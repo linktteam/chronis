@@ -165,6 +165,33 @@ def run_tiny_oracle_dynamics_stats(model, X: np.ndarray):
     return G, H, S, W
 
 
+def oracle_regime_sequence_leakage(model, X: np.ndarray) -> float:
+    """Exact posterior mass NOT on the single most probable complete regime sequence k_1..k_T
+    (mass of all duration paths that share a regime sequence is summed first). 0 when the data pin
+    down one regime sequence; larger when several remain plausible.
+
+    Added for ledger D12: the gap between the production dynamics statistics and the oracle's is
+    expected to track this leaked mass (the Gaussian collapse merges branches that the exact
+    posterior still separates), so the K=3 concentrated-posterior test scales its tolerance by it.
+    New function; nothing above it changed."""
+    T, K, Dmax = X.shape[0], model.K, model.Dmax
+    _check_size(T, K, Dmax)
+    log_pi = np.log(np.clip(model.pi, 1e-300, None))
+    logA = np.log(np.clip(model.A_slow, 1e-300, None))
+    dur_logpmf = model._duration_logpmf()
+    log_joints, sequences = [], []
+    for path in enumerate_legal_paths(T, K, Dmax):
+        loglik, _, _ = path_kalman_likelihood_and_smoother(path, X, model)
+        log_joints.append(path_log_prior(path, log_pi, logA, dur_logpmf) + loglik)
+        sequences.append(tuple(k for k, _r in path))
+    log_joints = np.array(log_joints)
+    weights = np.exp(log_joints - logsumexp(log_joints))
+    mass: dict = {}
+    for w, seq in zip(weights, sequences):
+        mass[seq] = mass.get(seq, 0.0) + float(w)
+    return max(0.0, 1.0 - max(mass.values()))
+
+
 def run_tiny_exact_oracle(model, X: np.ndarray) -> OracleResult:
     T, K, Dmax, L = X.shape[0], model.K, model.Dmax, model.L
     _check_size(T, K, Dmax)
