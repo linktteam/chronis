@@ -39,6 +39,74 @@ from backbone.hssm.model import (
 )
 
 
+def _safe_softmax(log_w: np.ndarray) -> np.ndarray:
+    """Softmax in log space; falls back to uniform (never NaN) if everything is ~-inf."""
+    if np.all(log_w <= NEG_INF / 2):
+        return np.full_like(log_w, 1.0 / len(log_w))
+    m = np.max(log_w)
+    w = np.exp(log_w - m)
+    s = w.sum()
+    if not np.isfinite(s) or s <= 0:
+        return np.full_like(log_w, 1.0 / len(log_w))
+    return w / s
+
+
+def _mixture_moments(means: np.ndarray, covs: np.ndarray, weights: np.ndarray):
+    """Moment-match a Gaussian mixture into a single Gaussian (standard GPB2 collapse)."""
+    mean = np.sum(weights[:, None] * means, axis=0)
+    L = means.shape[1]
+    cov = np.zeros((L, L))
+    for i in range(len(weights)):
+        diff = means[i] - mean
+        cov += weights[i] * (covs[i] + np.outer(diff, diff))
+    return mean, cov
+
+
+@dataclass
+class ForwardPassResult:
+    regime_post_filtered: np.ndarray   # (T, K)  P(k_t=k | y_1:t)
+    entry_mass: np.ndarray             # (T, K, D)  see NOTE (a) in _forward_pass
+    m_filt: np.ndarray                 # (T, K, L)
+    P_filt: np.ndarray                 # (T, K, L, L)
+    m_pred: np.ndarray                 # (T, K, L)  diagnostic only
+    P_pred: np.ndarray                 # (T, K, L, L)
+    emis_loglik: np.ndarray            # (T, K)  diagnostic only, not used for inference
+    ll_continuation: np.ndarray        # (T, K)  NEG_INF at t=0
+    ll_entry: np.ndarray               # (T, K)  predecessor-marginalized; at t=0 the initial Kalman ll
+    ll_branch: np.ndarray              # (T, K, K) [t,i,j] uncollapsed per-predecessor entry likelihood;
+                                        #   needed by the discrete backward, see NOTE (c) in _discrete_backward
+    alpha: np.ndarray                  # (T, K, D)
+    J_cont: np.ndarray                 # (T, K, L, L) P_pred of the (k,k) branch, cached
+    log_likelihood: float
+
+
+@dataclass
+class BackwardPassResult:
+    beta: np.ndarray                       # (T, K, D)
+    regime_posterior_smoothed: np.ndarray  # (T, K)   P(k_t=k | y_1:T)
+    gamma: np.ndarray                      # (T, K, D)
+    entry_posterior: np.ndarray            # (T, K, D)
+    xi_counts: np.ndarray                  # (K, K)
+    xi_t: np.ndarray                       # (T-1, K, K)
+    future_entry_val: np.ndarray           # (T, K)
+
+
+@dataclass
+class SmootherResult:
+    smoothed_m_k: np.ndarray     # (T, K, L)   E[m_t | k_t=k, Y]
+    smoothed_P_k: np.ndarray     # (T, K, L, L)
+    smoothed_m: np.ndarray       # (T, L)
+    smoothed_P: np.ndarray       # (T, L, L)
+    # Pair-conditioned quantities for t = 0..T-2, indexed [t, i, k] for the pair
+    # (k_t = i, k_{t+1} = k). Needed for the dynamics M-step: regime k's dynamics at time
+    # t+1 relate m_{t+1} to m_t, and m_t's distribution depends on which regime i it was
+    # generated in (at a segment start i != k). See NOTE (e) in _dynamics_sufficient_stats.
+    pair_m: np.ndarray           # (T-1, K, K, L)     E[m_t | k_t=i, k_{t+1}=k, Y]
+    pair_P: np.ndarray           # (T-1, K, K, L, L)  Cov[m_t | k_t=i, k_{t+1}=k, Y]
+    pair_J: np.ndarray           # (T-1, K, K, L, L)  RTS gain; Cov(m_{t+1}, m_t | pair) = J @ smoothed_P_k[t+1,k]
+    pair_w: np.ndarray           # (T-1, K, K)        P(k_t=i, k_{t+1}=k | Y)
+
+
 class DualTimescaleHSSM:
     """Production-grade Dual-Timescale Switching Linear Dynamical System (HSSM).
 
@@ -103,6 +171,7 @@ class DualTimescaleHSSM:
         self._n_observations: int = 0
         self.duration_fallback_used_: bool = False
         self.duration_optimizer_success_: dict[int, bool] = {}
+        self.transition_fallback_rows_: set[int] = set()
 
     # ---------- Model Identity & Capabilities ----------
 
@@ -225,117 +294,115 @@ class DualTimescaleHSSM:
 
     # ---------- Kim Filter (GPB2 Collapse) & Semi-Markov Integration ----------
 
-    def _forward_pass(self, X: np.ndarray):
-        """Kim (1994) GPB2 filter combined with semi-Markov duration state.
-
-        Returns:
-          regime_posterior: (T, K)
-          entry_posterior: (T, K)
-          filtered_m: (T, K, L)
-          filtered_P: (T, K, L, L)
-          pred_m: (T, K, L)
-          pred_P: (T, K, L, L)
-          emis_loglik: (T, K)
-        """
+    def _forward_pass(self, X: np.ndarray) -> ForwardPassResult:
         T, K, L, D = X.shape[0], self.K, self.L, self.Dmax
         dur_logpmf = self._duration_logpmf()
         logA = np.log(np.clip(self.A_slow, 1e-300, None))
         log_pi = np.log(np.clip(self.pi, 1e-300, None))
 
-        # Filtered continuous state holders
         m_filt = np.zeros((T, K, L))
         P_filt = np.zeros((T, K, L, L))
         m_pred = np.zeros((T, K, L))
         P_pred = np.zeros((T, K, L, L))
-
-        # Emission log-likelihoods conditional on regime k
         emis_loglik = np.zeros((T, K))
+        ll_continuation = np.full((T, K), NEG_INF)
+        ll_entry = np.full((T, K), NEG_INF)
+        ll_branch = np.full((T, K, K), NEG_INF)
+        J_cont_input_Ppred = np.zeros((T, K, L, L))
 
-        # Initial step t=0
-        for k in range(K):
-            # Prior at t=0
-            m_0_k = self.m0[k]
-            P_0_k = self.P0[k]
-            m_pred[0, k] = m_0_k
-            P_pred[0, k] = P_0_k
-
-            # Kalman update for regime k at t=0
-            m_up, P_up, ll_k = self._kalman_update_regime(X[0], m_0_k, P_0_k, k)
-            m_filt[0, k] = m_up
-            P_filt[0, k] = P_up
-            emis_loglik[0, k] = ll_k
-
-        # Discrete semi-Markov forward variables
         alpha = np.full((T, K, D), NEG_INF)
         entry_mass = np.full((T, K, D), NEG_INF)
 
+        # t = 0: single source per regime, no collapse needed
         for k in range(K):
-            entry_mass[0, k, :] = log_pi[k] + dur_logpmf[k]
+            m_pred[0, k], P_pred[0, k] = self.m0[k], self.P0[k]
+            m_up, P_up, ll_k = self._kalman_update_regime(X[0], self.m0[k], self.P0[k], k)
+            m_filt[0, k], P_filt[0, k], emis_loglik[0, k] = m_up, P_up, ll_k
+            # t=0 is inherently an entry; ll_entry carries the single-source likelihood so
+            # downstream code has a uniform (T,K) contract. ll_continuation stays NEG_INF.
+            ll_entry[0, k] = ll_k
+            J_cont_input_Ppred[0, k] = self.P0[k]
+
+        entry_mass[0] = log_pi[:, None] + dur_logpmf
         alpha[0] = entry_mass[0] + emis_loglik[0][:, None]
 
-        # Time recursion t=1..T-1
         for t in range(1, T):
-            # 1. Discrete HSMM prediction
             cont = np.full((K, D), NEG_INF)
             cont[:, : D - 1] = alpha[t - 1, :, 1:D]
+            completing = alpha[t - 1, :, 0]  # (K,) P(k_{t-1}=i, r_{t-1}=1, y_1:t-1)
 
-            completing = alpha[t - 1, :, 0]
-            trans_in = logsumexp(completing[:, None] + logA, axis=0)
-            entry = trans_in[:, None] + dur_logpmf
-            entry_mass[t] = entry
-
-            # 2. Continuous Kalman prediction and GPB2 branches (i -> j)
-            # For each destination regime j:
-            branch_m = np.zeros((K, L))      # conditional updated m from previous regime i
-            branch_m_pred = np.zeros((K, L)) # conditional prior m from previous regime i
-            branch_P = np.zeros((K, L, L))   # conditional updated P from previous regime i
-            branch_ll = np.zeros(K)
+            # NOTE (a): entry_mass is dur_logpmf alone for t >= 1; the
+            # transition prior is folded into ll_entry through the likelihood-weighted
+            # marginalization over predecessor i below. Adding trans_in here as well
+            # would double count it.
+            entry_mass[t] = dur_logpmf
 
             for j in range(K):
+                # continuation branch: single deterministic source i = j
+                m_pred_cont = self.A_fast[j] @ m_filt[t - 1, j] + self.b_fast[j]
+                P_pred_cont = self.A_fast[j] @ P_filt[t - 1, j] @ self.A_fast[j].T + self.Q_fast[j]
+                m_up_cont, P_up_cont, ll_cont = self._kalman_update_regime(X[t], m_pred_cont, P_pred_cont, j)
+                ll_continuation[t, j] = ll_cont
+                J_cont_input_Ppred[t, j] = P_pred_cont
+
+                # entry branch: GPB2 collapse over predecessors i (i=j vanishes via logA)
+                log_w_raw = np.full(K, NEG_INF)
+                m_up_ij = np.zeros((K, L))
+                P_up_ij = np.zeros((K, L, L))
                 for i in range(K):
-                    # Prediction from state (t-1, i) to (t, j)
+                    if not np.isfinite(logA[i, j]) or logA[i, j] <= NEG_INF / 2 or i == j:
+                        continue
                     m_pred_ij = self.A_fast[j] @ m_filt[t - 1, i] + self.b_fast[j]
                     P_pred_ij = self.A_fast[j] @ P_filt[t - 1, i] @ self.A_fast[j].T + self.Q_fast[j]
+                    m_up, P_up, ll_ij = self._kalman_update_regime(X[t], m_pred_ij, P_pred_ij, j)
+                    m_up_ij[i], P_up_ij[i] = m_up, P_up
+                    log_w_raw[i] = completing[i] + logA[i, j] + ll_ij
+                    ll_branch[t, i, j] = ll_ij
 
-                    # Measurement update
-                    m_up_ij, P_up_ij, ll_ij = self._kalman_update_regime(X[t], m_pred_ij, P_pred_ij, j)
-                    branch_m[i] = m_up_ij
-                    branch_m_pred[i] = m_pred_ij
-                    branch_P[i] = P_up_ij
-                    branch_ll[i] = ll_ij
+                ll_entry[t, j] = logsumexp(log_w_raw)
+                w = _safe_softmax(log_w_raw)
+                m_up_entry, P_up_entry = _mixture_moments(m_up_ij, P_up_ij, w)
 
-                # GPB2 collapse weight w(i|j) = Pr(p_{t-1}=i, p_t=j | Y_{1:t-1})
-                log_w = completing if j != 0 else completing
-                w_weights = np.exp(log_w - logsumexp(log_w)) if not np.all(np.isneginf(log_w)) else np.full(K, 1.0 / K)
+                alpha[t, j, :] = np.logaddexp(
+                    cont[j, :] + ll_continuation[t, j],
+                    entry_mass[t, j, :] + ll_entry[t, j],
+                )
 
-                # Collapsed state for regime j
-                m_collapsed = np.sum(w_weights[:, None] * branch_m, axis=0)
-                P_collapsed = np.zeros((L, L))
-                for i in range(K):
-                    diff = branch_m[i] - m_collapsed
-                    P_collapsed += w_weights[i] * (branch_P[i] + np.outer(diff, diff))
+                # final collapse: continuation vs entry into m_filt[t, j]
+                cont_mass_r = logsumexp(cont[j, :]) if np.any(cont[j, :] > NEG_INF / 2) else NEG_INF
+                log_mass_cont = cont_mass_r + ll_continuation[t, j] if cont_mass_r > NEG_INF / 2 else NEG_INF
+                log_mass_entry = ll_entry[t, j]
+                pi_cont, pi_entry = _safe_softmax(np.array([log_mass_cont, log_mass_entry]))
 
-                m_filt[t, j] = m_collapsed
-                P_filt[t, j] = P_collapsed
-                m_pred[t, j] = np.sum(w_weights[:, None] * branch_m_pred, axis=0)
-                P_pred[t, j] = P_collapsed
+                means = np.stack([m_up_cont, m_up_entry])
+                covs = np.stack([P_up_cont, P_up_entry])
+                m_filt[t, j], P_filt[t, j] = _mixture_moments(means, covs, np.array([pi_cont, pi_entry]))
 
-                # Effective emission log-likelihood for regime j
-                emis_loglik[t, j] = float(np.sum(w_weights * branch_ll))
+                entry_m_pred_by_i = np.array([self.A_fast[j] @ m_filt[t - 1, i] + self.b_fast[j] for i in range(K)])
+                m_pred[t, j] = pi_cont * m_pred_cont + pi_entry * np.sum(w[:, None] * entry_m_pred_by_i, axis=0)
+                P_pred[t, j] = pi_cont * P_pred_cont + pi_entry * np.sum(
+                    w[:, None, None] * np.array([
+                        self.A_fast[j] @ P_filt[t - 1, i] @ self.A_fast[j].T + self.Q_fast[j] for i in range(K)
+                    ]), axis=0)
 
-            # 3. Discrete HSMM update with emission likelihoods
-            alpha[t] = np.logaddexp(cont, entry) + emis_loglik[t][:, None]
+                emis_loglik[t, j] = pi_cont * ll_continuation[t, j] + pi_entry * ll_entry[t, j]  # diagnostic only
 
-        self.log_likelihood_ = float(logsumexp(alpha[-1]))
-
-        # Posterior regime distribution
-        regime_post = np.zeros((T, K))
+        log_likelihood = float(logsumexp(alpha[-1]))
+        regime_post_filtered = np.zeros((T, K))
         for t in range(T):
-            alpha_t_k = logsumexp(alpha[t], axis=1)  # (K,)
-            denom = logsumexp(alpha_t_k)
-            regime_post[t] = np.exp(alpha_t_k - denom)
+            alpha_t_k = logsumexp(alpha[t], axis=1)
+            regime_post_filtered[t] = np.exp(alpha_t_k - logsumexp(alpha_t_k))
 
-        return regime_post, entry_mass, m_filt, P_filt, m_pred, P_pred, emis_loglik
+        return ForwardPassResult(
+            regime_post_filtered=regime_post_filtered,
+            entry_mass=entry_mass,
+            m_filt=m_filt, P_filt=P_filt, m_pred=m_pred, P_pred=P_pred,
+            emis_loglik=emis_loglik,
+            ll_continuation=ll_continuation, ll_entry=ll_entry, ll_branch=ll_branch,
+            alpha=alpha,
+            J_cont=J_cont_input_Ppred,
+            log_likelihood=log_likelihood,
+        )
 
     def _kalman_update_regime(
         self,
@@ -388,144 +455,317 @@ class DualTimescaleHSSM:
         except np.linalg.LinAlgError:
             return m_prior.copy(), P_prior.copy(), -1e6
 
-    # ---------- Kim Backward Smoother ----------
+    # ---------- Discrete Backward Pass & Kim Switching Smoother ----------
 
-    def _backward_smoother(
-        self,
-        X: np.ndarray,
-        regime_post: np.ndarray,
-        m_filt: np.ndarray,
-        P_filt: np.ndarray,
-        m_pred: np.ndarray,
-        P_pred: np.ndarray,
-    ):
-        """Kim smoother for continuous latent state and regime posteriors.
+    def _discrete_backward(self, fwd: ForwardPassResult) -> BackwardPassResult:
+        T, K, D = fwd.alpha.shape
+        dur_logpmf = self._duration_logpmf()
+        logA = np.log(np.clip(self.A_slow, 1e-300, None))
+        alpha = fwd.alpha
+        ll_continuation, ll_entry = fwd.ll_continuation, fwd.ll_entry
+        log_likelihood = fwd.log_likelihood
 
-        Returns:
-          smoothed_m: (T, L)
-          smoothed_P: (T, L, L)
-          smoothed_m_k: (T, K, L)
-          smoothed_P_k: (T, K, L, L)
-        """
-        T, K, L = X.shape[0], self.K, self.L
+        # NOTE (c): reusing the predecessor-marginalized ll_entry in beta would make alpha
+        # and beta non-dual (checked against brute force on a pure-discrete mock). beta needs
+        # the source-specific branch likelihood, which the forward pass already computes
+        # before collapsing: ll_branch[t, i, j].
+        ll_branch = fwd.ll_branch
+
+        beta = np.full((T, K, D), NEG_INF)
+        beta[-1] = 0.0
+        future_entry_val = np.full((T, K), NEG_INF)
+
+        for t in range(T - 2, -1, -1):
+            inner = logsumexp(beta[t + 1] + dur_logpmf, axis=1)  # (K,) per destination j
+            future_entry_val[t + 1] = inner
+
+            cont_term = np.full((K, D), NEG_INF)
+            cont_term[:, 1:D] = beta[t + 1, :, : D - 1] + ll_continuation[t + 1][:, None]
+
+            fut_kj = logA + ll_branch[t + 1] + inner[None, :]  # [k,j]
+            trans_out = logsumexp(fut_kj, axis=1)              # (K,) per source k
+            end_term = np.full((K, D), NEG_INF)
+            end_term[:, 0] = trans_out
+
+            beta[t] = np.logaddexp(cont_term, end_term)
+
+        # Per-timestep normalizer Z_t = logsumexp(alpha[t] + beta[t]). With a correct dual
+        # this equals log_likelihood for every t; normalizing per t keeps gamma a proper
+        # distribution regardless. entry_posterior uses the same normalizer.
+        gamma = np.zeros((T, K, D))
+        entry_posterior = np.zeros((T, K, D))
+        for t in range(T):
+            Z_t = logsumexp((alpha[t] + beta[t]).ravel())
+            gamma[t] = np.exp(np.clip(alpha[t] + beta[t] - Z_t, -700, 0))
+            ep_log = fwd.entry_mass[t] + beta[t] + ll_entry[t][:, None] - Z_t
+            entry_posterior[t] = np.exp(np.clip(ep_log, -700, 0))
+        regime_posterior_smoothed = gamma.sum(axis=2)
+
+        # xi[t,i,j] = P(k_t=i, r_t=1, k_{t+1}=j | Y): uses the source-specific ll_branch
+        # (i is fixed here, so the i-marginalized ll_entry would be wrong).
+        xi_counts = np.zeros((K, K))
+        xi_t = np.zeros((max(T - 1, 0), K, K))
+        for t in range(T - 1):
+            completing_t = alpha[t, :, 0]
+            if np.all(completing_t <= NEG_INF / 2) or np.all(future_entry_val[t + 1] <= NEG_INF / 2):
+                continue
+            xi_log_t = (completing_t[:, None] + logA + ll_branch[t + 1]
+                        + future_entry_val[t + 1][None, :] - log_likelihood)
+            xi_t[t] = np.exp(np.clip(xi_log_t, -700, 0))
+            xi_counts += xi_t[t]
+
+        return BackwardPassResult(
+            beta=beta,
+            regime_posterior_smoothed=regime_posterior_smoothed,
+            gamma=gamma,
+            entry_posterior=entry_posterior,
+            xi_counts=xi_counts,
+            xi_t=xi_t,
+            future_entry_val=future_entry_val,
+        )
+
+    # NOTE (d): the Kim/GPB2 smoother uses the already-collapsed smoothed_m_k[t+1, j] in every
+    # (k, j) correction, which is itself a moment match over predecessors. Its continuous
+    # moments are therefore approximate even at T = 2 whenever regimes have distinct
+    # dynamics (exact when the collapse is lossless, i.e. identical continuous parameters).
+    def _switching_smoother(self, fwd: ForwardPassResult, bwd: BackwardPassResult) -> SmootherResult:
+        T, K, L = fwd.m_filt.shape
+        D = self.Dmax
+        m_filt, P_filt = fwd.m_filt, fwd.P_filt
+        xi_t, gamma = bwd.xi_t, bwd.gamma
+        regime_posterior_smoothed = bwd.regime_posterior_smoothed
 
         smoothed_m_k = np.zeros((T, K, L))
         smoothed_P_k = np.zeros((T, K, L, L))
+        n_pair = max(T - 1, 0)
+        pair_m = np.zeros((n_pair, K, K, L))
+        pair_P = np.zeros((n_pair, K, K, L, L))
+        pair_J = np.zeros((n_pair, K, K, L, L))
+        pair_w = np.zeros((n_pair, K, K))
 
-        # At t = T-1: smoothed = filtered
         smoothed_m_k[-1] = m_filt[-1]
         smoothed_P_k[-1] = P_filt[-1]
 
-        # Backward recursion
         for t in range(T - 2, -1, -1):
+            mass_continue = gamma[t, :, 1:D].sum(axis=1)  # P(r_t > 1, k_t=k | Y)
+
             for k in range(K):
-                # Smoother gain J_t = P_{t|t} A^T (P_{t+1|t})^{-1}
-                P_pred_next = self.A_fast[k] @ P_filt[t, k] @ self.A_fast[k].T + self.Q_fast[k] + 1e-6 * np.eye(L)
-                try:
-                    J_t = P_filt[t, k] @ self.A_fast[k].T @ np.linalg.inv(P_pred_next)
-                    m_pred_next = self.A_fast[k] @ m_filt[t, k] + self.b_fast[k]
-                    smoothed_m_k[t, k] = m_filt[t, k] + J_t @ (smoothed_m_k[t + 1, k] - m_pred_next)
-                    smoothed_P_k[t, k] = P_filt[t, k] + J_t @ (smoothed_P_k[t + 1, k] - P_pred_next) @ J_t.T
-                    smoothed_P_k[t, k] = 0.5 * (smoothed_P_k[t, k] + smoothed_P_k[t, k].T)
-                except np.linalg.LinAlgError:
+                m_smooth_per_j = np.zeros((K, L))
+                P_smooth_per_j = np.zeros((K, L, L))
+                raw_weight = np.zeros(K)
+
+                for j in range(K):
+                    P_pred_kj = self.A_fast[j] @ P_filt[t, k] @ self.A_fast[j].T + self.Q_fast[j]
+                    P_pred_kj = P_pred_kj + 1e-9 * np.eye(L)
+                    J_kj = P_filt[t, k] @ self.A_fast[j].T @ np.linalg.inv(P_pred_kj)
+                    m_pred_kj = self.A_fast[j] @ m_filt[t, k] + self.b_fast[j]
+                    m_smooth_per_j[j] = m_filt[t, k] + J_kj @ (smoothed_m_k[t + 1, j] - m_pred_kj)
+                    P_smooth_per_j[j] = P_filt[t, k] + J_kj @ (smoothed_P_k[t + 1, j] - P_pred_kj) @ J_kj.T
+
+                    # joint posterior mass of the pair (k_t=k, k_{t+1}=j): the continuation
+                    # mass on the diagonal (r_t > 1 forces k_{t+1} = k), the pairwise
+                    # transition marginal off it
+                    raw_weight[j] = mass_continue[k] if j == k else xi_t[t, k, j]
+
+                    # cache the pair-conditioned branch quantities for the M-step
+                    pair_m[t, k, j] = m_smooth_per_j[j]
+                    pair_P[t, k, j] = P_smooth_per_j[j]
+                    pair_J[t, k, j] = J_kj
+                    pair_w[t, k, j] = raw_weight[j]
+
+                total = raw_weight.sum()
+                if total <= 1e-12:
+                    # ~zero smoothed mass for k at t: keep the filtered belief (documented
+                    # fallback; avoids dividing by ~0)
                     smoothed_m_k[t, k] = m_filt[t, k]
                     smoothed_P_k[t, k] = P_filt[t, k]
+                    continue
 
-        # Aggregate across regimes using regime posterior weights
+                m_out, P_out = _mixture_moments(m_smooth_per_j, P_smooth_per_j, raw_weight / total)
+                smoothed_m_k[t, k] = m_out
+                smoothed_P_k[t, k] = P_out
+
+        # aggregate with the SMOOTHED marginal (the old code used the filtered one)
         smoothed_m = np.zeros((T, L))
         smoothed_P = np.zeros((T, L, L))
-
         for t in range(T):
-            gamma_t = regime_post[t]  # (K,)
-            m_t = np.sum(gamma_t[:, None] * smoothed_m_k[t], axis=0)
-            smoothed_m[t] = m_t
-            P_t = np.zeros((L, L))
-            for k in range(K):
-                diff = smoothed_m_k[t, k] - m_t
-                P_t += gamma_t[k] * (smoothed_P_k[t, k] + np.outer(diff, diff))
-            smoothed_P[t] = P_t
+            smoothed_m[t], smoothed_P[t] = _mixture_moments(
+                smoothed_m_k[t], smoothed_P_k[t], regime_posterior_smoothed[t])
 
-        return smoothed_m, smoothed_P, smoothed_m_k, smoothed_P_k
+        return SmootherResult(
+            smoothed_m_k=smoothed_m_k, smoothed_P_k=smoothed_P_k,
+            smoothed_m=smoothed_m, smoothed_P=smoothed_P,
+            pair_m=pair_m, pair_P=pair_P, pair_J=pair_J, pair_w=pair_w,
+        )
 
     # ---------- EM M-Step ----------
 
-    def _m_step(
-        self,
-        X: np.ndarray,
-        regime_post: np.ndarray,
-        smoothed_m_k: np.ndarray,
-        smoothed_P_k: np.ndarray,
-    ) -> None:
-        """Analytical M-step for continuous and discrete model parameters."""
-        T, K, L, F = X.shape[0], self.K, self.L, self.F
+    def _update_discrete_params(self, bwd: BackwardPassResult):
+        K = self.K
+        N = bwd.xi_counts
+        A_new = np.zeros((K, K))
+        self.transition_fallback_rows_ = set()
+        for i in range(K):
+            row_total = N[i].sum()
+            if row_total <= 1e-10:
+                A_new[i] = self.A_slow[i]  # explicit fallback: keep previous row
+                self.transition_fallback_rows_.add(i)
+            else:
+                A_new[i] = N[i] / row_total
+                A_new[i, i] = 0.0
+        self.A_slow = A_new
 
-        # 1. Update initial regime distribution
-        self.pi = np.clip(regime_post[0], 1e-4, None)
+        # duration parameters: weighted log-normal MLE through the SAME truncated and
+        # renormalized PMF used everywhere else
+        d_grid = np.arange(1, self.Dmax + 1)
+        new_mu = self.dur_mu.copy()
+        new_sigma = self.dur_sigma.copy()
+        for k in range(K):
+            N_j_d = bwd.entry_posterior[:, k, :].sum(axis=0)
+            if N_j_d.sum() <= 1e-10:
+                self.duration_optimizer_success_[k] = False
+                self.duration_fallback_used_ = True
+                continue
+
+            def neg_expected_ll(params, N_j_d=N_j_d, d_grid=d_grid):
+                mu, log_sigma = params
+                sigma = np.exp(log_sigma)
+                if sigma <= 1e-6 or sigma > 10 or not np.isfinite(mu):
+                    return 1e12
+                pdf = lognorm.pdf(d_grid, s=sigma, scale=np.exp(mu))
+                pdf = np.clip(pdf, 1e-300, None)
+                pdf = pdf / pdf.sum()
+                return -float(np.sum(N_j_d * np.log(pdf)))
+
+            x0 = [self.dur_mu[k], np.log(max(self.dur_sigma[k], 1e-3))]
+            try:
+                res = minimize(neg_expected_ll, x0, method="Nelder-Mead")
+                mu_hat, sigma_hat = res.x[0], float(np.exp(res.x[1]))
+                if not (res.success and np.isfinite(mu_hat) and np.isfinite(sigma_hat) and sigma_hat > 0):
+                    raise RuntimeError("optimizer did not converge to a valid result")
+                new_mu[k], new_sigma[k] = mu_hat, sigma_hat
+                self.duration_optimizer_success_[k] = True
+            except Exception:
+                new_mu[k], new_sigma[k] = self.dur_mu[k], self.dur_sigma[k]
+                self.duration_optimizer_success_[k] = False
+                self.duration_fallback_used_ = True
+
+        self.dur_mu, self.dur_sigma = new_mu, new_sigma
+
+        self.pi = np.clip(bwd.regime_posterior_smoothed[0], 1e-4, None)
         self.pi = self.pi / self.pi.sum()
 
-        # 2. Update observation parameters (C_obs, d_obs, R_obs)
-        for k in range(K):
-            gamma_k = regime_post[:, k]  # (T,)
-            weight_sum = np.sum(gamma_k) + 1e-8
+    def _dynamics_sufficient_stats(self, smoother: SmootherResult):
+        """Expected sufficient statistics for each regime's fast dynamics
+        m_t = A_k m_{t-1} + b_k + noise, applied at every t where k_t = k.
 
-            # Regression of y_t on [m_t, 1]
+        NOTE (e): the transition into time t+1 under regime k relates m_{t+1}
+        to m_t, and the distribution of m_t depends on the regime i it was generated in.
+        Within a segment i == k; at a segment start i != k, and E[m_t | k_t=k, Y] is the
+        wrong quantity there (it conditions on a regime m_t was probably not generated in).
+        So the statistics are accumulated over predecessor regimes i, weighted by the joint
+        posterior P(k_t=i, k_{t+1}=k | Y), using the pair-conditioned smoothed moments of
+        m_t and the matching lag covariance Cov(m_{t+1}, m_t) = J_{ik} @ P^s_{t+1,k}.
+
+        Returns G (K,L+1,L+1), H (K,L+1,L), S (K,L,L), W (K,) such that the weighted
+        least-squares problem for Theta = [A | b] is  G Theta = H  and the residual
+        second-moment sum is  S - Theta^T H.
+        """
+        K, L = self.K, self.L
+        n_pair = smoother.pair_w.shape[0]
+        G = np.zeros((K, L + 1, L + 1))
+        H = np.zeros((K, L + 1, L))
+        S = np.zeros((K, L, L))
+        W = np.zeros(K)
+        for t in range(n_pair):
+            for k in range(K):
+                m_cur = smoother.smoothed_m_k[t + 1, k]
+                E_cc = smoother.smoothed_P_k[t + 1, k] + np.outer(m_cur, m_cur)
+                for i in range(K):
+                    w = smoother.pair_w[t, i, k]
+                    if w <= 1e-12:
+                        continue
+                    m_prev = smoother.pair_m[t, i, k]
+                    E_pp = smoother.pair_P[t, i, k] + np.outer(m_prev, m_prev)
+                    # E[m_{t+1} m_t^T] = Cov(m_{t+1}, m_t) + outer(m_{t+1}, m_t)
+                    E_cp = smoother.pair_J[t, i, k] @ smoother.smoothed_P_k[t + 1, k] + np.outer(m_cur, m_prev)
+
+                    W[k] += w
+                    G[k, :L, :L] += w * E_pp
+                    G[k, :L, L] += w * m_prev
+                    G[k, L, :L] += w * m_prev
+                    G[k, L, L] += w
+                    H[k, :L, :] += w * E_cp.T
+                    H[k, L, :] += w * m_cur
+                    S[k] += w * E_cc
+        return G, H, S, W
+
+    def _m_step_continuous(self, X: np.ndarray, bwd: BackwardPassResult, smoother: SmootherResult):
+        T, K, L, F = X.shape[0], self.K, self.L, self.F
+        smoothed_m_k, smoothed_P_k = smoother.smoothed_m_k, smoother.smoothed_P_k
+        gamma_tk = bwd.regime_posterior_smoothed
+
+        # observation model: only m_t is involved, so the regime-k moments at time t
+        # (conditioned on k_t = k) weighted by gamma_t[k] are the right statistics
+        Ex = smoothed_m_k
+        Exx = np.zeros((T, K, L, L))
+        for t in range(T):
+            for k in range(K):
+                Exx[t, k] = smoothed_P_k[t, k] + np.outer(smoothed_m_k[t, k], smoothed_m_k[t, k])
+
+        G_dyn, H_dyn, S_dyn, W_dyn = self._dynamics_sufficient_stats(smoother)
+
+        A_new, b_new, Q_new = self.A_fast.copy(), self.b_fast.copy(), self.Q_fast.copy()
+        for k in range(K):
+            G, H, sum_Exx_t, W = G_dyn[k], H_dyn[k], S_dyn[k], W_dyn[k]
+
+            if W <= 1e-8:
+                continue  # no evidence for this regime's dynamics this iteration
+            theta = np.linalg.solve(G + 1e-6 * np.eye(L + 1), H)  # (L+1, L)
+            A_k, b_k = theta[:L, :].T, theta[L, :]
+
+            # weighted-LS residual identity: at the optimum the residual is sum_Exx - Theta^T H
+            Q_k = (sum_Exx_t - theta.T @ H) / W
+            Q_k = 0.5 * (Q_k + Q_k.T)
+            eigvals, eigvecs = np.linalg.eigh(Q_k)
+            Q_k = eigvecs @ np.diag(np.clip(eigvals, 1e-6, None)) @ eigvecs.T
+
+            A_new[k], b_new[k], Q_new[k] = A_k, b_k, Q_k
+
+        self.A_fast, self.b_fast, self.Q_fast = A_new, b_new, Q_new
+
+        C_new, d_new, R_new = self.C_obs.copy(), self.d_obs.copy(), self.R_obs.copy()
+        for k in range(K):
             for f in range(F):
                 valid = ~np.isnan(X[:, f])
-                if not np.any(valid):
+                G = np.zeros((L + 1, L + 1))
+                H = np.zeros((L + 1, 1))
+                sum_y2 = 0.0
+                W = 0.0
+                for t in range(T):
+                    if not valid[t]:
+                        continue
+                    w = gamma_tk[t, k]
+                    if w <= 1e-12:
+                        continue
+                    W += w
+                    y = X[t, f]
+                    G[:L, :L] += w * Exx[t, k]
+                    G[:L, L] += w * Ex[t, k]
+                    G[L, :L] += w * Ex[t, k]
+                    G[L, L] += w
+                    H[:L, 0] += w * Ex[t, k] * y
+                    H[L, 0] += w * y
+                    sum_y2 += w * y * y
+
+                if W <= 1e-8:
                     continue
-                w_f = gamma_k[valid]
-                w_sum_f = np.sum(w_f) + 1e-8
-                X_f = X[valid, f]
-                M_f = smoothed_m_k[valid, k]  # (T_valid, L)
+                theta_f = np.linalg.solve(G + 1e-6 * np.eye(L + 1), H)
+                C_new[k, f, :] = theta_f[:L, 0]
+                d_new[k, f] = theta_f[L, 0]
+                R_new[k, f] = max((sum_y2 - (theta_f.T @ H).item()) / W, 1e-6)
 
-                # Weighted linear regression
-                # Form [M_f, 1]
-                Phi = np.hstack([M_f, np.ones((len(M_f), 1))])  # (T_valid, L+1)
-                W_Phi = Phi * w_f[:, None]
-                lhs = W_Phi.T @ Phi + 1e-4 * np.eye(L + 1)
-                rhs = W_Phi.T @ X_f
-
-                try:
-                    theta = np.linalg.solve(lhs, rhs)
-                    self.C_obs[k, f, :] = theta[:L]
-                    self.d_obs[k, f] = theta[L]
-
-                    # Residual variance
-                    pred_f = Phi @ theta
-                    res_sq = (X_f - pred_f) ** 2
-                    var_f = float(np.sum(w_f * res_sq) / w_sum_f)
-                    self.R_obs[k, f] = max(var_f, 1e-3)
-                except np.linalg.LinAlgError:
-                    pass
-
-        # 3. Update continuous state dynamics (A_fast, b_fast, Q_fast)
-        for k in range(K):
-            gamma_k = regime_post[1:, k]  # (T-1,)
-            w_sum = np.sum(gamma_k) + 1e-8
-
-            M_prev = smoothed_m_k[:-1, k]  # (T-1, L)
-            M_curr = smoothed_m_k[1:, k]   # (T-1, L)
-
-            Phi = np.hstack([M_prev, np.ones((len(M_prev), 1))])  # (T-1, L+1)
-            W_Phi = Phi * gamma_k[:, None]
-            lhs = W_Phi.T @ Phi + 1e-4 * np.eye(L + 1)
-            rhs = W_Phi.T @ M_curr  # (L+1, L)
-
-            try:
-                theta = np.linalg.solve(lhs, rhs)  # (L+1, L)
-                self.A_fast[k] = theta[:L, :].T
-                self.b_fast[k] = theta[L, :]
-
-                # Process noise covariance
-                pred_M = Phi @ theta
-                res = M_curr - pred_M  # (T-1, L)
-                Q_k = np.zeros((L, L))
-                for t in range(len(res)):
-                    Q_k += gamma_k[t] * np.outer(res[t], res[t])
-                Q_k = Q_k / w_sum + 1e-4 * np.eye(L)
-                self.Q_fast[k] = 0.5 * (Q_k + Q_k.T)
-            except np.linalg.LinAlgError:
-                pass
+        self.C_obs, self.d_obs, self.R_obs = C_new, d_new, R_new
 
     # ---------- Fitting & Generalized EM ----------
 
@@ -553,27 +793,27 @@ class DualTimescaleHSSM:
         prev_ll = None
 
         for it in range(n_iter):
-            # Save snapshot for monotonicity rollback
-            snapshot = (
-                self.pi.copy(),
-                self.A_slow.copy(),
-                self.dur_mu.copy(),
-                self.dur_sigma.copy(),
-                self.A_fast.copy(),
-                self.b_fast.copy(),
-                self.Q_fast.copy(),
-                self.C_obs.copy(),
-                self.d_obs.copy(),
-                self.R_obs.copy(),
-            )
+            # Save snapshot for monotonicity rollback. It covers every array the M-step
+            # changes (pi, A_slow, dur_mu, dur_sigma, A_fast, b_fast, Q_fast, C_obs, d_obs,
+            # R_obs) AND the duration/transition status fields, so a rollback restores both.
+            snapshot = self._snapshot_params()
 
-            # E-step: Kim filter forward pass + backward smoother
-            regime_post, entry_mass, m_filt, P_filt, m_pred, P_pred, emis_ll = self._forward_pass(X)
-            smoothed_m, smoothed_P, smoothed_m_k, smoothed_P_k = self._backward_smoother(
-                X, regime_post, m_filt, P_filt, m_pred, P_pred
-            )
+            # E-step: two-level GPB2 forward pass, discrete backward pass, switching smoother
+            try:
+                fwd = self._forward_pass(X)
+                bwd = self._discrete_backward(fwd)
+                smoother = self._switching_smoother(fwd, bwd)
+            except (np.linalg.LinAlgError, ValueError):
+                if prev_params is not None:
+                    self._restore_params(prev_params)
+                self.log_likelihood_ = prev_ll
+                self.fit_state_ = FitState.NUMERICAL_FAILURE
+                self.n_iter_ = it
+                self._is_fitted = True
+                return self
 
-            ll = self.log_likelihood_
+            ll = fwd.log_likelihood
+            self.log_likelihood_ = ll
             if ll is None or np.isnan(ll) or np.isinf(ll):
                 self.fit_state_ = FitState.NUMERICAL_FAILURE
                 self.n_iter_ = it
@@ -600,11 +840,7 @@ class DualTimescaleHSSM:
                         UserWarning,
                         stacklevel=2,
                     )
-                    (
-                        self.pi, self.A_slow, self.dur_mu, self.dur_sigma,
-                        self.A_fast, self.b_fast, self.Q_fast,
-                        self.C_obs, self.d_obs, self.R_obs
-                    ) = prev_params
+                    self._restore_params(prev_params)
                     self.log_likelihood_ = prev_ll
                     self.fit_state_ = FitState.REJECTED_UPDATE
                     self.n_iter_ = it
@@ -613,14 +849,45 @@ class DualTimescaleHSSM:
             prev_params = snapshot
             prev_ll = ll
 
-            # M-step: Analytical update of linear-Gaussian parameters
-            self._m_step(X, regime_post, smoothed_m_k, smoothed_P_k)
+            # M-step: discrete parameters (A_slow, durations, pi), then continuous
+            # linear-Gaussian parameters from pair-conditioned sufficient statistics
+            try:
+                self._update_discrete_params(bwd)
+                self._m_step_continuous(X, bwd, smoother)
+            except (np.linalg.LinAlgError, ValueError):
+                self._restore_params(snapshot)
+                self.fit_state_ = FitState.NUMERICAL_FAILURE
+                self.n_iter_ = it
+                self._is_fitted = True
+                return self
 
         if self.fit_state_ == FitState.RUNNING:
             self.fit_state_ = FitState.MAX_ITER_REACHED
 
         self._is_fitted = True
         return self
+
+    def _snapshot_params(self):
+        """Copy every parameter the EM loop can change, plus the status fields that
+        _update_discrete_params sets, so a rollback restores both."""
+        names = ["pi", "A_slow", "dur_mu", "dur_sigma", "A_fast", "b_fast", "Q_fast",
+                 "m0", "P0", "C_obs", "d_obs", "R_obs"]
+        snap = {n: np.array(getattr(self, n), copy=True) for n in names}
+        snap["duration_optimizer_success_"] = dict(self.duration_optimizer_success_)
+        snap["duration_fallback_used_"] = bool(self.duration_fallback_used_)
+        snap["transition_fallback_rows_"] = set(self.transition_fallback_rows_)
+        return snap
+
+    def _restore_params(self, snapshot):
+        for n, v in snapshot.items():
+            if isinstance(v, np.ndarray):
+                setattr(self, n, np.array(v, copy=True))
+            elif isinstance(v, dict):
+                setattr(self, n, dict(v))
+            elif isinstance(v, set):
+                setattr(self, n, set(v))
+            else:
+                setattr(self, n, v)
 
     # ---------- Inference & Estimation ----------
 
@@ -631,18 +898,20 @@ class DualTimescaleHSSM:
         """Estimate fast continuous trajectory and slow regime assignments.
 
         Returns:
-          m_t: (T, L) continuous state trajectory posterior mean
+          m_t: (T, L) continuous state trajectory posterior mean (switching-smoother output)
           m_t_std: (T, L) continuous state posterior standard error (uncertainty)
-          p_t: (T,) MAP discrete regime sequence
-          p_t_post: (T, K) regime posterior probabilities
+          p_t: (T,) MAP discrete regime sequence, from the FILTERED regime posterior
+          p_t_post: (T, K) FILTERED regime posterior probabilities (not the smoothed ones)
         """
         self._require_fitted()
-        regime_post, entry_mass, m_filt, P_filt, m_pred, P_pred, emis_ll = self._forward_pass(X)
-        smoothed_m, smoothed_P, _, _ = self._backward_smoother(
-            X, regime_post, m_filt, P_filt, m_pred, P_pred
-        )
+        fwd = self._forward_pass(X)
+        bwd = self._discrete_backward(fwd)
+        smoother = self._switching_smoother(fwd, bwd)
 
+        regime_post = fwd.regime_post_filtered
         p_t = np.argmax(regime_post, axis=1)
+
+        smoothed_m, smoothed_P = smoother.smoothed_m, smoother.smoothed_P
 
         # Standard error along diagonal of covariance
         m_t_std = np.zeros_like(smoothed_m)
