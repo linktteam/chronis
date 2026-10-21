@@ -19,6 +19,8 @@ Theoretical Architecture:
 
 from __future__ import annotations
 
+import os
+import traceback
 import warnings
 from dataclasses import dataclass, field
 from enum import Enum
@@ -172,6 +174,19 @@ class DualTimescaleHSSM:
         self.duration_fallback_used_: bool = False
         self.duration_optimizer_success_: dict[int, bool] = {}
         self.transition_fallback_rows_: set[int] = set()
+
+        # --- Numerical-health bookkeeping (ledger A7 and N21). Bookkeeping only: nothing
+        # here feeds back into inference, and none of it is part of the parameter snapshot,
+        # so a rollback never erases the record that something went wrong. ---
+        # cumulative number of times the -1e6 Cholesky fallback in _kalman_update_regime fired
+        # since construction (E-steps, estimate_states, and anything else that calls it)
+        self.cholesky_fallback_count_: int = 0
+        # firings during the most recent fit() only, and the flag derived from it
+        self.fit_cholesky_fallbacks_: int = 0
+        self.fit_degraded_: bool = False
+        # every exception caught inside the most recent fit(); one dict per exception with
+        # keys iteration, stage, exception_type, message, location
+        self.fit_exceptions_: list[dict[str, Any]] = []
 
     # ---------- Model Identity & Capabilities ----------
 
@@ -411,7 +426,14 @@ class DualTimescaleHSSM:
         P_prior: np.ndarray,
         k: int,
     ) -> tuple[np.ndarray, np.ndarray, float]:
-        """Kalman measurement update for regime k with NaN marginalization."""
+        """Kalman measurement update for regime k with NaN marginalization.
+
+        If the innovation covariance cannot be Cholesky-factorised the function returns the
+        prior unchanged with log-density -1e6 (a magic number, not a likelihood). That
+        behaviour is kept, but every firing is now COUNTED in `self.cholesky_fallback_count_`
+        (ledger A7 / decision D3 interim); `fit()` turns the count into `fit_degraded_`.
+        Returned values are identical to the previous version in every case.
+        """
         L, F = self.L, self.F
         is_obs = ~np.isnan(yt)
         if not np.any(is_obs):
@@ -453,6 +475,7 @@ class DualTimescaleHSSM:
             ll = -0.5 * (len(y_obs) * np.log(2.0 * np.pi) + log_det + quad)
             return m_up, P_up, ll
         except np.linalg.LinAlgError:
+            self.cholesky_fallback_count_ += 1
             return m_prior.copy(), P_prior.copy(), -1e6
 
     # ---------- Discrete Backward Pass & Kim Switching Smoother ----------
@@ -777,7 +800,49 @@ class DualTimescaleHSSM:
         verbose: bool = False,
         timestamps: np.ndarray | None = None,
     ) -> "DualTimescaleHSSM":
-        """Fit dual-timescale model using generalized EM with backtracking rollback."""
+        """Fit dual-timescale model using generalized EM with backtracking rollback.
+
+        Besides the fit itself this records, for the call that just ran (ledger A7 / N21):
+          fit_cholesky_fallbacks_ : how many times the -1e6 Cholesky fallback fired in the loop
+          fit_degraded_           : True iff that number is > 0 (the likelihood contains the magic constant)
+          fit_exceptions_         : one dict per exception caught inside the loop
+        These are set even if an exception that is NOT caught here propagates out of the loop.
+        """
+        n_fallbacks_before = self.cholesky_fallback_count_
+        self.fit_exceptions_ = []
+        self.fit_cholesky_fallbacks_ = 0
+        self.fit_degraded_ = False
+        try:
+            return self._fit_impl(X, n_iter=n_iter, tol=tol, verbose=verbose, timestamps=timestamps)
+        finally:
+            self.fit_cholesky_fallbacks_ = self.cholesky_fallback_count_ - n_fallbacks_before
+            self.fit_degraded_ = self.fit_cholesky_fallbacks_ > 0
+
+    def _record_fit_exception(self, exc: BaseException, stage: str, iteration: int) -> None:
+        """Remember an exception that fit() caught, instead of discarding it (ledger N21).
+
+        The `except (LinAlgError, ValueError)` clauses in the EM loop also catch ValueErrors that
+        come from programming errors (for example a shape mismatch). Recording the type, message
+        and raising location keeps those distinguishable from genuine numerical failures.
+        """
+        frames = traceback.extract_tb(exc.__traceback__)
+        last = frames[-1] if frames else None
+        self.fit_exceptions_.append({
+            "iteration": int(iteration),
+            "stage": stage,
+            "exception_type": type(exc).__name__,
+            "message": str(exc),
+            "location": f"{os.path.basename(last.filename)}:{last.lineno} in {last.name}" if last else None,
+        })
+
+    def _fit_impl(
+        self,
+        X: np.ndarray,
+        n_iter: int = 50,
+        tol: float = 1e-4,
+        verbose: bool = False,
+        timestamps: np.ndarray | None = None,
+    ) -> "DualTimescaleHSSM":
         self.fit_state_ = FitState.RUNNING
         self.log_likelihood_history_ = []
         self._n_observations = len(X)
@@ -803,7 +868,8 @@ class DualTimescaleHSSM:
                 fwd = self._forward_pass(X)
                 bwd = self._discrete_backward(fwd)
                 smoother = self._switching_smoother(fwd, bwd)
-            except (np.linalg.LinAlgError, ValueError):
+            except (np.linalg.LinAlgError, ValueError) as exc:
+                self._record_fit_exception(exc, stage="E-step", iteration=it)
                 if prev_params is not None:
                     self._restore_params(prev_params)
                 self.log_likelihood_ = prev_ll
@@ -838,7 +904,7 @@ class DualTimescaleHSSM:
                         f"[DualTimescaleHSSM] Monotonicity violation at iter {it}: "
                         f"LL dropped from {prev_ll:.4f} to {ll:.4f}. Backtracking.",
                         UserWarning,
-                        stacklevel=2,
+                        stacklevel=3,  # fit() -> _fit_impl(): attribute the warning to the caller of fit()
                     )
                     self._restore_params(prev_params)
                     self.log_likelihood_ = prev_ll
@@ -854,7 +920,8 @@ class DualTimescaleHSSM:
             try:
                 self._update_discrete_params(bwd)
                 self._m_step_continuous(X, bwd, smoother)
-            except (np.linalg.LinAlgError, ValueError):
+            except (np.linalg.LinAlgError, ValueError) as exc:
+                self._record_fit_exception(exc, stage="M-step", iteration=it)
                 self._restore_params(snapshot)
                 self.fit_state_ = FitState.NUMERICAL_FAILURE
                 self.n_iter_ = it
@@ -902,6 +969,14 @@ class DualTimescaleHSSM:
           m_t_std: (T, L) continuous state posterior standard error (uncertainty)
           p_t: (T,) MAP discrete regime sequence, from the FILTERED regime posterior
           p_t_post: (T, K) FILTERED regime posterior probabilities (not the smoothed ones)
+
+        INFORMATION SETS (ledger A6, owner decision D2). The four outputs do NOT use the same data:
+          * m_t and m_t_std are SMOOTHED: row t uses EVERY observation in X, including those after t.
+          * p_t and p_t_post are FILTERED: row t uses only X[0..t] (causal).
+        Consequence: appending observations to X can change m_t / m_t_std of EARLIER rows but never
+        changes p_t / p_t_post of earlier rows (tests/test_dual_model_estimate_states_information_sets.py).
+        Do not display m_t beside p_t as if they came from one information set.
+        This method does not modify self.log_likelihood_ or any parameter.
         """
         self._require_fitted()
         fwd = self._forward_pass(X)
