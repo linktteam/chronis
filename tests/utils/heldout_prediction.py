@@ -53,7 +53,7 @@ class ContinuedData:
         return np.vstack([self.X_train, self.X_test])
 
 
-def continued_synthetic(seed: int) -> ContinuedData:
+def continued_synthetic(seed: int, n_train_segments: int = N_TRAIN_SEGMENTS, n_test_segments: int = N_TEST_SEGMENTS) -> ContinuedData:
     """Replays data/synthetic_dual.py draw by draw for the training part (and checks it equals the generator's output),
     then CONTINUES the same random stream: draws for the extra segments' durations/regimes first, then the extra
     latent innovations, then the extra emission noise (the same order the generator uses within one series)."""
@@ -74,7 +74,7 @@ def continued_synthetic(seed: int) -> ContinuedData:
             current = rng.choice([k for k in range(K) if k != current])
         return np.array(regimes, dtype=int), current
 
-    p_tr, nxt = segments(N_TRAIN_SEGMENTS, 0)
+    p_tr, nxt = segments(n_train_segments, 0)
     T_tr = len(p_tr)
     m_tr = np.zeros((T_tr, L))
     m_curr = rng.normal(scale=0.2, size=L)
@@ -87,11 +87,11 @@ def continued_synthetic(seed: int) -> ContinuedData:
         X_tr[t] = C @ m_tr[t] + d[p_tr[t]] + rng.normal(scale=R_scale, size=F)
 
     ref = generate_synthetic_dual_timescale_data(
-        n_regimes=K, n_features=F, latent_dim=L, n_segments=N_TRAIN_SEGMENTS, mean_dwell=MEAN_DWELL, seed=seed)
+        n_regimes=K, n_features=F, latent_dim=L, n_segments=n_train_segments, mean_dwell=MEAN_DWELL, seed=seed)
     if not (np.array_equal(ref.X, X_tr) and np.array_equal(ref.true_p_t, p_tr) and np.array_equal(ref.true_m_t, m_tr)):
         raise AssertionError(f"seed {seed}: the replayed training part differs from the generator's output; the generator changed")
 
-    p_te, _ = segments(N_TEST_SEGMENTS, nxt)
+    p_te, _ = segments(n_test_segments, nxt)
     T_te = len(p_te)
     m_te = np.zeros((T_te, L))
     for t in range(T_te):
