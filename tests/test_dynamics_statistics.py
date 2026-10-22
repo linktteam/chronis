@@ -141,17 +141,19 @@ def test_old_pairing_would_fail_the_concentrated_check():
 # were fixed before the first run. If a K=3 config ever needs a different tolerance, that is
 # a finding to report to the owner, not a number to adjust here.
 #
-# UPDATE (ledger D12, owner ruling "option (a)", status ASSUMED APPROVED, to be confirmed in
-# writing). One config (K=3, D=3, T=6, seed=1) missed the pre-declared 1e-6 with an observed
-# relative gap of 2.849e-05. That observation was reported to the owner first, as the paragraph
-# above requires. The owner ruled to use a leakage-aware tolerance computed from the oracle:
-#       gap <= max(1e-6, 2 x leakage)
-# where leakage = exact posterior mass NOT on the most probable complete regime sequence
-# (tests/oracle/tiny_exact_oracle.py::oracle_regime_sequence_leakage).
-# THIS IS A NEW CRITERION CHOSEN AFTER SEEING THE RESULT. It was not derived before the data
-# existed, and the factor 2 is not justified by theory; it is the owner's example value. The
-# config list is unchanged and the failing config was NOT replaced. For the five configs whose
-# leakage is ~0 the criterion is still 1e-6, so nothing was loosened there.
+# D12: OFFICIAL RULE, WITH A KNOWN WEAKNESS (read before relying on this test)
+# - Rule: relative gap <= max(1e-6, 2 x leakage); leakage = exact posterior mass not on the most
+#   likely regime sequence (tests/oracle/tiny_exact_oracle.py::oracle_regime_sequence_leakage).
+# - How it got here: the original 1e-6 limit failed on K=3, D=3, T=6, seed 1 (gap 2.849e-05).
+#   This rule was invented AFTER seeing that failure. It was not derived before the data existed.
+# - The factor 2 has no theory behind it. It was the owner's example value.
+# - Thin margin: seed 1 passes with gap/tolerance = 0.535 (a factor of 1.9).
+# - What this can hide: where two regimes look alike the test allows more error, so a real bug of
+#   that size could pass.
+# - What was NOT loosened: the other five configs still use 1e-6 (observed 1.1e-10 to 9.8e-10); the
+#   config list is unchanged; mutants N2-N6 are still caught (smallest ratio 186x).
+# - Status: accepted by the owner as the official rule on [OWNER: date]. Re-check trigger:
+#   [OWNER: fill in, for example "before the first pilot" or "when the engine changes"].
 # ---------------------------------------------------------------------------------------
 def _concentrated_model_k3(F, L, D, seed):
     assert F == 2 and L == 1
@@ -179,7 +181,7 @@ def test_dynamics_stats_match_oracle_when_posterior_is_concentrated_K3(D, T, see
     #
     # CRITERION (ledger D12): relative gap <= max(CONCENTRATED_REL_TOL, 2 x leakage).
     # This is a NEW criterion chosen AFTER seeing the seed-1 result (2.849e-05 against 1e-6);
-    # see the UPDATE note above. It replaces the earlier `rel < CONCENTRATED_REL_TOL` for K=3
+    # see the D12 notice above. It replaces the earlier `rel < CONCENTRATED_REL_TOL` for K=3
     # only; the K=2 test above is unchanged.
     m = _concentrated_model_k3(F=2, L=1, D=D, seed=seed)
     X = _simulate(m, T, np.random.default_rng(seed))
