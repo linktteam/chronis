@@ -1,3 +1,13 @@
+"""DIAGNOSTIC, NOT PART OF THE SUITE (file name does not match test_*.py; run it by path).
+
+Design 1 of the B1-against-oracle check, as pre-declared in tests/PREDECLARED_CRITERIA_WP3.md (dated amendment "B1 against the existing
+oracle-based tests"). FIRST RUN (wp3_evidence/B1_new_check_first_run.log): 16 passed, 2 FAILED on the real engine: seed 0 (engine 5.956e-02 vs
+filtered-weight mix 5.943e-02, ratio 1.002) and seed 5 (3.359e-01 vs 2.704e-01, ratio 1.242). The claim "the engine's smoothed_m is closer to the exact oracle than
+the filtered-weight mix of its own per-regime means" does NOT hold on 2 of the 6 pre-declared configs: the engine's per-regime-mean approximation error
+(Kim/GPB2 smoother, see NOTE (d) in dual_model._switching_smoother) can exceed the effect of the weights. The claim was not changed. It is kept here so the result is
+reproducible, and it is not a suite test (the brief allows no new xfail). Design 2 (a second, narrower claim declared afterwards) is in tests/test_smoother_oracle_regime_weights.py.
+"""
+
 """B1 against the exact oracle (WP3 item 1, outside N18): does the smoother weight its per-regime means with the SMOOTHED regime posterior?
 
 Why a new check exists. B1 (smoother aggregated with the FILTERED posterior) is NOT seen by any existing exact-oracle comparison: in the lossless-collapse
