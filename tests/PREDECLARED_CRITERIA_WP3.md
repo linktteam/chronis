@@ -128,3 +128,13 @@ The repo contradicts the brief for an item (stop that item, report, continue); a
   Reason: the exact smoothed mean is a mixture of per-regime means weighted by the SMOOTHED regime posterior; the engine's per-regime means approximate the oracle's, so the smoothed weights should land closer to the oracle than the filtered ones.
   Margin: strict inequality; the ratios are reported. Control (inside the test file): an engine of class `EngineFilteredSmoother` (B1) returns `smoothed_m` equal to the filtered mix, so the same predicate must fail for it (ratio exactly 1). Mutation check (script): the B1 class-level patch plugin must make the new test fail.
   If the real engine fails the claim on some config that is a finding about the engine or the claim; the claim is not changed.
+
+### 2026-10-22, DESIGN 2 of the B1-against-oracle check (written after design 1 failed on the real engine; ONE revision only)
+* Design 1 result (RUN, `wp3_evidence/B1_new_check_first_run.log`): the claim failed on the real engine on 2 of the 6 pre-declared configs (seed 0: ratio 1.002; seed 5: ratio 1.242); selection conditions held on all six; the B1 control behaved as expected (ratio 1).
+  Reading: the engine's per-regime mean error can exceed the effect of the aggregation weights, so comparing `smoothed_m` with the oracle cannot separate B1 from the smoother's own approximation error at these sizes. Design 1 is kept as a diagnostic outside the suite
+  (`tests/diagnostics/design1_smoother_closer_to_oracle_than_filtered_mix.py`) with its result; it is not edited.
+* Design 2 isolates the weights. Same six configs (no re-selection). `mix_oracle[t] = sum_k oracle.smoothed_regime_posterior[t,k] * smoothed_m_k[t,k]` (the engine's own per-regime means with the EXACT smoothed weights);
+  `g_engine = max_t |smoothed_m - mix_oracle|`, `g_filtered = max_t |filtered_mix - mix_oracle|`. **Claim: `g_engine <= 0.25 * g_filtered`.**
+  Reason: the engine's weights are its own smoothed regime posterior, which should match the oracle's up to the discrete approximation error, while the filtered weights differ from the oracle's smoothed weights by D1 >= 0.05 on these configs; 0.25 means "at least four times closer";
+  B1 gives ratio exactly 1. The number 0.25 was chosen before any design-2 number was seen. Control: the B1 engine class must violate the claim. Mutation check: the B1 class-level patch plugin must make the main test fail on every config.
+* STOP RULE: if design 2 also fails on the real engine, that is reported as a finding and no third design is tried; the owner decides.
