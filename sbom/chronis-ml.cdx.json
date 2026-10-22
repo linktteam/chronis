@@ -75,6 +75,24 @@
       "boundary": true
     },
     {
+      "name": "scikit-learn",
+      "version": "1.9.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "boundary",
+          "value": "true"
+        }
+      ],
+      "boundary": true
+    },
+    {
       "name": "pytest",
       "version": "8.3.4",
       "licenses": [
