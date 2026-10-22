@@ -104,3 +104,14 @@ Branch `ledger/wp3`, created from `ledger/wp2` (head `08a4c76`).
 
 ## 6. Stop conditions in force
 The repo contradicts the brief for an item (stop that item, report, continue); a test that would need an existing assertion changed; a wish to tune a threshold; a result that looks too good.
+
+## 7. Amendments (dated; the text above is unchanged)
+
+### 2026-10-22, after the FIRST run of the N18 tests (`wp3_evidence/N18_first_run.log`)
+* The first run gave: C2 passes; **C1 fails** (real minus single Gaussian: mean -0.7087 nats per held-out step, paired se 0.4920, mean - 3 se = -2.1846; 3 of 8 seeds favour the real engine);
+  **C3 fails narrowly** (real minus B2: mean +2.2200, se 0.7444, mean - 3 se = -0.0131; 8 of 8 seeds favour the real engine, 2.98 se); both breaker controls pass. The criteria are NOT changed. These are findings about the engine
+  (reported in the WP3 report), the two tests stay failing, and no xfail is added (brief section 0 rule 5).
+* A sanity assertion in the continuation test required T_train >= 55 (my informal "about 55 to 64" taken from the two A2 cells). Seeds 909 and 1010 give T_train = 50, which made that test fail. The bounds are corrected to the generator's logical ranges
+  (training 32..120, held-out 16..60). This is a bug in a sanity assertion, not an engine criterion; no engine criterion was touched.
+* Post-hoc diagnostics (NOT pass criteria, labelled as such everywhere): per-step diagnosis of the losses (`n18_diagnose.py`) and a sensitivity study (`n18_sensitivity.py`: more seeds; training length; split inside a segment).
+  All variants are reported whatever they show; none replaces the official criteria above.
