@@ -115,3 +115,16 @@ The repo contradicts the brief for an item (stop that item, report, continue); a
   (training 32..120, held-out 16..60). This is a bug in a sanity assertion, not an engine criterion; no engine criterion was touched.
 * Post-hoc diagnostics (NOT pass criteria, labelled as such everywhere): per-step diagnosis of the losses (`n18_diagnose.py`) and a sensitivity study (`n18_sensitivity.py`: more seeds; training length; split inside a segment).
   All variants are reported whatever they show; none replaces the official criteria above.
+
+### 2026-10-22, B1 against the existing oracle-based tests, and a corrected design for the fallback check (written BEFORE the new check was run)
+* RUN (`wp3_evidence/B1_oracle_unmutated.log`, `B1_oracle_B1.log`, `B1_oracle_verdict.txt`): the ten existing oracle/smoother test files give `57 passed` unmutated and `1 failed, 56 passed` with B1 applied. The one test that fails is
+  `tests/test_switching_smoother.py::test_smoother_uses_smoothed_not_filtered_posterior`. That test is structural (it compares `smoothed_m` with weighted mixes of its own per-regime means); it is NOT an exact-oracle comparison.
+  **No exact-oracle comparison fails under B1**, including `test_switching_smoother_matches_oracle_tiny_case` and the 13 lossless-collapse configs. My PREDICTION in section 1.5 ("caught, probably by the lossless oracle tests") was right about "caught" only in the structural sense and wrong about where.
+* RUN (`wp3_evidence/B1_design_scan.txt`, part a): in all 13 lossless-collapse configs the per-regime smoothed means differ by at most 5.6e-16 and the filtered and smoothed regime posteriors differ by at most 1.8e-15, so the aggregation weights cannot matter
+  there. The fallback design written in section 1.5 (lossless-collapse configs) cannot see B1 by construction. It is REPLACED by the design below; section 1.5 is otherwise left as written.
+* New check, outside N18 (it tests the smoother, not prediction). Configs: K=2, F=1, L=1, Dmax=2, T=5, `make_tiny_model(seed=s)`, `make_tiny_data(seed=s+100)`; the first six seeds in ascending order from 0..199 that satisfy the SELECTION conditions
+  D1 = max |filtered - smoothed regime posterior| >= 0.05 and D2 = max_t |smoothed_m_k[t,0] - smoothed_m_k[t,1]| >= 0.1 (the scan printed these values only, no oracle gap and no B1 outcome): **seeds 0, 1, 2, 3, 4, 5**.
+  Claim tested on each config: `max_t |smoothed_m - oracle.smoothed_m| < max_t |filtered_mix - oracle.smoothed_m|`, where `filtered_mix[t] = sum_k filtered_post[t,k] * smoothed_m_k[t,k]` uses the engine's own per-regime means with the FILTERED weights.
+  Reason: the exact smoothed mean is a mixture of per-regime means weighted by the SMOOTHED regime posterior; the engine's per-regime means approximate the oracle's, so the smoothed weights should land closer to the oracle than the filtered ones.
+  Margin: strict inequality; the ratios are reported. Control (inside the test file): an engine of class `EngineFilteredSmoother` (B1) returns `smoothed_m` equal to the filtered mix, so the same predicate must fail for it (ratio exactly 1). Mutation check (script): the B1 class-level patch plugin must make the new test fail.
+  If the real engine fails the claim on some config that is a finding about the engine or the claim; the claim is not changed.

@@ -11,6 +11,7 @@ Palash review) and is applied here as the final step before returning.
 """
 
 from __future__ import annotations
+import logging
 from dataclasses import dataclass, field
 import numpy as np
 import pandas as pd
@@ -21,6 +22,8 @@ from backbone.hssm.dual_model import DualTimescaleHSSM
 from backbone.hssm.label_switching import canonicalize_labels
 from backbone.hssm.config import DEFAULT_FIT_CONFIG, HSSMFitConfig, DEFAULT_COLD_START_CONFIG, ColdStartConfig
 from backbone.hssm.gating import ColdStartError, count_present_sessions
+
+logger = logging.getLogger(__name__)   # internal log only; the hold-back (WP3 item 2) never produces a user-facing notice
 
 
 def fit_with_random_restarts(
@@ -417,6 +420,13 @@ class HSSMResult:
     warnings: list[str] = field(default_factory=list)
     limitations: list[str] = field(default_factory=list)
 
+    # --- Numerical health of the fit (ledger A7 / N21, WP3 item 2) ---
+    # Carried from the fitted DualTimescaleHSSM (fit_degraded_, fit_cholesky_fallbacks_, fit_exceptions_).
+    # Safe defaults for every other path (the baseline model has no such flags).
+    fit_degraded: bool = False                 # the -1e6 Cholesky fallback fired during fit()
+    fit_cholesky_fallbacks: int = 0            # how many times it fired during that fit()
+    fit_exceptions: list = field(default_factory=list)   # one dict per exception caught inside fit()
+
     # --- Neural residual ---
     neural_residual_enabled: bool = False
     residual_mode: str = "DISABLED"
@@ -430,6 +440,38 @@ class HSSMResult:
     selected_k: int = 0
     model_class: str = ""
     convergence_metadata: dict[str, Any] = field(default_factory=dict)
+
+    # --- Hold-back (WP3 item 2, owner decision D3). Derived from the CURRENT field values, never stored, so it cannot go stale. ---
+    @property
+    def withheld_reason(self) -> Optional[str]:
+        """None when insights may be used; otherwise every cause that applies. RULE: withheld when `fit_degraded` is True
+        or `fit_state == FitState.NUMERICAL_FAILURE`. Covers firings during fit() only (that is what `fit_degraded` counts)."""
+        reasons = []
+        if self.fit_degraded:
+            reasons.append(f"fit_degraded: the -1e6 Cholesky fallback fired {self.fit_cholesky_fallbacks} time(s) during fit")
+        if self.fit_state == FitState.NUMERICAL_FAILURE:
+            reasons.append("fit_state is NUMERICAL_FAILURE")
+        return "; ".join(reasons) if reasons else None
+
+    @property
+    def insights_withheld(self) -> bool:
+        return self.withheld_reason is not None
+
+    def publishable_outputs(self) -> dict[str, Any] | None:
+        """The ONLY supported way for the product layer to read regime/latent outputs.
+
+        Returns None when the insights are withheld (see `withheld_reason`), otherwise the four output arrays. The raw fields
+        (`p_t_estimate`, `p_t_posterior`, `m_t_posterior_mean`, `m_t_uncertainty`) stay readable for internal diagnostics, but anything
+        that reaches a user must come through this accessor. The arrays are the stored ones, not copies: do not modify them.
+        """
+        if self.insights_withheld:
+            return None
+        return {
+            "p_t_estimate": self.p_t_estimate,
+            "p_t_posterior": self.p_t_posterior,
+            "m_t_posterior_mean": self.m_t_posterior_mean,
+            "m_t_uncertainty": self.m_t_uncertainty,
+        }
 
     # Legacy aliases — these read from the new canonical fields with fallback to convergence_metadata
     @property
@@ -510,6 +552,27 @@ def _compute_heldout_predictive_loglik(
         return float(np.sum(marginal_ll))
     except Exception:
         return None
+
+
+def _dual_health_fields(model: DualTimescaleHSSM) -> dict[str, Any]:
+    """Numerical-health fields of a fitted DualTimescaleHSSM, as HSSMResult keyword arguments."""
+    return dict(
+        fit_degraded=bool(getattr(model, "fit_degraded_", False)),
+        fit_cholesky_fallbacks=int(getattr(model, "fit_cholesky_fallbacks_", 0)),
+        fit_exceptions=[dict(e) for e in getattr(model, "fit_exceptions_", [])],
+    )
+
+
+def _log_holdback(result: HSSMResult, random_seed: Optional[int]) -> None:
+    """One internal WARNING when a result's insights are withheld. Nothing user-facing is added to the result."""
+    if not result.insights_withheld:
+        return
+    exception_types = sorted({str(e.get("exception_type", "?")) for e in result.fit_exceptions})
+    logger.warning(
+        "HSSM insights withheld: reason=[%s]; fit_cholesky_fallbacks=%d; exception_types=%s; random_seed=%s; user_id=%s; dataset_hash=%s; model_class=%s",
+        result.withheld_reason, result.fit_cholesky_fallbacks, exception_types, random_seed, result.user_id,
+        result.fit_dataset_hash, result.model_class,
+    )
 
 
 def fit_hssm(
@@ -602,7 +665,7 @@ def fit_hssm(
         m_t, m_t_std, p_t, p_t_post = best_dual_model.estimate_states(X)
         aic_val = float(best_dual_model.aic())
 
-        return HSSMResult(
+        dual_result = HSSMResult(
             model=best_dual_model,
             user_id=user_id,
             model_identity=best_dual_model.model_identity,
@@ -640,6 +703,7 @@ def fit_hssm(
             run_log=full_run_log,
             warnings=[],
             limitations=[],
+            **_dual_health_fields(best_dual_model),
             neural_residual_enabled=False,
             residual_mode="DISABLED",
             residual_weight=0.0,
@@ -660,6 +724,8 @@ def fit_hssm(
                 "run_log": full_run_log,
             },
         )
+        _log_holdback(dual_result, random_seed)
+        return dual_result
 
     # --- Baseline Model Fitting Branch ---
     model, report = select_k_by_bic(
@@ -735,7 +801,7 @@ def fit_hssm(
             "final truncated model."
         )
 
-    return HSSMResult(
+    baseline_result = HSSMResult(
         model=model,
         # Identity
         user_id=user_id,
@@ -796,3 +862,5 @@ def fit_hssm(
         model_class=model.__class__.__name__,
         convergence_metadata=convergence_metadata,
     )
+    _log_holdback(baseline_result, random_seed)
+    return baseline_result
