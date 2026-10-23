@@ -66,7 +66,26 @@ def _report(engine, opponent):
     return d, mean, se, lower
 
 
-@pytest.mark.parametrize("opponent,label", [("baseline", "C1 single Gaussian"), ("stops", "C2 stops learning"), ("B2", "C3 A_fast driven to 0")])
+# WP4 item 2 (owner decision): C1 and C3 are known findings about the engine, recorded in WP3 (RUN). They are marked xfail(strict=True) so the suite is
+# green while the findings stay visible: an unexpected pass FAILS the suite and forces this mark to be removed. The criterion itself is unchanged:
+# margin 3.0 paired standard errors, 8 seeds, same data and opponents (see tests/PREDECLARED_CRITERIA_WP3.md section 1).
+N18_C1_REASON = (
+    "N18 C1 (real engine vs a single Gaussian) fails on the engine: mean held-out step log-density advantage -0.7087 nats, paired se 0.4920, "
+    "mean - 3 se = -2.1846 (needs > 0); the real engine is ahead in 3 of 8 seeds (WP3, RUN). "
+    "Owner's reading: C1 is a cold-start finding, addressed in WP5; C3 is a near-miss that clears with 24 seeds (see WP3 sensitivity V1)."
+)
+N18_C3_REASON = (
+    "N18 C3 (real engine vs A_fast driven to 0) narrowly fails: mean advantage +2.2200 nats, paired se 0.7444, mean - 3 se = -0.0131 "
+    "(needs > 0); the real engine is ahead in 8 of 8 seeds (WP3, RUN). "
+    "Owner's reading: C1 is a cold-start finding, addressed in WP5; C3 is a near-miss that clears with 24 seeds (see WP3 sensitivity V1)."
+)
+
+
+@pytest.mark.parametrize("opponent,label", [
+    pytest.param("baseline", "C1 single Gaussian", marks=pytest.mark.xfail(strict=True, reason=N18_C1_REASON)),
+    ("stops", "C2 stops learning"),
+    pytest.param("B2", "C3 A_fast driven to 0", marks=pytest.mark.xfail(strict=True, reason=N18_C3_REASON)),
+])
 def test_real_engine_beats_opponent_on_held_out_data(opponent, label):
     d, mean, se, lower = _report("real", opponent)
     assert lower > 0.0, (
