@@ -1,0 +1,12 @@
+# Optional libraries: NOT needed to run the HSSM (backbone/) or its tests (tests/). Install only if you work on the module that needs them.
+# The import scan (python scripts/scan_imports.py) finds no import of any of them under backbone/, data/ or tests/, so no module in THIS repository needs them;
+# the SBOM (sbom/chronis-ml.cdx.json) lists them for other Chronis modules, which are not part of this repository (which module needs which is UNKNOWN here).
+# Versions are the ones the SBOM states (REPORTED). They were not installed, pinned together with requirements.txt, or tested on Python 3.12 in this work.
+bertopic==0.16.0          # needed by: no module in this repo (topic modelling library)
+bocd==0.1.1               # needed by: no module in this repo (Bayesian online change-point detection library)
+hdbscan==0.8.33           # needed by: no module in this repo (clustering library)
+mlflow==2.20.1            # needed by: no module in this repo (experiment tracking library)
+openai-whisper==20231117  # needed by: no module in this repo (speech-to-text library)
+opensmile==2.5.0          # needed by: no module in this repo (audio feature extraction library)
+pip-audit==2.8.0          # needed by: the dependency audit step only (a tool, never imported)
+pyannote.audio==3.1.1     # needed by: no module in this repo (speaker diarisation library)
