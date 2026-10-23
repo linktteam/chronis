@@ -5,4 +5,11 @@ __pycache__/
 .mypy_cache/
 *.egg-info/
 .env
-*.txt
+# generated files only (logs and scratch output); never a blanket *.txt: new requirements/evidence text files must not be dropped silently
+*.log
+*.out
+*.tmp
+scratch/
+# guard: these must never be ignored, whatever patterns are added above
+!requirements*.txt
+!*.cdx.json

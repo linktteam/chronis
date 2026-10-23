@@ -89,3 +89,11 @@ Timing: all new WP4 tests together under 180 s on an idle machine (same budget a
 ## 6. Stop conditions in force
 
 The repo contradicts the brief for an item (stop that item, report, continue); a change that would make a healthy-fit output differ; a test that would need an existing assertion changed; a wish to tune a threshold; a result that looks too good.
+
+## 7. Amendments (dated; the text above is unchanged)
+
+### 2026-10-23, Item 0a: form of the expected check-ignore output (written after the first AFTER run)
+* Section 1 said the negatives would print nothing with `git check-ignore -v --no-index`. That form was imprecise: with the guard negations `!requirements*.txt` and `!*.cdx.json` in the file, `-v` also prints the negation rule that matched
+  (`.gitignore:14:!requirements*.txt requirements.txt`, exit 0), although the files are not ignored. The substance of the criterion (these files are NOT ignored, logs ARE) is unchanged and is shown by the non-verbose form
+  (`git check-ignore --no-index requirements.txt requirements-optional.txt wp4_evidence/x.txt sbom/chronis-ml.cdx.json`: no output, exit 1) and by `git status --porcelain -uall` listing `requirements-optional.txt` and `wp4_evidence/x.txt` as untracked.
+  Both forms are in `wp4_evidence/gitignore_check.txt`. No pattern was changed because of this.

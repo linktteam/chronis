@@ -8,6 +8,11 @@ M_TOL = 1.2  # provisional; checked against the measured battery in RESULTS.md
 P_TOL = 1.2
 
 
+# B1 CONTROL, STATUS: NEEDS FURTHER DEVELOPMENT (ledger WP3/WP4).
+# This is the ONLY test that detects B1 (the smoother aggregating regimes with the FILTERED instead of the smoothed posterior): with B1 applied it is
+# the single failure among the 57 existing oracle/smoother tests (RUN, WP3). No exact-oracle comparison detects B1. Two oracle-based designs were tried
+# and both failed on the real engine, because the engine's discrete smoothing posterior differs from the exact one by up to 0.497 at T=5. This test
+# checks one tiny configuration only (K=2, F=1, L=1, T=5, seed 6); it is not evidence that B1 would be caught at other sizes.
 def test_smoother_uses_smoothed_not_filtered_posterior():
     """Old bug: aggregation used the FILTERED regime posterior. The aggregate smoothed_m
     must equal the SMOOTHED-posterior-weighted mix, and differ from the filtered-weighted

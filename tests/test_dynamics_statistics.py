@@ -152,8 +152,7 @@ def test_old_pairing_would_fail_the_concentrated_check():
 #   that size could pass.
 # - What was NOT loosened: the other five configs still use 1e-6 (observed 1.1e-10 to 9.8e-10); the
 #   config list is unchanged; mutants N2-N6 are still caught (smallest ratio 186x).
-# - Status: accepted by the owner as the official rule on [OWNER: date]. Re-check trigger:
-#   [OWNER: fill in, for example "before the first pilot" or "when the engine changes"].
+# - Status: accepted as the official rule. No acceptance date and no re-check trigger are recorded (owner decision); see the ledger open items.
 # ---------------------------------------------------------------------------------------
 def _concentrated_model_k3(F, L, D, seed):
     assert F == 2 and L == 1
