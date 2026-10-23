@@ -118,7 +118,14 @@ def fit_dual_with_random_restarts(
     bypass_init_gate: bool = False,
     timestamps: np.ndarray | None = None,
 ) -> tuple[DualTimescaleHSSM, list[dict]]:
-    """Fit DualTimescaleHSSM with multiple initializations, return highest-LL model."""
+    """Fit DualTimescaleHSSM with multiple initializations, return highest-LL model.
+
+    Selection (WP4 item 1b, ledger A7 / decision D3): a restart whose fit was degraded (`fit_degraded_`: the -1e6 Cholesky
+    fallback fired) is never chosen while a healthy restart exists, because that fit's log-likelihood contains the magic
+    constant and can look better than a healthy one. Among healthy restarts the highest log-likelihood wins, first maximum on
+    ties (unchanged). If every usable restart is degraded, the highest-log-likelihood one is returned and the HSSMResult built
+    from it is withheld.
+    """
     if not bypass_init_gate:
         if n_init < 10:
             raise ValueError("Directive Day 8 requires a HARD MINIMUM of 10 random initializations.")
@@ -129,6 +136,8 @@ def fit_dual_with_random_restarts(
     run_log = []
     best_ll = -np.inf
     best_model: DualTimescaleHSSM | None = None
+    best_degraded_ll = -np.inf
+    best_degraded_model: DualTimescaleHSSM | None = None
 
     for i in range(n_init):
         seed = base_seed + i * 31
@@ -153,10 +162,17 @@ def fit_dual_with_random_restarts(
 
         if model.fit_state_ in (FitState.CONVERGED, FitState.MAX_ITER_REACHED, FitState.REJECTED_UPDATE):
             ll = model.log_likelihood_
-            if ll is not None and ll > best_ll:
-                best_ll = ll
-                best_model = model
+            if ll is not None:
+                if getattr(model, "fit_degraded_", False):
+                    if ll > best_degraded_ll:
+                        best_degraded_ll = ll
+                        best_degraded_model = model
+                elif ll > best_ll:
+                    best_ll = ll
+                    best_model = model
 
+    if best_model is None:
+        best_model = best_degraded_model     # only reached when no healthy restart exists; the result is then withheld
     if best_model is None:
         raise FittingConvergenceError("None of the random restarts converged for DualTimescaleHSSM")
 
@@ -426,6 +442,10 @@ class HSSMResult:
     fit_degraded: bool = False                 # the -1e6 Cholesky fallback fired during fit()
     fit_cholesky_fallbacks: int = 0            # how many times it fired during that fit()
     fit_exceptions: list = field(default_factory=list)   # one dict per exception caught inside fit()
+    # WP4 item 1c: firings AFTER fit() finished. `states_pass_fallbacks` = firings inside the estimate_states pass of fit_hssm (they happen
+    # before the result exists); `fallback_count_at_build` = the model's cumulative count when the result was built (None: not recorded).
+    states_pass_fallbacks: int = 0
+    fallback_count_at_build: Optional[int] = None
 
     # --- Neural residual ---
     neural_residual_enabled: bool = False
@@ -441,30 +461,61 @@ class HSSMResult:
     model_class: str = ""
     convergence_metadata: dict[str, Any] = field(default_factory=dict)
 
-    # --- Hold-back (WP3 item 2, owner decision D3). Derived from the CURRENT field values, never stored, so it cannot go stale. ---
+    def __post_init__(self) -> None:
+        # private once-flag for the internal WARNING (not a dataclass field: not compared, not in asdict, not in the schema)
+        self._holdback_logged = False
+        self._log_seed: Optional[int] = None
+
+    # --- Hold-back (WP3 item 2, owner decision D3; closed in WP4 item 1). Derived from the CURRENT field values and the CURRENT model
+    # count, never stored, so it cannot go stale. ---
+    @property
+    def late_fallbacks(self) -> int:
+        """Firings of the -1e6 Cholesky fallback on the model AFTER this result was built (for example a later `estimate_states` call
+        on `self.model`). 0 when the count at build was not recorded or the model has no counter (baseline model)."""
+        at_build = self.fallback_count_at_build
+        now = getattr(self.model, "cholesky_fallback_count_", None)
+        if at_build is None or not isinstance(now, (int, np.integer)) or isinstance(now, bool):
+            return 0
+        return max(int(now) - int(at_build), 0)
+
     @property
     def withheld_reason(self) -> Optional[str]:
-        """None when insights may be used; otherwise every cause that applies. RULE: withheld when `fit_degraded` is True
-        or `fit_state == FitState.NUMERICAL_FAILURE`. Covers firings during fit() only (that is what `fit_degraded` counts)."""
+        """None when insights may be used; otherwise every cause that applies. RULE: withheld when `fit_degraded` is True,
+        or `fit_state == FitState.NUMERICAL_FAILURE`, or `states_pass_fallbacks > 0` (the fallback fired in the estimate_states pass
+        that produced the outputs), or `late_fallbacks > 0` (it fired on the model after this result was built)."""
         reasons = []
         if self.fit_degraded:
             reasons.append(f"fit_degraded: the -1e6 Cholesky fallback fired {self.fit_cholesky_fallbacks} time(s) during fit")
         if self.fit_state == FitState.NUMERICAL_FAILURE:
             reasons.append("fit_state is NUMERICAL_FAILURE")
+        if self.states_pass_fallbacks > 0:
+            reasons.append(f"states_pass: the -1e6 Cholesky fallback fired {self.states_pass_fallbacks} time(s) in the estimate_states pass")
+        late = self.late_fallbacks
+        if late > 0:
+            reasons.append(f"late_fallbacks: the -1e6 Cholesky fallback fired {late} time(s) on the model after this result was built")
         return "; ".join(reasons) if reasons else None
 
     @property
     def insights_withheld(self) -> bool:
         return self.withheld_reason is not None
 
+    def _withheld_on_read(self) -> bool:
+        """True when the insights are withheld. The first time this is seen for a result, one internal WARNING is logged (once per
+        result, shared with the build-time log in `_log_holdback`)."""
+        if not self.insights_withheld:
+            return False
+        _log_holdback(self, getattr(self, "_log_seed", None))
+        return True
+
     def publishable_outputs(self) -> dict[str, Any] | None:
         """The ONLY supported way for the product layer to read regime/latent outputs.
 
         Returns None when the insights are withheld (see `withheld_reason`), otherwise the four output arrays. The raw fields
         (`p_t_estimate`, `p_t_posterior`, `m_t_posterior_mean`, `m_t_uncertainty`) stay readable for internal diagnostics, but anything
-        that reaches a user must come through this accessor. The arrays are the stored ones, not copies: do not modify them.
+        that reaches a user must come through this accessor. The legacy aliases `p_t`, `regime_posterior`, `m_t` follow the same rule.
+        The arrays are the stored ones, not copies: do not modify them.
         """
-        if self.insights_withheld:
+        if self._withheld_on_read():
             return None
         return {
             "p_t_estimate": self.p_t_estimate,
@@ -473,21 +524,21 @@ class HSSMResult:
             "m_t_uncertainty": self.m_t_uncertainty,
         }
 
-    # Legacy aliases — these read from the new canonical fields with fallback to convergence_metadata
+    # Legacy aliases. WP4 item 1d: they return None when the insights are withheld (the raw fields above stay readable).
     @property
     def p_t(self) -> np.ndarray | None:
-        """Legacy alias: MAP regime assignment."""
-        return self.p_t_estimate
+        """Legacy alias: MAP regime assignment. None when the insights are withheld."""
+        return None if self._withheld_on_read() else self.p_t_estimate
 
     @property
     def regime_posterior(self) -> np.ndarray | None:
-        """Legacy alias: full regime posterior."""
-        return self.p_t_posterior
+        """Legacy alias: full regime posterior. None when the insights are withheld."""
+        return None if self._withheld_on_read() else self.p_t_posterior
 
     @property
     def m_t(self) -> np.ndarray | None:
-        """Legacy alias: fast state posterior mean."""
-        return self.m_t_posterior_mean
+        """Legacy alias: fast state posterior mean. None when the insights are withheld."""
+        return None if self._withheld_on_read() else self.m_t_posterior_mean
 
     @property
     def k_selected(self) -> int:
@@ -564,9 +615,13 @@ def _dual_health_fields(model: DualTimescaleHSSM) -> dict[str, Any]:
 
 
 def _log_holdback(result: HSSMResult, random_seed: Optional[int]) -> None:
-    """One internal WARNING when a result's insights are withheld. Nothing user-facing is added to the result."""
-    if not result.insights_withheld:
+    """One internal WARNING per result when its insights are withheld (at build time, or the first time a result that became withheld
+    later is read). Nothing user-facing is added to the result."""
+    if random_seed is not None:
+        result._log_seed = random_seed
+    if not result.insights_withheld or getattr(result, "_holdback_logged", False):
         return
+    result._holdback_logged = True
     exception_types = sorted({str(e.get("exception_type", "?")) for e in result.fit_exceptions})
     logger.warning(
         "HSSM insights withheld: reason=[%s]; fit_cholesky_fallbacks=%d; exception_types=%s; random_seed=%s; user_id=%s; dataset_hash=%s; model_class=%s",
@@ -662,7 +717,11 @@ def fit_hssm(
         if best_dual_model is None or best_k is None:
             raise FittingConvergenceError("None of the candidate Ks converged across random restarts")
 
+        # WP4 item 1c: the estimate_states pass runs AFTER fit() finished and BEFORE the result exists, so a firing inside it is not
+        # in `fit_degraded`. Count it, and remember the model's cumulative count so that later firings (late_fallbacks) are visible too.
+        count_before_states = int(best_dual_model.cholesky_fallback_count_)
         m_t, m_t_std, p_t, p_t_post = best_dual_model.estimate_states(X)
+        count_after_states = int(best_dual_model.cholesky_fallback_count_)
         aic_val = float(best_dual_model.aic())
 
         dual_result = HSSMResult(
@@ -704,6 +763,8 @@ def fit_hssm(
             warnings=[],
             limitations=[],
             **_dual_health_fields(best_dual_model),
+            states_pass_fallbacks=count_after_states - count_before_states,
+            fallback_count_at_build=count_after_states,
             neural_residual_enabled=False,
             residual_mode="DISABLED",
             residual_weight=0.0,

@@ -53,15 +53,45 @@ The `HSSMResult` dataclass in `backbone.hssm.fitting` is the single canonical re
 | `neural_residual_enabled`| `bool` | Neural residual flag | `False` | `False` (by default) |
 | `residual_mode` | `str` | Mode of neural residual | `"DISABLED"` | `"DISABLED"` / `"SHADOW"` |
 | `residual_weight` | `float` | Additive blending factor | `0.0` | `0.0` |
+| `fit_degraded` | `bool` | The -1e6 Cholesky fallback fired during `fit()` (ledger A7) | `False` (no such flag) | `True` iff it fired during the fit |
+| `fit_cholesky_fallbacks` | `int` | How many times it fired during that `fit()` | `0` | Integer $\ge 0$ |
+| `fit_exceptions` | `list[dict]` | One dict per exception caught inside `fit()` (type, message, stage, location) | `[]` | List of dicts |
+| `states_pass_fallbacks` | `int` | Firings inside the `estimate_states` pass of `fit_hssm`, which runs after `fit()` and before the result is built (WP4) | `0` | Integer $\ge 0$ |
+| `fallback_count_at_build` | `int` or `None` | The model's cumulative fallback count when the result was built; `None` if not recorded (WP4) | `None` | Integer $\ge 0$ |
 
 ---
 
-## 3. Backward Compatibility Aliases
+## 3. Hold-back of insights (ledger A7 / decision D3; closed in WP4)
 
-The following read properties maintain 100% backward compatibility with legacy Sprint 3/4 consumers:
-- `result.p_t` $\rightarrow$ returns `result.p_t_estimate`
-- `result.regime_posterior` $\rightarrow$ returns `result.p_t_posterior`
-- `result.m_t` $\rightarrow$ returns `result.m_t_posterior_mean`
+Computed read-only properties and one method, derived from the CURRENT field values and the CURRENT model count (nothing is stored, so nothing goes stale):
+
+| Name | Kind | Meaning |
+|---|---|---|
+| `late_fallbacks` | `int` property | Firings of the fallback on `result.model` after the result was built: the model's current `cholesky_fallback_count_` minus `fallback_count_at_build`. `0` if the count was not recorded or the model has no counter (baseline). |
+| `withheld_reason` | `str` or `None` property | `None` when the insights may be used; otherwise every cause that applies, joined by `"; "`. |
+| `insights_withheld` | `bool` property | `withheld_reason is not None`. |
+| `publishable_outputs()` | method | `None` when withheld, otherwise a dict with the four output arrays (`p_t_estimate`, `p_t_posterior`, `m_t_posterior_mean`, `m_t_uncertainty`). The only supported way for the product layer to read them. |
+
+RULE: the insights are withheld when `fit_degraded` is `True`, or `fit_state == FitState.NUMERICAL_FAILURE`, or `states_pass_fallbacks > 0`, or `late_fallbacks > 0`.
+
+Internal log: one WARNING per result on logger `backbone.hssm.fitting` (at build time, or the first time a result that became withheld later is read through `publishable_outputs()` or an alias). Nothing user-facing is added to the result.
+
+Entry points:
+- `fit_hssm(...)` returns the result; it never raises for withheld insights.
+- `fit_hssm_gated_result(...)` (`backbone.hssm.gating`) is the gated fit returning the full result, with `model_type="baseline"` (default) or `"dual_timescale"`; it never raises for withheld insights.
+- `fit_hssm_gated(...)` keeps the legacy return `(model, run_log)` and raises `InsightsWithheldError` (attributes `reason`, `result`) when the insights are withheld. It fits the baseline model only.
+- `fit_dual_with_random_restarts(...)` never returns a degraded restart while a healthy one exists. If every usable restart is degraded it returns the best one by log-likelihood, and the result built from it is withheld.
+
+Not covered: the choice of K by BIC across candidate Ks does not look at degradation.
+
+---
+
+## 4. Backward Compatibility Aliases
+
+The following read properties maintain backward compatibility with legacy Sprint 3/4 consumers. The first three return `None` when the insights are withheld (section 3); the raw fields stay readable for internal diagnostics:
+- `result.p_t` $\rightarrow$ returns `result.p_t_estimate` (`None` if withheld)
+- `result.regime_posterior` $\rightarrow$ returns `result.p_t_posterior` (`None` if withheld)
+- `result.m_t` $\rightarrow$ returns `result.m_t_posterior_mean` (`None` if withheld; also `None` for the baseline model)
 - `result.k_selected` $\rightarrow$ returns `result.K`
 - `result.bic_by_k` $\rightarrow$ returns BIC map from convergence metadata
 - `result.duration_info` $\rightarrow$ returns duration parameter dictionary

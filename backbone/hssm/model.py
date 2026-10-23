@@ -63,6 +63,19 @@ class FittingConvergenceError(HSSMError, RuntimeError):
     pass
 
 
+class InsightsWithheldError(HSSMError, RuntimeError):
+    """Raised by `fit_hssm_gated` when the fit finished but its insights are withheld (WP4 item 1, ledger A7 / decision D3).
+
+    `reason` is the HSSMResult's `withheld_reason`; `result` is the full HSSMResult (raw fields stay readable for internal
+    diagnostics). Callers that need the result instead of an exception use `fit_hssm_gated_result`.
+    """
+
+    def __init__(self, reason: str, result: object = None):
+        super().__init__(f"HSSM insights withheld: {reason}")
+        self.reason = reason
+        self.result = result
+
+
 class InternalStateError(HSSMError, RuntimeError):
     """Exception class to raise when an internal invariant or state assumption is violated."""
     pass
