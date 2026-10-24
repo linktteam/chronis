@@ -1,0 +1,105 @@
+{
+ "T_train": [
+  154,
+  189,
+  204,
+  132,
+  152,
+  163,
+  199,
+  222,
+  237,
+  228,
+  187,
+  188,
+  147,
+  178,
+  196,
+  168,
+  152,
+  161,
+  170,
+  214
+ ],
+ "n_users_in": 20,
+ "population": "normal",
+ "reference_ll": -456.5245805808613,
+ "rounds": [
+  {
+   "dur_mu_pooled_by_mean": [
+    10.833163219343254,
+    13.579759774553407
+   ],
+   "dur_sigma_pooled_by_mean": [
+    1.2943393887114325,
+    1.3686715421637172
+   ],
+   "duration_pooling": "median",
+   "excluded": {
+    "frame_failed": 0,
+    "regime_ambiguous": 1,
+    "unhealthy": 0
+   },
+   "max_abs_change_vs_init": {
+    "A_fast": 0.1399742146315306,
+    "A_slow": 0.0,
+    "C_obs": 0.18985966409325683,
+    "P0": 0.08111651269625875,
+    "Q_fast": 0.24631483171577329,
+    "R_obs": 0.026828135958511582,
+    "b_fast": 0.17545060750795685,
+    "d_obs": 0.8738449123840952,
+    "dur_mu": 0.22077887768836346,
+    "dur_sigma": 0.037552240733217224,
+    "m0": 0.0,
+    "pi": 5.961786619934628e-11
+   },
+   "max_cond": 1.1422238573219747,
+   "max_rel_residual": 0.2448786737099649,
+   "n_nonidentity_regime_perm": 4,
+   "n_pooled": 19,
+   "n_user_regimes_with_dur_sigma_ge_5": 4,
+   "round": 1
+  },
+  {
+   "dur_mu_pooled_by_mean": [
+    19.910926229964783,
+    16.503707433391018
+   ],
+   "dur_sigma_pooled_by_mean": [
+    1.9370144024320912,
+    1.828100907564644
+   ],
+   "duration_pooling": "median",
+   "excluded": {
+    "frame_failed": 0,
+    "regime_ambiguous": 1,
+    "unhealthy": 0
+   },
+   "max_abs_change_vs_init": {
+    "A_fast": 0.03064811652061178,
+    "A_slow": 0.0,
+    "C_obs": 0.043144935838071774,
+    "P0": 0.020524170810902707,
+    "Q_fast": 0.0219391498456962,
+    "R_obs": 0.011269558163430969,
+    "b_fast": 0.07129532038280256,
+    "d_obs": 0.2782817017599226,
+    "dur_mu": 0.0396484677377833,
+    "dur_sigma": 0.01910415041829594,
+    "m0": 0.0,
+    "pi": 5.955635984378205e-11
+   },
+   "max_cond": 1.1488234838097968,
+   "max_rel_residual": 0.18024667909543193,
+   "n_nonidentity_regime_perm": 3,
+   "n_pooled": 19,
+   "n_user_regimes_with_dur_sigma_ge_5": 6,
+   "round": 2
+  }
+ ],
+ "scramble_labels_seed": null,
+ "seeds": "8001..8020",
+ "train_segments": 12,
+ "wall_s": 472.9
+}
