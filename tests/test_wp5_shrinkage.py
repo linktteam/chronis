@@ -518,3 +518,10 @@ def test_the_default_path_does_not_import_the_prototype():
     out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, cwd=str(__import__("pathlib").Path(__file__).resolve().parents[1]))
     assert out.returncode == 0, out.stderr[-500:]
     assert out.stdout.split() == ["False", "False"]
+
+
+def test_every_atypical_user_is_farther_from_the_centre_than_every_evaluation_user():
+    """Pre-declaration section 2 / amendment A6: reads only the perturbation draws of seeds 7001..7024 and 9001..9012 (no data, no fit, no score)."""
+    evaluation = [np.linalg.norm(draw_perturbation(s, SPEC)[1]) for s in range(7001, 7025)]
+    atypical = [np.linalg.norm(draw_perturbation(s, SPEC, 3.0)[1]) for s in range(9001, 9013)]
+    assert min(atypical) > max(evaluation)
