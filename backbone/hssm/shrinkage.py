@@ -38,6 +38,7 @@ from backbone.hssm.model import FitState, HSSMError
 PARAM_NAMES = ("pi", "A_slow", "dur_mu", "dur_sigma", "A_fast", "b_fast", "Q_fast", "m0", "P0", "C_obs", "d_obs", "R_obs")
 PRIOR_WHITELIST = ("K", "F", "L", "n_users", "n_excluded", "prior_uncertainty_in_m_t_std") + PARAM_NAMES
 EXCLUSION_KEYS = ("unhealthy", "regime_ambiguous", "frame_failed")
+MEDIAN_POOLED = ("dur_mu", "dur_sigma")   # pooled by the median (amendment A8): the engine's own duration M-step can drift to degenerate values
 COND_LIMIT = 10.0           # frame map: condition number above this is a failure
 RESIDUAL_LIMIT = 0.5        # frame map: relative residual of the loadings above this is a failure
 AMBIGUITY_RATIO = 0.5       # regime matching: best cost must be at most this fraction of the second-best cost
@@ -221,8 +222,9 @@ def align_user(user_p: dict, ref_p: dict) -> tuple[dict | None, dict]:
     return apply_frame(permuted, M), {**info, "status": "ok"}
 
 
-def pool(aligned: Sequence[dict]) -> dict:
-    return {n: np.mean([p[n] for p in aligned], axis=0) for n in PARAM_NAMES}
+def pool(aligned: Sequence[dict], median_pooled: Sequence[str] = MEDIAN_POOLED) -> dict:
+    """Pool aligned parameters over users: the mean, except `median_pooled` (the two duration parameters) which use the median (bounded influence)."""
+    return {n: (np.median if n in median_pooled else np.mean)([p[n] for p in aligned], axis=0) for n in PARAM_NAMES}
 
 
 # ------------------------------------------------------------------------------------------ the model
@@ -362,10 +364,14 @@ def _healthy(model: DualTimescaleHSSM) -> bool:
 
 def build_shared_prior(series: Sequence[np.ndarray], n_regimes: int, n_features: int, latent_dim: int, max_duration: int,
                        reference_seeds: Sequence[int], n_iter: int = 30, rounds: int = 2, min_users: int = 10,
-                       scramble_labels_seed: int | None = None) -> tuple[SharedPrior, dict]:
+                       scramble_labels_seed: int | None = None, duration_pooling: str = "median") -> tuple[SharedPrior, dict]:
     """Build the shared prior from the training series of the population users (the series are used here and not stored).
     Returns (prior, report); the report holds counts and parameter changes only. `scramble_labels_seed` is the "alignment broken" variant of
-    criterion 6: after alignment every user's regimes are randomly permuted before pooling."""
+    criterion 6: after alignment every user's regimes are randomly permuted before pooling. `duration_pooling` is "median" (amendment A8, the
+    default) or "mean" (the form pre-declared in section 4.4, kept so the two can be compared)."""
+    if duration_pooling not in ("median", "mean"):
+        raise ValueError("duration_pooling must be 'median' or 'mean'")
+    median_pooled = MEDIAN_POOLED if duration_pooling == "median" else ()
     if len(series) < min_users:
         raise PriorBuildError(f"{len(series)} users given, the minimum is {min_users}")
     best, best_ll = None, -np.inf
@@ -380,7 +386,7 @@ def build_shared_prior(series: Sequence[np.ndarray], n_regimes: int, n_features:
     rng = np.random.default_rng(scramble_labels_seed) if scramble_labels_seed is not None else None
     for r in range(rounds):
         aligned, counts, conds, rels = [], {k: 0 for k in EXCLUSION_KEYS}, [], []
-        n_nonidentity = 0
+        n_nonidentity, n_long_sigma = 0, 0
         for X in series:
             m = ShrinkageDualHSSM(n_regimes, n_features, latent_dim, max_duration, seed=0, shared_prior=ref, n0=0.0, warm_start=True).fit(X, n_iter=n_iter)
             if not _healthy(m):
@@ -395,11 +401,15 @@ def build_shared_prior(series: Sequence[np.ndarray], n_regimes: int, n_features:
             if rng is not None:
                 p = permute_regimes(p, tuple(int(i) for i in rng.permutation(n_regimes)))
             aligned.append(p)
+            n_long_sigma += int(np.sum(p["dur_sigma"] >= 5.0))
         if len(aligned) < min_users:
             raise PriorBuildError(f"round {r + 1}: only {len(aligned)} of {len(series)} users survived alignment (minimum {min_users}); exclusions {counts}")
-        pooled = pool(aligned)
+        pooled = pool(aligned, median_pooled)
+        by_mean = pool(aligned, ())
         change = {n: float(np.max(np.abs(pooled[n] - ref.params()[n]))) for n in PARAM_NAMES}
         report["rounds"].append({"round": r + 1, "n_pooled": len(aligned), "excluded": dict(counts), "n_nonidentity_regime_perm": n_nonidentity,
-                                 "max_cond": float(max(conds)), "max_rel_residual": float(max(rels)), "max_abs_change_vs_init": change})
+                                 "max_cond": float(max(conds)), "max_rel_residual": float(max(rels)), "max_abs_change_vs_init": change,
+                                 "duration_pooling": duration_pooling, "n_user_regimes_with_dur_sigma_ge_5": n_long_sigma,
+                                 "dur_mu_pooled_by_mean": by_mean["dur_mu"].tolist(), "dur_sigma_pooled_by_mean": by_mean["dur_sigma"].tolist()})
         ref = SharedPrior.from_params(pooled, n_users=len(aligned), n_excluded=counts)
     return ref, report

@@ -425,6 +425,17 @@ def test_match_regimes_and_pooling():
     assert all(np.allclose(v, 2.0) for v in pool([a, b]).values())
 
 
+def test_pooling_uses_the_median_for_the_two_duration_parameters_and_the_mean_for_everything_else():
+    users = [{n: np.full((2, 2), v) for n in PARAM_NAMES} for v in (1.0, 2.0, 12.0)]            # one outlying user (a degenerate fit)
+    pooled = pool(users)
+    for n in PARAM_NAMES:
+        expected = 2.0 if n in ("dur_mu", "dur_sigma") else 5.0                                  # median 2, mean 5
+        assert np.allclose(pooled[n], expected), n
+    assert all(np.allclose(v, 5.0) for v in pool(users, ()).values())                            # the pre-declared all-mean form is still available
+    degenerate = [{**{n: np.full((2, 2), 1.0) for n in PARAM_NAMES}, "dur_mu": np.full((2, 2), m)} for m in (2.5, 2.6, 300.0)]
+    assert np.allclose(pool(degenerate)["dur_mu"], 2.6)
+
+
 # ------------------------------------------------------------------ building the prior (small: 10 users, 3 segments, 3 iterations, one round)
 @pytest.fixture(scope="module")
 def small_population():
@@ -440,6 +451,31 @@ def test_build_shared_prior_returns_an_aggregate_only_prior_and_a_counts_only_re
     assert set(report["rounds"][0]["excluded"]) == {"unhealthy", "regime_ambiguous", "frame_failed"}
     scrambled, _ = build_shared_prior(small_population, K, F, L, DMAX, reference_seeds=(1, 2), n_iter=3, rounds=1, min_users=5, scramble_labels_seed=0)
     assert not _params_equal(scrambled, pr)                                                      # the "alignment broken" variant changes the prior
+
+
+def test_build_shared_prior_records_both_duration_poolings_and_rejects_an_unknown_one(small_population):
+    pr, report = build_shared_prior(small_population, K, F, L, DMAX, reference_seeds=(1, 2), n_iter=3, rounds=1, min_users=5)
+    rd = report["rounds"][0]
+    assert rd["duration_pooling"] == "median" and len(rd["dur_mu_pooled_by_mean"]) == K and len(rd["dur_sigma_pooled_by_mean"]) == K
+    assert isinstance(rd["n_user_regimes_with_dur_sigma_ge_5"], int)
+    by_mean, rep2 = build_shared_prior(small_population, K, F, L, DMAX, reference_seeds=(1, 2), n_iter=3, rounds=1, min_users=5, duration_pooling="mean")
+    assert rep2["rounds"][0]["duration_pooling"] == "mean"
+    assert np.allclose(by_mean.dur_mu, rd["dur_mu_pooled_by_mean"]) and np.allclose(rep2["rounds"][0]["dur_mu_pooled_by_mean"], rd["dur_mu_pooled_by_mean"])
+    assert not np.allclose(pr.dur_mu, by_mean.dur_mu)                                            # the median and the mean differ on this population
+    with pytest.raises(ValueError, match="duration_pooling"):
+        build_shared_prior(small_population, K, F, L, DMAX, reference_seeds=(1,), n_iter=2, rounds=1, min_users=5, duration_pooling="trimmed")
+
+
+def test_build_shared_prior_counts_user_regimes_with_degenerate_durations(small_population):
+    from unittest.mock import patch
+    import backbone.hssm.shrinkage as module
+    def fake_align(user, ref):
+        q = {n: np.array(v, copy=True) for n, v in user.items()}
+        q["dur_sigma"] = np.array([6.0, 0.3])                                    # one degenerate regime per user
+        return q, {"status": "ok", "perm": (0, 1), "cond": 1.0, "rel_residual": 0.0}
+    with patch.object(module, "align_user", fake_align):
+        _, report = build_shared_prior(small_population[:6], K, F, L, DMAX, reference_seeds=(1,), n_iter=2, rounds=1, min_users=5)
+    assert report["rounds"][0]["n_pooled"] == 6 and report["rounds"][0]["n_user_regimes_with_dur_sigma_ge_5"] == 6
 
 
 def test_build_shared_prior_refuses_too_few_users(small_population):
