@@ -13,14 +13,20 @@ Spec:
 """
 
 from __future__ import annotations
+import logging
+
 import numpy as np
 
 from backbone.shared.synthetic_data import generate_surrogate_user
 from backbone.shared.feature_reduction import per_person_zscore, reduce_dimensionality
 from backbone.hssm.gating import fit_hssm_gated, ColdStartError, count_present_sessions
+from backbone.hssm.model import InsightsWithheldError
 from backbone.attractors.detector import compute_attractor_stats, is_attractor
 from backbone.attractors.calibration import grid_search_NT, sample_from_fitted_hssm
 from backbone.attractors.config import DEFAULT_CALIBRATION_CONFIG, CalibrationConfig
+
+
+logger = logging.getLogger(__name__)
 
 
 def fit_user_pipeline(n_sessions: int, n_features_raw: int = 15, n_regimes: int = 2,
@@ -50,10 +56,16 @@ def validate_planted_recovery(
     held out from the trials used to select the threshold in the first place."""
     all_calibrations = {}
     all_recovery = {}
+    skipped_users = []      # WP5 item 0b: users whose HSSM insights were withheld (fail closed: no claim is made about them)
 
     for u in range(n_users):
-        model, run_log, _ = fit_user_pipeline(n_sessions=130, n_regimes=n_regimes,
-                                               target_dims=target_dims, seed=u * 7 + 1)
+        try:
+            model, run_log, _ = fit_user_pipeline(n_sessions=130, n_regimes=n_regimes,
+                                                   target_dims=target_dims, seed=u * 7 + 1)
+        except InsightsWithheldError as exc:
+            skipped_users.append(f"user_{u}")
+            logger.warning("validate_planted_recovery: user_%d skipped, HSSM insights withheld (%s)", u, exc.reason)
+            continue
         target_regime = n_regimes - 1  # highest-activity regime, canonical post-sort
 
         calib = grid_search_NT(model, target_regime=target_regime, config=config, base_seed=u * 500)
@@ -82,7 +94,10 @@ def validate_planted_recovery(
         }
 
     all_pass = all(v["meets_bar"] for v in all_recovery.values())
-    return {"calibrations": all_calibrations, "recovery": all_recovery, "all_users_pass": all_pass}
+    if skipped_users and not all_recovery:
+        all_pass = False        # every user was skipped: nothing was validated, so this must not read as a pass
+    return {"calibrations": all_calibrations, "recovery": all_recovery, "all_users_pass": all_pass,
+            "n_skipped_users": len(skipped_users), "skipped_users": skipped_users}
 
 
 def check_no_coincidental_NT_sharing(calibrations: dict) -> bool:

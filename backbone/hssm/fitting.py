@@ -194,7 +194,12 @@ def select_k_by_bic(
     timestamps: np.ndarray | None = None,
 ) -> tuple[GaussianHSMM, dict]:
     """Fit each candidate K with the full random-restart harness, select by
-    BIC only — never because a K 'gives more interesting regimes'."""
+    BIC only — never because a K 'gives more interesting regimes'.
+
+    WP5 item 0a: a candidate whose selected model is degraded (`fit_degraded_` true: the -1e6 Cholesky fallback fired) is not chosen
+    while any healthy candidate exists; if every candidate is degraded the lowest BIC wins as before (and the result built from it is
+    withheld by the hold-back rule). Models without the flag (the baseline GaussianHSMM) count as healthy, so for them nothing changes.
+    """
     if not k_candidates or len(k_candidates) == 0:
         raise ValueError("k_candidates must be a non-empty sequence of positive integers")
     if any(k <= 0 for k in k_candidates):
@@ -204,6 +209,9 @@ def select_k_by_bic(
     best_k = None
     best_bic = np.inf
     best_model: GaussianHSMM | None = None
+    best_degraded_k = None
+    best_degraded_bic = np.inf
+    best_degraded_model: GaussianHSMM | None = None
 
     for k in k_candidates:
         if verbose:
@@ -231,7 +239,12 @@ def select_k_by_bic(
             if verbose:
                 print(f"  K={k}: BIC={bic:.2f}, conv_rate={model.convergence_rate_:.2f}")
 
-            if bic < best_bic:
+            if getattr(model, "fit_degraded_", False):
+                if bic < best_degraded_bic:
+                    best_degraded_bic = bic
+                    best_degraded_k = k
+                    best_degraded_model = model
+            elif bic < best_bic:
                 best_bic = bic
                 best_k = k
                 best_model = model
@@ -245,6 +258,8 @@ def select_k_by_bic(
             if verbose:
                 print(f"  K={k}: No random restart converged")
 
+    if best_model is None:                 # no healthy candidate: choose among the degraded ones by BIC (the result is then withheld)
+        best_k, best_model = best_degraded_k, best_degraded_model
     if best_model is None:
         raise FittingConvergenceError("None of the candidate Ks converged across random restarts")
     selection_report = {
@@ -684,6 +699,9 @@ def fit_hssm(
         best_k = None
         best_bic = float("inf")
         best_dual_model: DualTimescaleHSSM | None = None
+        best_degraded_k = None                 # WP5 item 0a: degraded candidates are only used when no healthy candidate exists
+        best_degraded_bic = float("inf")
+        best_degraded_model: DualTimescaleHSSM | None = None
         bic_by_k = {}
         loglik_by_k = {}
         conv_by_k = {}
@@ -709,10 +727,18 @@ def fit_hssm(
             conv_by_k[k] = dual_m.convergence_rate_
             full_run_log.extend(rlog)
 
-            if bic < best_bic:
+            if getattr(dual_m, "fit_degraded_", False):
+                if bic < best_degraded_bic:
+                    best_degraded_bic = bic
+                    best_degraded_k = k
+                    best_degraded_model = dual_m
+            elif bic < best_bic:
                 best_bic = bic
                 best_k = k
                 best_dual_model = dual_m
+
+        if best_dual_model is None:            # every candidate K is degraded: lowest BIC, the result is withheld by the hold-back rule
+            best_k, best_bic, best_dual_model = best_degraded_k, best_degraded_bic, best_degraded_model
 
         if best_dual_model is None or best_k is None:
             raise FittingConvergenceError("None of the candidate Ks converged across random restarts")
