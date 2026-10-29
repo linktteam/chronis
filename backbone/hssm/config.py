@@ -22,3 +22,7 @@ class ColdStartConfig:
 
 DEFAULT_FIT_CONFIG = HSSMFitConfig()
 DEFAULT_COLD_START_CONFIG = ColdStartConfig()
+
+# WP5 (N18-v2): strength of the shrinkage toward a shared prior, in pseudo-steps PER REGIME. Frozen on development seeds 6001..6012 (tests/N0_FROZEN_WP5.md).
+# Used only when a shared prior is passed to fit_hssm / fit_dual_with_random_restarts; there is no prior by default.
+SHARED_PRIOR_DEFAULT_N0 = 5.0

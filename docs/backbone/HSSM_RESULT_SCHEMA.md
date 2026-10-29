@@ -58,6 +58,8 @@ The `HSSMResult` dataclass in `backbone.hssm.fitting` is the single canonical re
 | `fit_exceptions` | `list[dict]` | One dict per exception caught inside `fit()` (type, message, stage, location) | `[]` | List of dicts |
 | `states_pass_fallbacks` | `int` | Firings inside the `estimate_states` pass of `fit_hssm`, which runs after `fit()` and before the result is built (WP4) | `0` | Integer $\ge 0$ |
 | `fallback_count_at_build` | `int` or `None` | The model's cumulative fallback count when the result was built; `None` if not recorded (WP4) | `None` | Integer $\ge 0$ |
+| `used_shared_prior` | `bool` | The fit started at a shared prior and was regularised toward it (WP5; section 3b) | `False` | `True` iff `fit_hssm(..., shared_prior=<SharedPrior>)` was used |
+| `shared_prior_n0` | `float` or `None` | Strength of that prior in pseudo-steps per regime (WP5; section 3b) | `None` | Float $\ge 0$ when a prior was used (default `SHARED_PRIOR_DEFAULT_N0` = 5.0), else `None` |
 
 ---
 
@@ -83,6 +85,22 @@ Entry points:
 - `fit_dual_with_random_restarts(...)` never returns a degraded restart while a healthy one exists. If every usable restart is degraded it returns the best one by log-likelihood, and the result built from it is withheld.
 
 Not covered: the choice of K by BIC across candidate Ks does not look at degradation.
+
+---
+
+## 3b. Shared prior for the cold start (WP5, N18-v2; optional, off by default)
+
+`fit_hssm(..., model_type="dual_timescale", shared_prior=None, shared_prior_n0=None)` and `fit_dual_with_random_restarts(..., shared_prior=None, shared_prior_n0=None)`. With the default `None` nothing changes (checked bit for bit against `16c3431`, see the WP5 report).
+
+With a `backbone.hssm.shrinkage.SharedPrior` (aggregate parameters of a population of users; no data):
+- the fit starts at the shared parameters (so it stays in the shared latent frame) and its M-step is regularised toward them with strength `shared_prior_n0` pseudo-steps per regime (default `backbone.hssm.config.SHARED_PRIOR_DEFAULT_N0` = 5.0, frozen on development seeds, `tests/N0_FROZEN_WP5.md`);
+- exactly one fit is run (a deterministic starting point makes restarts identical); the minimum of 10 random initialisations does not apply; `n_initializations` is ignored;
+- K is the prior's K: it must be in `candidate_ks`; no BIC search over K is made; `bic_by_k` has that one entry; BIC and AIC use the unpenalised log-likelihood at the shrunk parameters;
+- the result records `used_shared_prior=True`, `shared_prior_n0`, `model_class="ShrinkageDualHSSM"`, and `convergence_metadata["shared_prior"] = {n0, n_users, k_fixed_by_prior, n_fits_run, prior_uncertainty_in_m_t_std: False, bic_note}`; the default result's metadata has no `shared_prior` key;
+- the prior's uncertainty is NOT included in `m_t_uncertainty` (the engine's `estimate_states` is unchanged; N17 is not addressed);
+- the EM monotonicity guard compares the unpenalised log-likelihood, so a regularised fit can stop early with `fit_state == REJECTED_UPDATE` (about a third of the fits in the WP5 study); the hold-back rule of section 3 is unchanged;
+- the cold-start gate (30 present sessions) is NOT changed by a prior; a caller may pass a `config` with a lower minimum, which is a product decision;
+- fail closed: a prior whose (K, F, L) differ from the request, a prior that is not aggregate-only (attribute whitelist), a negative or non-finite strength, a strength without a prior, a prior with `model_type="baseline"`, or a fit that did not finish raises (`ValueError` / `FittingConvergenceError`); there is no silent fall-back to a prior-free fit.
 
 ---
 

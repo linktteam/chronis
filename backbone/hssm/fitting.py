@@ -15,13 +15,16 @@ import logging
 from dataclasses import dataclass, field
 import numpy as np
 import pandas as pd
-from typing import Any, Dict, Optional, Sequence, Tuple, cast
+from typing import TYPE_CHECKING, Any, Dict, Optional, Sequence, Tuple, cast
 
 from backbone.hssm.model import GaussianHSMM, KimHSSMModel, FitState, NotFittedError, FittingConvergenceError, InternalStateError
 from backbone.hssm.dual_model import DualTimescaleHSSM
 from backbone.hssm.label_switching import canonicalize_labels
-from backbone.hssm.config import DEFAULT_FIT_CONFIG, HSSMFitConfig, DEFAULT_COLD_START_CONFIG, ColdStartConfig
+from backbone.hssm.config import DEFAULT_FIT_CONFIG, HSSMFitConfig, DEFAULT_COLD_START_CONFIG, ColdStartConfig, SHARED_PRIOR_DEFAULT_N0
 from backbone.hssm.gating import ColdStartError, count_present_sessions
+
+if TYPE_CHECKING:     # the prototype module is imported lazily, only when a shared prior is passed: the default path never loads it
+    from backbone.hssm.shrinkage import SharedPrior
 
 logger = logging.getLogger(__name__)   # internal log only; the hold-back (WP3 item 2) never produces a user-facing notice
 
@@ -117,8 +120,15 @@ def fit_dual_with_random_restarts(
     verbose: bool = False,
     bypass_init_gate: bool = False,
     timestamps: np.ndarray | None = None,
+    shared_prior: "SharedPrior | None" = None,
+    shared_prior_n0: float | None = None,
 ) -> tuple[DualTimescaleHSSM, list[dict]]:
     """Fit DualTimescaleHSSM with multiple initializations, return highest-LL model.
+
+    Shared prior (WP5, off by default). With `shared_prior=None` (the default) nothing below changes. With a `SharedPrior` the fit is NOT a
+    random-restart fit: it starts at the shared parameters (so it stays in the shared latent frame) and its M-step is regularised toward them with
+    strength `shared_prior_n0` pseudo-steps per regime (default `SHARED_PRIOR_DEFAULT_N0`); restarts from one deterministic starting point would be
+    identical, so exactly one fit is run and the `n_init` minimum is not enforced. The prior's (K, F, L) must equal (n_regimes, n_features, latent_dim).
 
     Selection (WP4 item 1b, ledger A7 / decision D3): a restart whose fit was degraded (`fit_degraded_`: the -1e6 Cholesky
     fallback fired) is never chosen while a healthy restart exists, because that fit's log-likelihood contains the magic
@@ -126,6 +136,12 @@ def fit_dual_with_random_restarts(
     ties (unchanged). If every usable restart is degraded, the highest-log-likelihood one is returned and the HSSMResult built
     from it is withheld.
     """
+    if shared_prior is None:
+        if shared_prior_n0 is not None:
+            raise ValueError("shared_prior_n0 was given without a shared_prior")
+    else:
+        return _fit_dual_from_shared_prior(X, n_regimes, n_features, latent_dim, n_iter, max_duration, base_seed, verbose, timestamps, shared_prior, shared_prior_n0)
+
     if not bypass_init_gate:
         if n_init < 10:
             raise ValueError("Directive Day 8 requires a HARD MINIMUM of 10 random initializations.")
@@ -179,6 +195,30 @@ def fit_dual_with_random_restarts(
     convergence_rate = sum(1.0 if r["converged"] else 0.0 for r in run_log) / len(run_log)
     best_model.convergence_rate_ = convergence_rate
     return best_model, run_log
+
+
+def _fit_dual_from_shared_prior(X, n_regimes, n_features, latent_dim, n_iter, max_duration, base_seed, verbose, timestamps, shared_prior, shared_prior_n0):
+    """The shared-prior branch of fit_dual_with_random_restarts (WP5). Fails closed: a prior that is not aggregate-only, or whose (K, F, L) differ from the
+    request, raises ValueError; a fit that did not finish raises FittingConvergenceError. No silent fall-back to a prior-free fit."""
+    from backbone.hssm.shrinkage import ShrinkageDualHSSM        # lazy: see the TYPE_CHECKING note at the top of this module
+    n0 = SHARED_PRIOR_DEFAULT_N0 if shared_prior_n0 is None else float(shared_prior_n0)
+    if (shared_prior.K, shared_prior.F, shared_prior.L) != (n_regimes, n_features, latent_dim):
+        raise ValueError(f"shared prior has (K, F, L) = {(shared_prior.K, shared_prior.F, shared_prior.L)}, the fit asks for {(n_regimes, n_features, latent_dim)}")
+    try:
+        shared_prior.assert_aggregate_only()
+    except AssertionError as exc:
+        raise ValueError(f"shared prior refused: {exc}") from exc
+    model = ShrinkageDualHSSM(n_regimes=n_regimes, n_features=n_features, latent_dim=latent_dim, max_duration=max_duration, seed=base_seed,
+                              shared_prior=shared_prior, n0=n0)
+    model.fit(X, n_iter=n_iter, timestamps=timestamps, verbose=verbose)
+    run_log = [{
+        "init_index": 0, "seed": base_seed, "fit_state": model.fit_state_, "converged": model.converged_, "log_likelihood": model.log_likelihood_,
+        "n_iter": model.n_iter_, "shared_prior": True, "shared_prior_n0": n0,
+    }]
+    if model.fit_state_ not in (FitState.CONVERGED, FitState.MAX_ITER_REACHED, FitState.REJECTED_UPDATE) or model.log_likelihood_ is None:
+        raise FittingConvergenceError(f"The shared-prior fit did not finish for DualTimescaleHSSM (fit_state={model.fit_state_})")
+    model.convergence_rate_ = 1.0 if model.converged_ else 0.0
+    return model, run_log
 
 
 def select_k_by_bic(
@@ -462,6 +502,10 @@ class HSSMResult:
     states_pass_fallbacks: int = 0
     fallback_count_at_build: Optional[int] = None
 
+    # --- Shared prior (WP5, N18-v2): off by default ---
+    used_shared_prior: bool = False                      # the fit started at a shared prior and was regularised toward it
+    shared_prior_n0: Optional[float] = None              # its strength, in pseudo-steps per regime; None when no prior was used
+
     # --- Neural residual ---
     neural_residual_enabled: bool = False
     residual_mode: str = "DISABLED"
@@ -660,6 +704,8 @@ def fit_hssm(
     dataset_hash: str = "",
     model_type: str = "baseline",
     latent_dim: int = 2,
+    shared_prior: "SharedPrior | None" = None,
+    shared_prior_n0: float | None = None,
 ) -> HSSMResult:
     """Canonical fitting entrypoint for backbone.hssm per directive.
 
@@ -672,6 +718,11 @@ def fit_hssm(
     Parameters:
       model_type: 'baseline' (GaussianHSMM, slow-regime only) or
                   'dual_timescale' (DualTimescaleHSSM, fast m_t + slow p_t).
+      shared_prior, shared_prior_n0 (WP5, off by default): only for the dual-timescale model. With a `SharedPrior` the fit starts at the shared
+                  parameters and is regularised toward them with strength `shared_prior_n0` pseudo-steps per regime (default
+                  `SHARED_PRIOR_DEFAULT_N0`). K is the prior's K (it must be among `candidate_ks`; no BIC search over K), one fit is run (see
+                  `fit_dual_with_random_restarts`), and the result records `used_shared_prior=True` and `shared_prior_n0`. The cold-start gate below
+                  is NOT changed by a prior (a caller may pass a `config` with a lower minimum). Default `None`: identical to before.
     """
     if isinstance(matrix, pd.DataFrame):
         X = matrix.to_numpy(dtype=float)
@@ -682,6 +733,15 @@ def fit_hssm(
         raise ValueError("Feature count must be strictly greater than zero (F > 0)")
 
     n_features = X.shape[1]
+
+    if shared_prior is None:
+        if shared_prior_n0 is not None:
+            raise ValueError("shared_prior_n0 was given without a shared_prior")
+    else:
+        if model_type not in ("dual_timescale", "dual", "full_hssm"):
+            raise ValueError("a shared prior applies to the dual-timescale model only (model_type='dual_timescale')")
+        if shared_prior.K not in tuple(candidate_ks):
+            raise ValueError(f"the shared prior has K={shared_prior.K}, which is not among candidate_ks={tuple(candidate_ks)}")
 
     if n_present_sessions is None:
         n_present_sessions = count_present_sessions(X)
@@ -707,7 +767,7 @@ def fit_hssm(
         conv_by_k = {}
         full_run_log = []
 
-        for k in candidate_ks:
+        for k in (candidate_ks if shared_prior is None else (shared_prior.K,)):
             dual_m, rlog = fit_dual_with_random_restarts(
                 X,
                 n_regimes=k,
@@ -719,6 +779,8 @@ def fit_hssm(
                 base_seed=(random_seed or 0) + k * 1000,
                 bypass_init_gate=allow_fast_test_fit,
                 timestamps=timestamps,
+                shared_prior=shared_prior,
+                shared_prior_n0=shared_prior_n0,
             )
             n_obs = n_present_sessions if n_present_sessions > 0 else X.shape[0]
             bic = dual_m.bic(n_observations=n_obs)
@@ -749,6 +811,8 @@ def fit_hssm(
         m_t, m_t_std, p_t, p_t_post = best_dual_model.estimate_states(X)
         count_after_states = int(best_dual_model.cholesky_fallback_count_)
         aic_val = float(best_dual_model.aic())
+        used_prior = bool(getattr(best_dual_model, "used_shared_prior", False))
+        prior_n0 = float(best_dual_model.n0) if used_prior else None
 
         dual_result = HSSMResult(
             model=best_dual_model,
@@ -810,7 +874,15 @@ def fit_hssm(
                 "n_iter": best_dual_model.n_iter_,
                 "run_log": full_run_log,
             },
+            used_shared_prior=used_prior,
+            shared_prior_n0=prior_n0,
         )
+        if used_prior:      # recorded only when a prior was used: the default result's metadata is unchanged
+            dual_result.convergence_metadata["shared_prior"] = {
+                "n0": prior_n0, "n_users": int(best_dual_model.shared_prior.n_users), "k_fixed_by_prior": True, "n_fits_run": 1,
+                "prior_uncertainty_in_m_t_std": False,
+                "bic_note": "BIC and AIC use the unpenalised log-likelihood at the shrunk parameters",
+            }
         _log_holdback(dual_result, random_seed)
         return dual_result
 
