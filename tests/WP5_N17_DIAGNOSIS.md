@@ -21,7 +21,7 @@ GPB2 against the exact oracle (T = 6, Dmax = 3, 24 random tiny problems, 216 val
 ## Reading (by the pre-declared rules)
 
 * **R1 (GPB2 collapse too inaccurate): does not fire.** `truth` coverage 0.951 / 0.950 is within 1 se of nominal, and the median GPB2/exact ratio is inside 0.95..1.05. The wide spread of the individual ratios at T = 6 is reported, but it is not what the rule tests, and it is a tiny random problem, not T = 60, Dmax = 25.
-* **R2 (missing parameter uncertainty): fires.** `truth` is at nominal, `personal` is 6 to 7 se below `truth`, and `shrinkage` is 7 to 8 se above `personal`.
+* **R2 (missing parameter uncertainty): fires.** `truth` is at nominal, `personal` is 6 to 7 se below `truth`, and `shrinkage` is 6 to 8 se above `personal`.
 * **R3 (alignment plus autocorrelated errors): does not fire.** Its first condition (personal at nominal over 24 seeds) fails: 0.675. Lag-1 autocorrelation is 0.24, below the declared 0.3. The across-seed dispersion of `personal` is 7 to 8 times the binomial one, but the `truth` arm already has 1.5 to 1.7 with the same alignment-free statistic, and the personal number is not separable from bad fits (mean z^2 = 353 means a few very large errors against a tiny `m_t_std`).
 
 **The numbers favour "the reported `m_t_std` conditions on the fitted parameters as if they were the truth" (N17 cause 2).** With the true parameters the same smoother is calibrated, so the smoother and the GPB2 collapse are not the main culprit at this size.
