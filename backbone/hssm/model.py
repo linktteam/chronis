@@ -34,6 +34,8 @@ from scipy.special import logsumexp
 from scipy.stats import lognorm
 from scipy.optimize import minimize
 
+from backbone.hssm.config import MAX_TIMESTAMP_SPAN_DAYS
+
 NEG_INF = -1e10
 
 
@@ -313,6 +315,11 @@ class GaussianHSMM:
                 adjusted_offsets[i] = adjusted_offsets[i - 1] + 1
 
         total_days = adjusted_offsets[-1] + 1
+        if total_days - 1 > MAX_TIMESTAMP_SPAN_DAYS:      # WP6 item 1: refuse BEFORE the lattice is allocated (seconds passed as days gave 6.43 GiB)
+            raise ValueError(
+                f"timestamps span {total_days - 1} calendar days, more than the limit of {MAX_TIMESTAMP_SPAN_DAYS}. Timestamps are calendar DAYS; "
+                f"a span this large is the signature of seconds or milliseconds. Convert to days before fitting."
+            )
         F = X.shape[1]
         X_grid = np.full((total_days, F), np.nan)
         for i, offset in enumerate(adjusted_offsets):

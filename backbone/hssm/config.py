@@ -26,3 +26,8 @@ DEFAULT_COLD_START_CONFIG = ColdStartConfig()
 # WP5 (N18-v2): strength of the shrinkage toward a shared prior, in pseudo-steps PER REGIME. Frozen on development seeds 6001..6012 (tests/N0_FROZEN_WP5.md).
 # Used only when a shared prior is passed to fit_hssm / fit_dual_with_random_restarts; there is no prior by default.
 SHARED_PRIOR_DEFAULT_N0 = 5.0
+
+# WP6 item 1: `timestamps` are calendar DAYS. The span (last - first) may not exceed this many days. Reason (tests/PREDECLARED_CRITERIA_WP6.md section 2):
+# 20,000 days is 54.8 years, longer than any person's record; a record in seconds exceeds it after 5.5 hours, in milliseconds after 20 seconds; at the
+# limit the baseline lattice is (20000, 4, 45) float64 = 28.8 MB per array, against the 6.43 GiB the owner's run tried to allocate for seconds.
+MAX_TIMESTAMP_SPAN_DAYS = 20000

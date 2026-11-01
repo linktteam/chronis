@@ -20,13 +20,47 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, Sequence, Tuple, cast
 from backbone.hssm.model import GaussianHSMM, KimHSSMModel, FitState, NotFittedError, FittingConvergenceError, InternalStateError
 from backbone.hssm.dual_model import DualTimescaleHSSM
 from backbone.hssm.label_switching import canonicalize_labels
-from backbone.hssm.config import DEFAULT_FIT_CONFIG, HSSMFitConfig, DEFAULT_COLD_START_CONFIG, ColdStartConfig, SHARED_PRIOR_DEFAULT_N0
+from backbone.hssm.config import DEFAULT_FIT_CONFIG, HSSMFitConfig, DEFAULT_COLD_START_CONFIG, ColdStartConfig, SHARED_PRIOR_DEFAULT_N0, MAX_TIMESTAMP_SPAN_DAYS
 from backbone.hssm.gating import ColdStartError, count_present_sessions
 
 if TYPE_CHECKING:     # the prototype module is imported lazily, only when a shared prior is passed: the default path never loads it
     from backbone.hssm.shrinkage import SharedPrior
 
 logger = logging.getLogger(__name__)   # internal log only; the hold-back (WP3 item 2) never produces a user-facing notice
+
+
+def validate_timestamps_days(timestamps, n_rows: int | None = None) -> np.ndarray:
+    """Check that `timestamps` is a usable vector of calendar DAYS (WP6 item 1); return it as a float array.
+
+    `timestamps` are CALENDAR DAYS (fractional days allowed, one row per calendar day): the baseline model places row i on a daily lattice at
+    `round(timestamps[i] - timestamps[0])`, so the span of the record is the length of the lattice. Raises `ValueError` (the message names the unit
+    mistake) when the input is not a 1-D array of numbers, its length differs from `n_rows`, any value is NaN or infinite, the values are not strictly
+    increasing, the span exceeds `MAX_TIMESTAMP_SPAN_DAYS`, or two timestamps fall on the same calendar day after rounding (the engine would otherwise
+    move one of them to the next day without saying so). Nothing is allocated before this check passes.
+    """
+    try:
+        ts = np.asarray(timestamps, dtype=float)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"timestamps must be a 1-D array of numbers in calendar DAYS ({exc})") from exc
+    if ts.ndim != 1:
+        raise ValueError(f"timestamps must be 1-dimensional (one calendar-day value per row); got shape {ts.shape}")
+    if n_rows is not None and len(ts) != n_rows:
+        raise ValueError(f"timestamps has {len(ts)} values but the matrix has {n_rows} rows")
+    if len(ts) == 0:
+        raise ValueError("timestamps is empty")
+    if not np.all(np.isfinite(ts)):
+        raise ValueError("timestamps contains NaN or infinite values")
+    if np.any(np.diff(ts) <= 0):
+        raise ValueError("timestamps must be strictly increasing (one row per calendar day; sort the rows and drop duplicate days)")
+    span = float(ts[-1] - ts[0])
+    if span > MAX_TIMESTAMP_SPAN_DAYS:
+        raise ValueError(
+            f"timestamps span {span:g} days ({span / 365.25:.0f} years), more than the limit of {MAX_TIMESTAMP_SPAN_DAYS} days. Timestamps are calendar "
+            f"DAYS; a span this large is the signature of seconds or milliseconds (seconds passed as days gave a 6.4 GiB lattice). Convert to days."
+        )
+    if np.any(np.diff(np.round(ts - ts[0]).astype(int)) <= 0):
+        raise ValueError("two timestamps fall on the same calendar day after rounding to whole days; timestamps are calendar DAYS, one row per day")
+    return ts
 
 
 def fit_with_random_restarts(
@@ -50,6 +84,9 @@ def fit_with_random_restarts(
     else:
         if n_init < 1:
             raise ValueError("Must run at least 1 random initialization.")
+
+    if timestamps is not None:
+        validate_timestamps_days(timestamps, len(X))          # WP6 item 1: calendar DAYS, checked before anything is allocated
 
     run_log = []
     best_model: GaussianHSMM | None = None
@@ -125,6 +162,9 @@ def fit_dual_with_random_restarts(
 ) -> tuple[DualTimescaleHSSM, list[dict]]:
     """Fit DualTimescaleHSSM with multiple initializations, return highest-LL model.
 
+    `timestamps` (WP6 item 1) are CALENDAR DAYS and are validated by `validate_timestamps_days` (finite, strictly increasing, span at most
+    `MAX_TIMESTAMP_SPAN_DAYS`); this model does not build a calendar lattice, it labels `duration_unit` and works in row steps.
+
     Shared prior (WP5, off by default). With `shared_prior=None` (the default) nothing below changes. With a `SharedPrior` the fit is NOT a
     random-restart fit: it starts at the shared parameters (so it stays in the shared latent frame) and its M-step is regularised toward them with
     strength `shared_prior_n0` pseudo-steps per regime (default `SHARED_PRIOR_DEFAULT_N0`); restarts from one deterministic starting point would be
@@ -136,6 +176,9 @@ def fit_dual_with_random_restarts(
     ties (unchanged). If every usable restart is degraded, the highest-log-likelihood one is returned and the HSSMResult built
     from it is withheld.
     """
+    if timestamps is not None:
+        validate_timestamps_days(timestamps, len(X))          # WP6 item 1: calendar DAYS, checked before anything is allocated
+
     if shared_prior is None:
         if shared_prior_n0 is not None:
             raise ValueError("shared_prior_n0 was given without a shared_prior")
@@ -716,6 +759,12 @@ def fit_hssm(
     eligible sessions or raises ColdStartError.
 
     Parameters:
+      matrix: (T, F) float matrix, one row per day or session, z-scored per person; NaN rows (missing days) are allowed and are marginalised.
+      timestamps: optional, CALENDAR DAYS (WP6 item 1): one value per row, finite, strictly increasing, fractional days allowed but no two rows on the
+                  same calendar day after rounding, and a span (last - first) of at most `MAX_TIMESTAMP_SPAN_DAYS` (20,000). Seconds or milliseconds
+                  raise `ValueError` before anything is allocated. The baseline model places the rows on a daily lattice with these offsets (gaps
+                  become NaN rows); the dual-timescale model uses them only to label `duration_unit` and works in row steps. See
+                  docs/INTEGRATION_CONTRACT_HSSM.md.
       model_type: 'baseline' (GaussianHSMM, slow-regime only) or
                   'dual_timescale' (DualTimescaleHSSM, fast m_t + slow p_t).
       shared_prior, shared_prior_n0 (WP5, off by default): only for the dual-timescale model. With a `SharedPrior` the fit starts at the shared
@@ -733,6 +782,9 @@ def fit_hssm(
         raise ValueError("Feature count must be strictly greater than zero (F > 0)")
 
     n_features = X.shape[1]
+
+    if timestamps is not None:
+        validate_timestamps_days(timestamps, X.shape[0])      # WP6 item 1: first, so a malformed argument raises ValueError even for a too-short record
 
     if shared_prior is None:
         if shared_prior_n0 is not None:

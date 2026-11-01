@@ -63,6 +63,12 @@ The `HSSMResult` dataclass in `backbone.hssm.fitting` is the single canonical re
 
 ---
 
+## 2b. Inputs: the unit of `timestamps` (WP6 item 1)
+
+`fit_hssm(..., timestamps=...)`, `fit_dual_with_random_restarts(..., timestamps=...)` and `fit_with_random_restarts(..., timestamps=...)` take **calendar DAYS**: one value per matrix row, finite, strictly increasing, fractional days allowed, no two rows on the same calendar day after rounding to whole days, and a span (last minus first) of at most `backbone.hssm.config.MAX_TIMESTAMP_SPAN_DAYS` = 20,000 days (54.8 years). Anything else raises `ValueError` before anything is allocated, and the message names the unit mistake. Seconds or milliseconds are the typical error: seconds gave a lattice of 6,393,601 steps and a 6.43 GiB allocation in an integration run. A mistake that stays under the limit (hours over a month) cannot be detected and is the caller's responsibility. The baseline model places row i on a daily lattice at `round(timestamps[i] - timestamps[0])` (gaps become NaN rows); the dual-timescale model uses the timestamps only to set `duration_unit` and works in row steps. Full contract: `docs/INTEGRATION_CONTRACT_HSSM.md`.
+
+---
+
 ## 3. Hold-back of insights (ledger A7 / decision D3; closed in WP4)
 
 Computed read-only properties and one method, derived from the CURRENT field values and the CURRENT model count (nothing is stored, so nothing goes stale):
