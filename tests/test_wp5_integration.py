@@ -62,7 +62,9 @@ def test_the_default_result_records_no_prior_and_its_metadata_is_unchanged():
     r = default_fit()
     assert r.used_shared_prior is False and r.shared_prior_n0 is None and "shared_prior" not in r.convergence_metadata
     assert type(r.model) is DualTimescaleHSSM and r.model_class == "DualTimescaleHSSM"
-    assert set(r.convergence_metadata) == {"bic_by_k", "loglik_by_k", "convergence_rate_by_k", "selected_loglik", "fit_state", "converged", "n_iter", "run_log"}
+    # WP6 item 3 part 2 added the keys convergence_criterion, window_gain_at_cap and duration_box (additive, docs/backbone/HSSM_RESULT_SCHEMA.md); every WP5 key is still there
+    assert set(r.convergence_metadata) == {"bic_by_k", "loglik_by_k", "convergence_rate_by_k", "selected_loglik", "fit_state", "converged", "n_iter", "run_log",
+                                           "convergence_criterion", "window_gain_at_cap", "duration_box"}
     model, log = fit_dual_with_random_restarts(X, n_regimes=2, n_features=F, latent_dim=L, n_init=2, n_iter=3, max_duration=DMAX, bypass_init_gate=True)
     assert type(model) is DualTimescaleHSSM and len(log) == 2 and "shared_prior" not in log[0]
 
