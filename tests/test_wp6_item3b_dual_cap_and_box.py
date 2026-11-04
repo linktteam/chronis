@@ -1,9 +1,11 @@
 """WP6 item 3, part 2: the dual model's stopping rule at the iteration limit (C2) and its duration box (D1).
 
-Pre-declared in tests/PREDECLARED_CRITERIA_WP6.md sections 5.1, 5.2, 5.4 and 5.5 (before any dual engine code). The default dual fit must stay bit-identical for every fit
-whose Nelder-Mead duration results never leave the box and that ended `CONVERGED` by the old rule (identity gate, wp6_evidence/ab_item3b_*); these tests check the new
-branches. Mutation set `item3b` (integration_report/wp6/scripts/mutation_wp6.py).
+Pre-declared in tests/PREDECLARED_CRITERIA_WP6.md sections 5.1, 5.2, 5.4, 5.5 and 5.6 (before the engine code; 5.6 replaced the trigger of the box after a development look). A dual
+fit that ends with its durations inside the box must stay bit-identical to the reference (the box code is never entered); only a fit that ENDS degenerate is run again with the box
+active (identity gate, wp6_evidence/ab_item3b_*). Mutation set `item3b` (integration_report/wp6/scripts/mutation_wp6.py).
 """
+import copy
+import warnings
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -167,8 +169,9 @@ def bwd_with(masses):
     return SimpleNamespace(xi_counts=np.ones((len(masses), len(masses))), entry_posterior=entry, regime_posterior_smoothed=np.full((3, len(masses)), 1.0 / len(masses)))
 
 
-def fresh_model(mu=(2.2, 2.4), sigma=(0.5, 0.55)):
+def fresh_model(mu=(2.2, 2.4), sigma=(0.5, 0.55), box=True):
     m = DualTimescaleHSSM(n_regimes=K, n_features=F, latent_dim=L, max_duration=DMAX, seed=1)
+    m._duration_box_active = box                                                      # the box is active only inside the second run of a refit; the unit tests switch it on
     m._init_params(np.random.default_rng(0).normal(size=(T, F)))
     m.dur_mu = np.array(mu, dtype=float)
     m.dur_sigma = np.array(sigma, dtype=float)
@@ -250,6 +253,16 @@ def test_an_entry_mass_that_drives_the_old_update_out_of_the_box_is_boxed(make_m
     assert m.dur_mu[1] == mu_o and m.dur_sigma[1] == sg_o
 
 
+@pytest.mark.parametrize("make_mass", OUT_OF_BOX_MASSES, ids=IDS)
+def test_with_the_box_inactive_the_update_is_the_old_update_exactly_even_when_it_leaves_the_box(make_mass):
+    mass = make_mass()
+    m = fresh_model(box=False)
+    assert m._duration_box_active is False and DualTimescaleHSSM(n_regimes=K, n_features=F, latent_dim=L, max_duration=DMAX)._duration_box_active is False
+    mu_old, sg_old, _ = old_update(2.2, 0.5, mass)
+    m._update_discrete_params(bwd_with([mass, lognormal_mass(np.log(10.0), 0.4)]))
+    assert (m.dur_mu[0], m.dur_sigma[0]) == (mu_old, sg_old) and m.duration_box_applied_ == []
+
+
 def test_the_boxed_update_is_not_worse_than_staying_at_the_previous_iterate():
     mass = flat_mass()
     d = np.arange(1, DMAX + 1)
@@ -326,6 +339,142 @@ def test_the_box_limits_are_the_declared_ones_at_a_wall():
     assert big._duration_box()[1] == pytest.approx(np.log(2000.0))                    # the upper limit of mu follows Dmax
 
 
+# ------------------------------------------------------------------------------------------------ the refit of a fit that ends degenerate (5.6)
+class ScriptedImpl:
+    """Replaces DualTimescaleHSSM._fit_impl: records the state of the box flag and the generator at each call and ends in a scripted state."""
+
+    def __init__(self, ends, fallbacks=(0, 0), exceptions=((), ())):
+        self.ends, self.fallbacks, self.exceptions, self.calls = list(ends), list(fallbacks), list(exceptions), []
+
+    def __call__(self, model, X, **kw):
+        i = len(self.calls)
+        self.calls.append({"box_active": model._duration_box_active, "rng_state": copy.deepcopy(model.rng.bit_generator.state), "draw": None})
+        model.rng.random()                                                            # a fit consumes the generator (the real one does in _init_params)
+        mu, sg, state, n_it, ll = self.ends[i]
+        model.dur_mu, model.dur_sigma = np.array(mu, dtype=float), np.array(sg, dtype=float)
+        model.fit_state_, model.n_iter_, model.log_likelihood_ = state, n_it, ll
+        model.cholesky_fallback_count_ += self.fallbacks[i]
+        model.fit_exceptions_.extend(dict(e) for e in self.exceptions[i])
+        model._is_fitted = True
+        return model
+
+
+def as_method(impl):
+    """A plain function that patch.object binds as a method (a callable instance would not receive the model)."""
+    def method(self, X, **kw):
+        return impl(self, X, **kw)
+    return method
+
+
+HEALTHY = ([2.0, 2.2], [0.5, 0.6])
+DEGENERATE = ([102.5, 2.2], [10.0, 0.6])
+
+
+def run_scripted(ends, **kw):
+    impl = ScriptedImpl(ends, **kw)
+    m = DualTimescaleHSSM(n_regimes=K, n_features=F, latent_dim=L, max_duration=DMAX, seed=11)
+    with patch.object(DualTimescaleHSSM, "_fit_impl", as_method(impl)):
+        m.fit(np.zeros((T, F)), n_iter=7)
+    return m, impl
+
+
+def test_a_fit_that_ends_with_a_degenerate_duration_is_run_again_from_the_same_start_with_the_box_active():
+    m, impl = run_scripted([(*DEGENERATE, FitState.MAX_ITER_REACHED, 7, -500.0), (*HEALTHY, FitState.CONVERGED, 7, -480.0)])
+    assert [c["box_active"] for c in impl.calls] == [False, True] and len(impl.calls) == 2
+    assert impl.calls[0]["rng_state"] == impl.calls[1]["rng_state"]                  # the second run starts from the generator state of the first (same starting point)
+    assert m._duration_box_active is False                                            # switched off again afterwards
+    assert m.fit_state_ == FitState.CONVERGED and m.log_likelihood_ == -480.0 and list(m.dur_mu) == HEALTHY[0] and list(m.dur_sigma) == HEALTHY[1]     # the second fit replaces the first
+    r = m.duration_box_refit_
+    assert r["first_fit_state"] == FitState.MAX_ITER_REACHED and r["first_fit_n_iter"] == 7 and r["first_fit_log_likelihood"] == -500.0
+    assert r["first_fit_duration_mu"] == DEGENERATE[0] and r["first_fit_duration_sigma"] == DEGENERATE[1]
+
+
+def test_a_fit_that_ends_inside_the_box_is_run_once_and_untouched():
+    m, impl = run_scripted([(*HEALTHY, FitState.MAX_ITER_REACHED, 7, -500.0)])
+    assert len(impl.calls) == 1 and impl.calls[0]["box_active"] is False and m.duration_box_refit_ is None
+    assert m.fit_state_ == FitState.MAX_ITER_REACHED and m.log_likelihood_ == -500.0 and list(m.dur_mu) == HEALTHY[0]
+
+
+@pytest.mark.parametrize("mu,sigma,triggers", [
+    ([2.0, 2.0], [3.0, 0.5], False),                                                  # sigma exactly at the wall: inside
+    ([2.0, 2.0], [3.0 + 1e-9, 0.5], True),
+    ([DUAL_DURATION_MU_MIN, 2.0], [0.5, 0.5], False),                                 # mu exactly at the lower wall: inside
+    ([DUAL_DURATION_MU_MIN - 1e-9, 2.0], [0.5, 0.5], True),
+    ([float(np.log(DUAL_DURATION_MU_MAX_DMAX_FACTOR * DMAX)), 2.0], [0.5, 0.5], False),
+    ([float(np.log(DUAL_DURATION_MU_MAX_DMAX_FACTOR * DMAX)) + 1e-9, 2.0], [0.5, 0.5], True),
+    ([np.nan, 2.0], [0.5, 0.5], True),
+    ([2.0, 2.0], [np.inf, 0.5], True),
+], ids=["sigma_wall", "sigma_above", "mu_low_wall", "mu_below", "mu_high_wall", "mu_above", "mu_nan", "sigma_inf"])
+def test_the_refit_trigger_is_exactly_the_outside_of_the_box(mu, sigma, triggers):
+    m, impl = run_scripted([(mu, sigma, FitState.CONVERGED, 5, -1.0), (*HEALTHY, FitState.CONVERGED, 5, -1.0)])
+    assert (len(impl.calls) == 2) is triggers
+
+
+def test_the_refit_can_be_switched_off():
+    class NoRefit(DualTimescaleHSSM):
+        DURATION_BOX_REFIT = False
+
+    impl = ScriptedImpl([(*DEGENERATE, FitState.MAX_ITER_REACHED, 7, -500.0), (*HEALTHY, FitState.CONVERGED, 7, -480.0)])
+    m = NoRefit(n_regimes=K, n_features=F, latent_dim=L, max_duration=DMAX, seed=11)
+    with patch.object(DualTimescaleHSSM, "_fit_impl", as_method(impl)):
+        m.fit(np.zeros((T, F)), n_iter=7)
+    assert len(impl.calls) == 1 and m.duration_box_refit_ is None and list(m.dur_mu) == DEGENERATE[0]
+    assert DualTimescaleHSSM.DURATION_BOX_REFIT is True                               # on by default
+
+
+def test_the_box_flag_is_switched_off_even_when_the_second_run_raises():
+    impl = ScriptedImpl([(*DEGENERATE, FitState.MAX_ITER_REACHED, 7, -500.0)])
+    calls = []
+
+    def raising(model, X, **kw):
+        calls.append(model._duration_box_active)
+        if len(calls) == 1:
+            return impl(model, X, **kw)
+        raise RuntimeError("second run failed")
+
+    m = DualTimescaleHSSM(n_regimes=K, n_features=F, latent_dim=L, max_duration=DMAX, seed=11)
+    with patch.object(DualTimescaleHSSM, "_fit_impl", as_method(raising)), pytest.raises(RuntimeError, match="second run failed"):
+        m.fit(np.zeros((T, F)), n_iter=7)
+    assert calls == [False, True] and m._duration_box_active is False
+
+
+def test_the_health_bookkeeping_describes_the_final_fit_only():
+    first_exc = {"iteration": 3, "stage": "E-step", "exception_type": "LinAlgError", "message": "x", "location": None}
+    m, _ = run_scripted([(*DEGENERATE, FitState.MAX_ITER_REACHED, 7, -500.0), (*HEALTHY, FitState.CONVERGED, 7, -480.0)], fallbacks=(3, 0), exceptions=((first_exc,), ()))
+    assert m.fit_cholesky_fallbacks_ == 0 and m.fit_degraded_ is False and m.fit_exceptions_ == []                # the first run's fallbacks and exception belong to the replaced fit
+    assert m.cholesky_fallback_count_ == 3                                                                          # the cumulative counter still counts both runs
+    m, _ = run_scripted([(*DEGENERATE, FitState.MAX_ITER_REACHED, 7, -500.0), (*HEALTHY, FitState.CONVERGED, 7, -480.0)], fallbacks=(0, 2), exceptions=((), (first_exc,)))
+    assert m.fit_cholesky_fallbacks_ == 2 and m.fit_degraded_ is True and m.fit_exceptions_ == [first_exc]
+    m, _ = run_scripted([(*HEALTHY, FitState.CONVERGED, 7, -480.0)], fallbacks=(4,))
+    assert m.fit_cholesky_fallbacks_ == 4 and m.fit_degraded_ is True                                               # without a refit: as before
+
+
+def test_the_next_fit_forgets_the_refit_record():
+    m, impl = run_scripted([(*DEGENERATE, FitState.MAX_ITER_REACHED, 7, -500.0), (*HEALTHY, FitState.CONVERGED, 7, -480.0)])
+    assert m.duration_box_refit_ is not None
+    impl2 = ScriptedImpl([(*HEALTHY, FitState.CONVERGED, 7, -470.0)])
+    with patch.object(DualTimescaleHSSM, "_fit_impl", as_method(impl2)):
+        m.fit(np.zeros((T, F)), n_iter=7)
+    assert m.duration_box_refit_ is None and len(impl2.calls) == 1
+
+
+def test_a_real_fit_with_the_box_active_ends_inside_the_box_and_records_where_it_acted():
+    X = generate_population_user(5101, 12, 0).X_train                                  # a record on which the unboxed first M-step leaves the box (seen in development)
+    m = DualTimescaleHSSM(n_regimes=2, n_features=4, latent_dim=2, max_duration=25, seed=5101)
+    m._duration_box_active = True
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        m._fit_impl(X, n_iter=3)
+    mu_lo, mu_hi, sig_hi = m._duration_box()
+    assert all(mu_lo <= mu <= mu_hi for mu in m.dur_mu) and all(0 < sg <= sig_hi for sg in m.dur_sigma)
+    assert m.duration_box_applied_ and m.duration_box_applied_[0]["iteration"] == 0
+    ref = DualTimescaleHSSM(n_regimes=2, n_features=4, latent_dim=2, max_duration=25, seed=5101)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        ref._fit_impl(X, n_iter=3)                                                    # the same fit with the box inactive (the default): the box is never entered
+    assert ref.duration_box_applied_ == [] and not np.array_equal(ref.dur_mu, m.dur_mu)
+
+
 # ------------------------------------------------------------------------------------------------ the at-bound flag
 def test_duration_at_bound_flags_a_final_value_within_the_tolerance_of_a_wall():
     m = fresh_model()
@@ -364,6 +513,7 @@ def test_the_dual_result_carries_the_new_fields(dual_result):
     md = r.convergence_metadata
     assert md["convergence_criterion"] == m.convergence_criterion_ and md["window_gain_at_cap"] == m.window_gain_at_cap_
     assert md["duration_box"]["n_applications"] == len(m.duration_box_applied_) == len(md["duration_box"]["applied"])
+    assert md["duration_box"]["refit"] is False and md["duration_box"]["first_fit"] is None and m.duration_box_refit_ is None      # a fit that ends inside the box is not refitted
     assert md["n_iter"] == m.n_iter_ == 3                                             # 3 iterations at the limit, no longer 0
     assert r.fit_state == FitState.MAX_ITER_REACHED and r.insights_withheld            # fewer than W + 1 iterations: never certified, still withheld (P0-07)
 
@@ -374,22 +524,33 @@ def test_the_baseline_result_has_an_empty_at_bound_field():
     assert r.duration_at_bound == {} and "duration_box" not in r.convergence_metadata
 
 
-def test_the_result_reports_a_box_application_and_an_at_bound_regime():
-    """Wiring check: a box application recorded by the model, and a duration at a wall, reach the result (the model's own behaviour is tested above)."""
+def test_the_result_reports_a_refit_a_box_application_and_an_at_bound_regime():
+    """Wiring check: a refit, a box application recorded by the model, and a duration at a wall reach the result (the model's own behaviour is tested above)."""
     X = generate_population_user(21, 3, 0).X_train
     real_fit_impl = DualTimescaleHSSM._fit_impl
 
     def fit_and_pretend(self, *a, **kw):
         out = real_fit_impl(self, *a, **kw)
-        self.duration_box_applied_.append({"iteration": 1, "regime": 0, "from_mu": 2.0, "from_sigma": 0.5, "to_mu": 5.0, "to_sigma": 1.0})
+        self.dur_sigma = np.array(self.dur_sigma, dtype=float)
         self.dur_mu = np.array(self.dur_mu, dtype=float)
-        self.dur_mu[0] = float(np.log(DUAL_DURATION_MU_MAX_DMAX_FACTOR * 25))        # the upper limit of mu for Dmax = 25
+        if not self._duration_box_active:
+            self.dur_sigma[0] = 9.0                                                    # a degenerate first fit: triggers the refit
+        else:
+            self.duration_box_applied_.append({"iteration": 1, "regime": 0, "from_mu": 2.0, "from_sigma": 0.5, "to_mu": 5.0, "to_sigma": 1.0})
+            self.dur_mu[0] = float(np.log(DUAL_DURATION_MU_MAX_DMAX_FACTOR * 25))      # the upper limit of mu for Dmax = 25
         return out
 
     with patch.object(DualTimescaleHSSM, "_fit_impl", fit_and_pretend):
         r = fit_hssm(X, candidate_ks=(2,), n_initializations=2, max_iter=3, allow_fast_test_fit=True, config=ColdStartConfig(min_present_sessions=10),
                      model_type="dual_timescale", max_duration=25, random_seed=7)
     box = r.convergence_metadata["duration_box"]
-    assert box["n_applications"] == len(r.model.duration_box_applied_) >= 1 and box["applied"] == r.model.duration_box_applied_     # the fit may itself have applied the box (it does, at iteration 0, on this record)
+    assert box["refit"] is True and box["first_fit"]["first_fit_duration_sigma"][0] == 9.0 and box["first_fit"] == r.model.duration_box_refit_
+    assert box["n_applications"] == len(r.model.duration_box_applied_) >= 1 and box["applied"] == r.model.duration_box_applied_
     assert {"iteration": 1, "regime": 0, "from_mu": 2.0, "from_sigma": 0.5, "to_mu": 5.0, "to_sigma": 1.0} in box["applied"]        # the pretended application arrived
     assert r.duration_at_bound[0] is True and set(r.duration_at_bound) == {0, 1}
+
+
+def test_the_baseline_result_has_an_empty_at_bound_field():
+    X = generate_population_user(21, 3, 0).X_train
+    r = fit_hssm(X, candidate_ks=(2,), n_initializations=2, max_iter=15, allow_fast_test_fit=True, config=ColdStartConfig(min_present_sessions=10))
+    assert r.duration_at_bound == {} and "duration_box" not in r.convergence_metadata

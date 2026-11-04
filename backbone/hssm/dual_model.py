@@ -19,6 +19,7 @@ Theoretical Architecture:
 
 from __future__ import annotations
 
+import copy
 import os
 import traceback
 import warnings
@@ -128,6 +129,10 @@ class DualTimescaleHSSM:
       - Generalized EM monotonicity backtracking
     """
 
+    # WP6 item 3 part 2 (tests/PREDECLARED_CRITERIA_WP6.md 5.6): a fit that ENDS with a duration outside the duration box is run once more from
+    # the same starting point with the box active. A fit that ends inside the box is never touched. Switch for tests and studies.
+    DURATION_BOX_REFIT: bool = True
+
     def __init__(
         self,
         n_regimes: int = 3,
@@ -190,6 +195,10 @@ class DualTimescaleHSSM:
         self.window_gain_at_cap_: Optional[float] = None
         # one dict (iteration, regime, from_mu, from_sigma) per box redo of the duration update in the last fit()
         self.duration_box_applied_: list[dict[str, Any]] = []
+        # None, or a dict describing the FIRST fit of a refit (its final state, iterations, log-likelihood and durations) when the first fit ended with a
+        # duration outside the box and the fit was run again with the box active (5.6)
+        self.duration_box_refit_: Optional[dict[str, Any]] = None
+        self._duration_box_active: bool = False        # True only inside the second run of a refit
         self._em_iteration: int = 0
 
         # --- Numerical-health bookkeeping (ledger A7 and N21). Bookkeeping only: nothing
@@ -700,11 +709,13 @@ class DualTimescaleHSSM:
                 mu_hat, sigma_hat = res.x[0], float(np.exp(res.x[1]))
                 if not (res.success and np.isfinite(mu_hat) and np.isfinite(sigma_hat) and sigma_hat > 0):
                     raise RuntimeError("optimizer did not converge to a valid result")
-                # WP6 item 3 part 2 (D1, event-triggered): a result the old rule would accept but that lies outside the duration box is
-                # redone from the previous iterate inside the box. A result inside the box is accepted exactly as before.
-                mu_lo, mu_hi, sig_hi = self._duration_box()
-                if mu_hat < mu_lo or mu_hat > mu_hi or sigma_hat > sig_hi:
-                    mu_hat, sigma_hat = self._boxed_duration_update(k, N_j_d, d_grid, neg_expected_ll)
+                # WP6 item 3 part 2 (D1): inside the second run of a refit (5.6), a result the old rule would accept but that lies outside the
+                # duration box is redone from the previous iterate inside the box. A result inside the box is accepted exactly as before.
+                # Outside a refit this block is never entered.
+                if self._duration_box_active:
+                    mu_lo, mu_hi, sig_hi = self._duration_box()
+                    if mu_hat < mu_lo or mu_hat > mu_hi or sigma_hat > sig_hi:
+                        mu_hat, sigma_hat = self._boxed_duration_update(k, N_j_d, d_grid, neg_expected_ll)
                 new_mu[k], new_sigma[k] = mu_hat, sigma_hat
                 self.duration_optimizer_success_[k] = True
             except Exception:
@@ -879,11 +890,38 @@ class DualTimescaleHSSM:
         self.fit_exceptions_ = []
         self.fit_cholesky_fallbacks_ = 0
         self.fit_degraded_ = False
+        self.duration_box_refit_ = None
+        self._duration_box_active = False
+        rng_state = copy.deepcopy(self.rng.bit_generator.state)
         try:
-            return self._fit_impl(X, n_iter=n_iter, tol=tol, verbose=verbose, timestamps=timestamps)
+            out = self._fit_impl(X, n_iter=n_iter, tol=tol, verbose=verbose, timestamps=timestamps)
+            if self.DURATION_BOX_REFIT and self._durations_outside_box():
+                # WP6 item 3 part 2 (5.6): the fit ended with a degenerate duration. Run it once more from the same starting point with the box active;
+                # the second fit replaces the first, whose end state is recorded. The health bookkeeping below describes the final fit only.
+                self.duration_box_refit_ = {
+                    "first_fit_state": self.fit_state_, "first_fit_n_iter": int(self.n_iter_), "first_fit_log_likelihood": self.log_likelihood_,
+                    "first_fit_duration_mu": [float(x) for x in self.dur_mu], "first_fit_duration_sigma": [float(x) for x in self.dur_sigma],
+                }
+                n_fallbacks_before = self.cholesky_fallback_count_
+                self.fit_exceptions_ = []
+                self.rng.bit_generator.state = rng_state
+                self._duration_box_active = True
+                try:
+                    out = self._fit_impl(X, n_iter=n_iter, tol=tol, verbose=verbose, timestamps=timestamps)
+                finally:
+                    self._duration_box_active = False
+            return out
         finally:
             self.fit_cholesky_fallbacks_ = self.cholesky_fallback_count_ - n_fallbacks_before
             self.fit_degraded_ = self.fit_cholesky_fallbacks_ > 0
+
+    def _durations_outside_box(self) -> bool:
+        """True when some regime's final duration parameters lie outside the duration box or are not finite (the degeneracy that triggers the refit)."""
+        if self.dur_mu is None or self.dur_sigma is None:
+            return False
+        mu_lo, mu_hi, sig_hi = self._duration_box()
+        mu, sg = np.asarray(self.dur_mu, dtype=float), np.asarray(self.dur_sigma, dtype=float)
+        return bool(np.any(~np.isfinite(mu) | ~np.isfinite(sg) | (mu < mu_lo) | (mu > mu_hi) | (sg > sig_hi)))
 
     def _record_fit_exception(self, exc: BaseException, stage: str, iteration: int) -> None:
         """Remember an exception that fit() caught, instead of discarding it (ledger N21).
