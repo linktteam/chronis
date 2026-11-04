@@ -554,3 +554,14 @@ def test_the_baseline_result_has_an_empty_at_bound_field():
     X = generate_population_user(21, 3, 0).X_train
     r = fit_hssm(X, candidate_ks=(2,), n_initializations=2, max_iter=15, allow_fast_test_fit=True, config=ColdStartConfig(min_present_sessions=10))
     assert r.duration_at_bound == {} and "duration_box" not in r.convergence_metadata
+
+
+def test_the_contract_and_schema_document_the_dual_rules():
+    import pathlib
+    root = pathlib.Path(__file__).resolve().parents[1]
+    contract = (root / "docs" / "INTEGRATION_CONTRACT_HSSM.md").read_text()
+    schema = (root / "docs" / "backbone" / "HSSM_RESULT_SCHEMA.md").read_text()
+    for needle in ("DUAL_CAP_CERT_GAIN_PER_ROW", "window_gain_at_cap", "DURATION_BOX_REFIT", "duration_at_bound", "about 90% of dual fits"):
+        assert needle in contract, needle
+    for needle in ("`duration_at_bound: dict = {}`", "convergence_criterion", "window_gain_at_cap", "duration_box"):
+        assert needle in schema, needle

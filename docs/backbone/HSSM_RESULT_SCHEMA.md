@@ -84,6 +84,8 @@ RULE: the insights are withheld when `fit_degraded` is `True`, or `fit_state == 
 
 New fields (WP6 item 3, all defaulted, additive): `fit_collapsed: bool = False`, `collapse_report: dict = {}` (`effective_days`, `min_effective_days`, `n_variance_at_floor`, `min_effective_days_threshold`, `collapsed`), `restart_summary: dict = {}` (multi-start metadata, see `docs/INTEGRATION_CONTRACT_HSSM.md` section 8), `guard_repairs: int = 0`. The baseline `convergence_metadata` also gains the keys `restart_summary`, `collapse`, `guard_repairs`.
 
+New dual-model fields (WP6 item 3 part 2, additive): `duration_at_bound: dict = {}` (regime index to bool: the final duration parameters are within 1e-3 of a wall of the duration box; empty for the baseline). The dual `convergence_metadata` gains `convergence_criterion` (`"abs_tol"`, `"window_gain_at_cap"` or `None`), `window_gain_at_cap` (nats gained over the last 10 iterations when the iteration limit was reached, else `None`) and `duration_box` (`n_applications`, `applied`, `refit`, `first_fit`); `n_iter` is the number of iterations run also at the limit. A dual fit certified at the limit has `fit_state == CONVERGED`; one that is not stays `MAX_ITER_REACHED` and is withheld (see the rule above).
+
 Internal log: one WARNING per result on logger `backbone.hssm.fitting` (at build time, or the first time a result that became withheld later is read through `publishable_outputs()` or an alias). Nothing user-facing is added to the result.
 
 Entry points:
