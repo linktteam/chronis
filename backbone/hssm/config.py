@@ -42,3 +42,14 @@ BASELINE_VARIANCE_FLOOR = 1e-3
 # adjusted Rand index at least RESTART_SAME_ARI count as the same solution.
 RESTART_EPSILON_NATS = 1.0
 RESTART_SAME_ARI = 0.9
+
+# WP6 item 3, part 2 (tests/PREDECLARED_CRITERIA_WP6.md section 5; numbers from tests/WP6_CONVERGENCE_DIAGNOSIS.md and the Q4b continuation study).
+# Dual stopping rule at the iteration limit: if the log-likelihood gained less than this many nats PER ROW over the last DUAL_CAP_WINDOW iterations, the fit
+# that reached the limit is certified CONVERGED (criterion "window_gain_at_cap"); otherwise it stays MAX_ITER_REACHED and is withheld.
+DUAL_CAP_WINDOW = 10
+DUAL_CAP_CERT_GAIN_PER_ROW = 2.0e-4
+# Dual duration box (applied only when the Nelder-Mead update leaves it): mu in [DUAL_DURATION_MU_MIN, ln(DUAL_DURATION_MU_MAX_DMAX_FACTOR * Dmax)], sigma <= DUAL_DURATION_SIGMA_MAX.
+DUAL_DURATION_MU_MIN = -5.0
+DUAL_DURATION_MU_MAX_DMAX_FACTOR = 10.0
+DUAL_DURATION_SIGMA_MAX = 3.0
+DUAL_DURATION_BOUND_TOL = 1e-3          # absolute tolerance (in mu and in sigma) for the `duration_at_bound_` flag (clarification 5.5b)

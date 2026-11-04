@@ -31,6 +31,14 @@ from scipy.optimize import minimize
 from scipy.special import logsumexp
 from scipy.stats import lognorm
 
+from backbone.hssm.config import (
+    DUAL_CAP_CERT_GAIN_PER_ROW,
+    DUAL_CAP_WINDOW,
+    DUAL_DURATION_BOUND_TOL,
+    DUAL_DURATION_MU_MAX_DMAX_FACTOR,
+    DUAL_DURATION_MU_MIN,
+    DUAL_DURATION_SIGMA_MAX,
+)
 from backbone.hssm.model import (
     FitState,
     HSSMError,
@@ -175,6 +183,15 @@ class DualTimescaleHSSM:
         self.duration_optimizer_success_: dict[int, bool] = {}
         self.transition_fallback_rows_: set[int] = set()
 
+        # --- WP6 item 3 part 2 bookkeeping (reported, never fed back into inference; not part of the parameter snapshot) ---
+        # how the last fit() ended: "abs_tol" (|ll - prev| < tol), "window_gain_at_cap" (iteration limit reached with a small trailing gain), or None
+        self.convergence_criterion_: Optional[str] = None
+        # log-likelihood gained over the last DUAL_CAP_WINDOW iterations when the iteration limit was reached (None otherwise)
+        self.window_gain_at_cap_: Optional[float] = None
+        # one dict (iteration, regime, from_mu, from_sigma) per box redo of the duration update in the last fit()
+        self.duration_box_applied_: list[dict[str, Any]] = []
+        self._em_iteration: int = 0
+
         # --- Numerical-health bookkeeping (ledger A7 and N21). Bookkeeping only: nothing
         # here feeds back into inference, and none of it is part of the parameter snapshot,
         # so a rollback never erases the record that something went wrong. ---
@@ -232,6 +249,23 @@ class DualTimescaleHSSM:
     @property
     def converged_(self) -> bool:
         return self.fit_state_ == FitState.CONVERGED
+
+    @property
+    def duration_at_bound_(self) -> dict[int, bool]:
+        """Per regime: True when the final duration parameters lie within `DUAL_DURATION_BOUND_TOL` of a wall of the duration box
+        (mu at its lower or upper limit, sigma at its upper limit). Empty before the first fit."""
+        if self.dur_mu is None or self.dur_sigma is None:
+            return {}
+        mu_lo, mu_hi, sig_hi = self._duration_box()
+        tol = DUAL_DURATION_BOUND_TOL
+        return {
+            int(k): bool(abs(float(self.dur_mu[k]) - mu_lo) <= tol or abs(float(self.dur_mu[k]) - mu_hi) <= tol or abs(float(self.dur_sigma[k]) - sig_hi) <= tol)
+            for k in range(self.K)
+        }
+
+    def _duration_box(self) -> tuple[float, float, float]:
+        """(mu lower limit, mu upper limit, sigma upper limit) of the duration box (WP6 item 3 part 2)."""
+        return (DUAL_DURATION_MU_MIN, float(np.log(DUAL_DURATION_MU_MAX_DMAX_FACTOR * self.Dmax)), DUAL_DURATION_SIGMA_MAX)
 
     def _require_fitted(self) -> None:
         if not self._is_fitted:
@@ -666,6 +700,11 @@ class DualTimescaleHSSM:
                 mu_hat, sigma_hat = res.x[0], float(np.exp(res.x[1]))
                 if not (res.success and np.isfinite(mu_hat) and np.isfinite(sigma_hat) and sigma_hat > 0):
                     raise RuntimeError("optimizer did not converge to a valid result")
+                # WP6 item 3 part 2 (D1, event-triggered): a result the old rule would accept but that lies outside the duration box is
+                # redone from the previous iterate inside the box. A result inside the box is accepted exactly as before.
+                mu_lo, mu_hi, sig_hi = self._duration_box()
+                if mu_hat < mu_lo or mu_hat > mu_hi or sigma_hat > sig_hi:
+                    mu_hat, sigma_hat = self._boxed_duration_update(k, N_j_d, d_grid, neg_expected_ll)
                 new_mu[k], new_sigma[k] = mu_hat, sigma_hat
                 self.duration_optimizer_success_[k] = True
             except Exception:
@@ -677,6 +716,34 @@ class DualTimescaleHSSM:
 
         self.pi = np.clip(bwd.regime_posterior_smoothed[0], 1e-4, None)
         self.pi = self.pi / self.pi.sum()
+
+    def _boxed_duration_update(self, k: int, N_j_d: np.ndarray, d_grid: np.ndarray, neg_expected_ll) -> tuple[float, float]:
+        """Redo the duration update of regime k inside the duration box (WP6 item 3 part 2, D1).
+
+        Starts at the previous iterate clipped into the box and minimises the same objective with a penalty (1e12) outside the box. Returns
+        (mu, sigma) inside the box; raises RuntimeError when the optimiser does not succeed, so the caller takes the old fallback path
+        (previous iterate kept, `duration_optimizer_success_[k] = False`). Records the application in `duration_box_applied_`.
+        """
+        mu_lo, mu_hi, sig_hi = self._duration_box()
+        from_mu, from_sigma = float(self.dur_mu[k]), float(self.dur_sigma[k])
+
+        def boxed(params):
+            mu, log_sigma = params
+            if not np.isfinite(mu) or not np.isfinite(log_sigma) or mu < mu_lo or mu > mu_hi or np.exp(log_sigma) > sig_hi:
+                return 1e12
+            return neg_expected_ll(params)
+
+        x0 = [float(np.clip(from_mu, mu_lo, mu_hi)), float(np.log(np.clip(max(from_sigma, 1e-3), 1e-3, sig_hi)))]
+        res = minimize(boxed, x0, method="Nelder-Mead")
+        mu_hat, sigma_hat = float(res.x[0]), float(np.exp(res.x[1]))
+        if not (res.success and np.isfinite(mu_hat) and np.isfinite(sigma_hat) and sigma_hat > 0
+                and mu_lo <= mu_hat <= mu_hi and sigma_hat <= sig_hi):
+            raise RuntimeError("boxed duration update did not converge to a valid result")
+        self.duration_box_applied_.append({
+            "iteration": int(self._em_iteration), "regime": int(k), "from_mu": from_mu, "from_sigma": from_sigma,
+            "to_mu": mu_hat, "to_sigma": sigma_hat,
+        })
+        return mu_hat, sigma_hat
 
     def _dynamics_sufficient_stats(self, smoother: SmootherResult):
         """Expected sufficient statistics for each regime's fast dynamics
@@ -846,6 +913,10 @@ class DualTimescaleHSSM:
         self.fit_state_ = FitState.RUNNING
         self.log_likelihood_history_ = []
         self._n_observations = len(X)
+        self.convergence_criterion_ = None
+        self.window_gain_at_cap_ = None
+        self.duration_box_applied_ = []
+        self._em_iteration = 0
 
         if timestamps is not None:
             self.duration_unit = "calendar_days"
@@ -858,6 +929,7 @@ class DualTimescaleHSSM:
         prev_ll = None
 
         for it in range(n_iter):
+            self._em_iteration = it
             # Save snapshot for monotonicity rollback. It covers every array the M-step
             # changes (pi, A_slow, dur_mu, dur_sigma, A_fast, b_fast, Q_fast, C_obs, d_obs,
             # R_obs) AND the duration/transition status fields, so a rollback restores both.
@@ -894,6 +966,7 @@ class DualTimescaleHSSM:
             # Convergence check
             if it > 0 and prev_ll is not None and abs(ll - prev_ll) < tol:
                 self.fit_state_ = FitState.CONVERGED
+                self.convergence_criterion_ = "abs_tol"
                 self.n_iter_ = it
                 break
 
@@ -929,7 +1002,18 @@ class DualTimescaleHSSM:
                 return self
 
         if self.fit_state_ == FitState.RUNNING:
-            self.fit_state_ = FitState.MAX_ITER_REACHED
+            # The iteration limit was reached without the |ll - prev| < tol rule firing (WP6 item 3 part 2, C2). The fit is certified CONVERGED
+            # only if the log-likelihood gained less than DUAL_CAP_CERT_GAIN_PER_ROW nats per row over the last DUAL_CAP_WINDOW iterations;
+            # otherwise it stays MAX_ITER_REACHED (and the result is withheld by the non-convergence rule).
+            hist = self.log_likelihood_history_
+            self.n_iter_ = len(hist)
+            if len(hist) > DUAL_CAP_WINDOW:
+                self.window_gain_at_cap_ = float(hist[-1] - hist[-1 - DUAL_CAP_WINDOW])
+                if self.window_gain_at_cap_ < DUAL_CAP_CERT_GAIN_PER_ROW * self._n_observations:
+                    self.fit_state_ = FitState.CONVERGED
+                    self.convergence_criterion_ = "window_gain_at_cap"
+            if self.fit_state_ == FitState.RUNNING:
+                self.fit_state_ = FitState.MAX_ITER_REACHED
 
         self._is_fitted = True
         return self

@@ -12,7 +12,7 @@ from scipy.stats import lognorm
 
 from backbone.hssm import fitting
 from backbone.hssm.config import COLLAPSE_MIN_EFFECTIVE_DAYS, RESTART_EPSILON_NATS, RESTART_SAME_ARI
-from backbone.hssm.fitting import HSSMResult, adjusted_rand_index, collapse_report, fit_dual_with_random_restarts, fit_with_random_restarts, select_k_by_bic
+from backbone.hssm.fitting import HSSMResult, _restart_summary, adjusted_rand_index, collapse_report, fit_dual_with_random_restarts, fit_with_random_restarts, select_k_by_bic
 from backbone.hssm.model import FitState, FittingConvergenceError, GaussianHSMM, _neg_duration_loglik
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -391,6 +391,32 @@ def test_restart_summary_values(monkeypatch):
     assert s["n_other_same_solution"] == 1 and s["gap_to_next_distinct"] == pytest.approx(3.0)
 
 
+def test_the_same_solution_threshold_separates_near_agreement_from_moderate_agreement():
+    base = np.repeat([0, 1, 2], 20)
+    near = base.copy()
+    near[0] = 1                                              # one row moved: ARI about 0.93, the same solution
+    mid = base.copy()
+    mid[:8] = 1                                              # a clearly different labelling that still agrees more than chance (0 < ARI < 0.9)
+    assert adjusted_rand_index(base, near) >= RESTART_SAME_ARI > adjusted_rand_index(base, mid) > 0.0
+    sel = {"ll": -100.0, "collapsed": False, "labels": base}
+    recs = [sel, {"ll": -101.0, "collapsed": False, "labels": near}, {"ll": -105.0, "collapsed": False, "labels": mid}]
+    s = _restart_summary([{"fit_state": FitState.CONVERGED}] * 3, recs, sel)
+    assert s["n_other_same_solution"] == 1 and s["same_solution_ari"] == RESTART_SAME_ARI == 0.9
+    assert s["gap_to_next_distinct"] == pytest.approx(5.0)   # the moderate-agreement restart is distinct, the near one is not
+
+
+def test_a_regime_with_exactly_the_threshold_of_effective_days_is_not_collapsed():
+    def report_for(post):
+        stub = SimpleNamespace(_forward_backward=lambda grid: (post, None, None), log_likelihood_=-1.0, var=np.ones((2, 2)))
+        return collapse_report(stub, np.zeros((len(post), 2)))[0]
+
+    exact = np.full((8, 2), 0.5)                             # both regimes hold exactly 4.0 effective days
+    assert exact.sum(axis=0).tolist() == [4.0, 4.0] and COLLAPSE_MIN_EFFECTIVE_DAYS == 4.0
+    assert report_for(exact)["collapsed"] is False
+    below = np.stack([np.r_[np.full(7, 0.5), 0.4999], np.full(8, 0.5)], axis=1)       # 3.9999 and 4.0
+    assert report_for(below)["collapsed"] is True and report_for(below)["min_effective_days"] == pytest.approx(3.9999)
+
+
 def test_adjusted_rand_index_known_values_and_against_scikit_learn():
     assert adjusted_rand_index([0, 0, 1, 1], [1, 1, 0, 0]) == pytest.approx(1.0)
     assert adjusted_rand_index([0, 0, 1, 1], [0, 1, 0, 1]) == pytest.approx(-0.5)
@@ -505,3 +531,5 @@ def test_the_contract_and_schema_document_the_new_rules():
         for needle in ("fit_state_not_converged", "collapsed_regime", "guard_repairs", "restart_summary", "fit_collapsed"):
             assert needle in text, needle
     assert "COLLAPSE_MIN_EFFECTIVE_DAYS" in contract and "4 effective days" in contract
+    for field_decl in ("`fit_collapsed: bool = False`", "`collapse_report: dict = {}`", "`restart_summary: dict = {}`", "`guard_repairs: int = 0`"):
+        assert field_decl in schema, field_decl

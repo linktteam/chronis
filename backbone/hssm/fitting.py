@@ -680,6 +680,8 @@ class HSSMResult:
     collapse_report: dict = field(default_factory=dict)  # effective days per regime, minimum, variances at the floor, threshold, collapsed
     restart_summary: dict = field(default_factory=dict)  # multi-start stability metadata (ledger N1); descriptive, never changes publishing
     guard_repairs: int = 0                               # guard events of the selected fit that the duration repair resolved
+    # WP6 item 3 part 2 (dual model): per regime, True when the final duration parameters lie at a wall of the duration box. Empty for the baseline.
+    duration_at_bound: dict = field(default_factory=dict)
 
     # --- Neural residual ---
     neural_residual_enabled: bool = False
@@ -1069,7 +1071,12 @@ def fit_hssm(
                 "converged": best_dual_model.converged_,
                 "n_iter": best_dual_model.n_iter_,
                 "run_log": full_run_log,
+                "convergence_criterion": best_dual_model.convergence_criterion_,
+                "window_gain_at_cap": best_dual_model.window_gain_at_cap_,
+                "duration_box": {"n_applications": len(best_dual_model.duration_box_applied_),
+                                 "applied": [dict(a) for a in best_dual_model.duration_box_applied_]},
             },
+            duration_at_bound=dict(best_dual_model.duration_at_bound_),
             used_shared_prior=used_prior,
             shared_prior_n0=prior_n0,
         )
