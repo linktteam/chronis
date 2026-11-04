@@ -31,3 +31,14 @@ SHARED_PRIOR_DEFAULT_N0 = 5.0
 # 20,000 days is 54.8 years, longer than any person's record; a record in seconds exceeds it after 5.5 hours, in milliseconds after 20 seconds; at the
 # limit the baseline lattice is (20000, 4, 45) float64 = 28.8 MB per array, against the 6.43 GiB the owner's run tried to allocate for seconds.
 MAX_TIMESTAMP_SPAN_DAYS = 20000
+
+# WP6 item 3 (tests/PREDECLARED_CRITERIA_WP6.md section 4). Reasons are given there; the numbers come from tests/WP6_CONVERGENCE_DIAGNOSIS.md.
+# A fit is *collapsed* when some regime holds fewer than this many effective days (sum of its smoothed posterior over the rows). A variance at the
+# floor is reported but does not make a fit collapsed (floor-only converged fits are not worse than healthy ones in the diagnosis, section 3).
+COLLAPSE_MIN_EFFECTIVE_DAYS = 4.0
+# Variance floor of the baseline M-step (unchanged value; named here so that the collapse report and the M-step use the same number).
+BASELINE_VARIANCE_FLOOR = 1e-3
+# Multi-start summary (ledger N1): restarts within this many nats of the selected log-likelihood count as "within epsilon"; two labellings with an
+# adjusted Rand index at least RESTART_SAME_ARI count as the same solution.
+RESTART_EPSILON_NATS = 1.0
+RESTART_SAME_ARI = 0.9

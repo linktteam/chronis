@@ -34,7 +34,7 @@ from scipy.special import logsumexp
 from scipy.stats import lognorm
 from scipy.optimize import minimize
 
-from backbone.hssm.config import MAX_TIMESTAMP_SPAN_DAYS
+from backbone.hssm.config import BASELINE_VARIANCE_FLOOR, COLLAPSE_MIN_EFFECTIVE_DAYS, MAX_TIMESTAMP_SPAN_DAYS
 
 NEG_INF = -1e10
 
@@ -84,6 +84,18 @@ class InternalStateError(HSSMError, RuntimeError):
 
 
 
+def _neg_duration_loglik(params, w: np.ndarray, d_vals: np.ndarray) -> float:
+    """Negative expected complete-data log-likelihood of the duration block for one regime: -sum_d w[d] log pmf(d), pmf the truncated and
+    renormalised log-normal on 1..Dmax. The same function the M-step has always minimised (WP6 item 3 uses it to compare candidate updates)."""
+    m, s = params[0], max(params[1], 1e-3)
+    pdf = lognorm.pdf(d_vals, s=s, scale=np.exp(m))
+    pdf_sum = pdf.sum()
+    if pdf_sum <= 0.0 or np.isnan(pdf_sum):
+        return 1e10
+    pmf = np.clip(pdf / pdf_sum, 1e-300, None)
+    return -float(np.sum(w * np.log(pmf)))
+
+
 class GaussianHSMM:
     def __init__(
         self,
@@ -125,6 +137,13 @@ class GaussianHSMM:
         self.duration_optimizer_success_: dict[int, bool] = {}
         self.duration_fallback_used_: bool = False
         self.duration_optimizer_messages_: dict[int, str] = {}
+        # WP6 item 3. guard_repairs_: one dict per guard event that was repaired (iteration, drop). duration_safeguard_active_: True from the first
+        # repair on (the safeguarded duration update is then used for the rest of that fit). collapse_report_ / restart_summary_ are set by
+        # fit_with_random_restarts on the model it returns.
+        self.guard_repairs_: list[dict] = []
+        self.duration_safeguard_active_: bool = False
+        self.collapse_report_: dict | None = None
+        self.restart_summary_: dict | None = None
 
     @property
     def converged_(self) -> bool:
@@ -341,46 +360,71 @@ class GaussianHSMM:
             self.duration_unit = "sessions"
 
         self._init_params(X_fit)
+        self.guard_repairs_ = []
+        self.duration_safeguard_active_ = False
         prev_params = None
         prev_ll = None
+        prev_stats = None
+        finished = False
         for it in range(n_iter):
-            regime_post, entry_post, xi_counts = self._forward_backward(X_fit)
-            if self.log_likelihood_ is None:
-                raise InternalStateError("Log likelihood is None after forward-backward step")
-            ll = self.log_likelihood_
-            self.log_likelihood_history_.append(ll)
+            repaired = False
+            while True:
+                regime_post, entry_post, xi_counts = self._forward_backward(X_fit)
+                if self.log_likelihood_ is None:
+                    raise InternalStateError("Log likelihood is None after forward-backward step")
+                ll = self.log_likelihood_
+                self.log_likelihood_history_.append(ll)
 
-            if verbose and it % 10 == 0:
-                print(f"  iter {it}: log-likelihood = {ll:.3f}")
+                if verbose and it % 10 == 0:
+                    print(f"  iter {it}: log-likelihood = {ll:.3f}")
 
-            if np.isnan(ll) or np.isinf(ll):
-                self.fit_state_ = FitState.NUMERICAL_FAILURE
-                self.n_iter_ = it
-                self._is_fitted = True
-                return self
+                if np.isnan(ll) or np.isinf(ll):
+                    self.fit_state_ = FitState.NUMERICAL_FAILURE
+                    self.n_iter_ = it
+                    self._is_fitted = True
+                    return self
 
-            if it > 0 and abs(ll - prev_ll) < tol:
-                self.fit_state_ = FitState.CONVERGED
-                self.n_iter_ = it
+                if it > 0 and abs(ll - prev_ll) < tol:
+                    self.fit_state_ = FitState.CONVERGED
+                    self.n_iter_ = it
+                    finished = True
+                    break
+
+                if it > 0 and ll < prev_ll - 1e-4:
+                    if prev_params is not None:
+                        if not repaired and prev_stats is not None:
+                            # WP6 item 3 (candidate A1, tests/PREDECLARED_CRITERIA_WP6.md 4.1). The drop is the duration M-step (diagnosis, section 2):
+                            # redo the previous M-step with the safeguarded duration update, from the previous parameters and the previous E-step
+                            # statistics, and evaluate again at this iteration. The dropped value is not kept in the history.
+                            self.log_likelihood_history_.pop()
+                            self.guard_repairs_.append({"iteration": int(it), "drop": float(prev_ll - ll)})
+                            (self.pi, self.A, self.mu, self.var, self.dur_mu, self.dur_sigma, self.duration_optimizer_success_,
+                             self.duration_fallback_used_, self.duration_optimizer_messages_) = tuple(
+                                v.copy() if hasattr(v, "copy") else v for v in prev_params)
+                            self.duration_safeguard_active_ = True
+                            self._m_step(X_fit, *prev_stats)
+                            repaired = True
+                            continue
+                        print(
+                            f"[EM Monotonicity Guard] Violation at iteration {it}: "
+                            f"log-likelihood decreased from {prev_ll:.6f} to {ll:.6f} (delta = {ll - prev_ll:.6f}). "
+                            f"Rejecting update and restoring previous parameters."
+                        )
+                        self.pi, self.A, self.mu, self.var, self.dur_mu, self.dur_sigma, self.duration_optimizer_success_, self.duration_fallback_used_, self.duration_optimizer_messages_ = prev_params
+                        self.log_likelihood_ = prev_ll
+                        self.log_likelihood_history_.append(prev_ll)
+                        self.fit_state_ = FitState.REJECTED_UPDATE
+                        self.n_iter_ = it
+                        finished = True
+                        break
+                    else:
+                        self.fit_state_ = FitState.FAILED
+                        self.n_iter_ = it
+                        finished = True
+                        break
                 break
-
-            if it > 0 and ll < prev_ll - 1e-4:
-                if prev_params is not None:
-                    print(
-                        f"[EM Monotonicity Guard] Violation at iteration {it}: "
-                        f"log-likelihood decreased from {prev_ll:.6f} to {ll:.6f} (delta = {ll - prev_ll:.6f}). "
-                        f"Rejecting update and restoring previous parameters."
-                    )
-                    self.pi, self.A, self.mu, self.var, self.dur_mu, self.dur_sigma, self.duration_optimizer_success_, self.duration_fallback_used_, self.duration_optimizer_messages_ = prev_params
-                    self.log_likelihood_ = prev_ll
-                    self.log_likelihood_history_.append(prev_ll)
-                    self.fit_state_ = FitState.REJECTED_UPDATE
-                    self.n_iter_ = it
-                    break
-                else:
-                    self.fit_state_ = FitState.FAILED
-                    self.n_iter_ = it
-                    break
+            if finished:
+                break
 
             prev_params = (
                 self.pi.copy(),
@@ -394,6 +438,7 @@ class GaussianHSMM:
                 self.duration_optimizer_messages_.copy(),
             )
             prev_ll = ll
+            prev_stats = (regime_post, entry_post, xi_counts)
             self._m_step(X_fit, regime_post, entry_post, xi_counts)
         else:
             self.fit_state_ = FitState.MAX_ITER_REACHED
@@ -420,7 +465,7 @@ class GaussianHSMM:
                 mu_kf = (w_f * feat_col[obs_mask]).sum() / w_sum
                 var_kf = (w_f * (feat_col[obs_mask] - mu_kf) ** 2).sum() / w_sum
                 self.mu[k, f] = mu_kf
-                self.var[k, f] = max(var_kf, 1e-3)
+                self.var[k, f] = max(var_kf, BASELINE_VARIANCE_FLOOR)
 
         # Duration params — exact MLE of discrete-truncated log-normal PMF over d=1..Dmax.
         # Account for the truncation normalization penalty Z(mu, sigma) = sum_{d=1}^Dmax pdf(d).
@@ -436,6 +481,11 @@ class GaussianHSMM:
             init_mu = float((w * log_d).sum() / (w_sum + 1e-12))
             init_var = float((w * (log_d - init_mu) ** 2).sum() / (w_sum + 1e-12))
             init_sigma = float(np.sqrt(max(init_var, 1e-3)))
+
+            if self.duration_safeguard_active_:
+                # WP6 item 3: the update cannot lower this block's expected complete-data log-likelihood (candidate A1)
+                self._safeguarded_duration_update(k, w, d_vals, init_mu, init_sigma)
+                continue
 
             # Exact truncated objective: maximize sum(w * log(pmf))
             def neg_target_loglik(params: np.ndarray) -> float:
@@ -483,6 +533,46 @@ class GaussianHSMM:
         row_sums2 = new_A.sum(axis=1, keepdims=True)
         row_sums2[row_sums2 == 0] = 1.0
         self.A = new_A / row_sums2
+
+    def _safeguarded_duration_update(self, k: int, w: np.ndarray, d_vals: np.ndarray, init_mu: float, init_sigma: float) -> None:
+        """Duration update for regime k that cannot lower sum_d w[d] log pmf(d) below its value at the current (previous-iterate) parameters.
+
+        Candidates (tests/PREDECLARED_CRITERIA_WP6.md 4.1): (iii) L-BFGS-B from the previous iterate, maxiter 200, ftol 1e-12; (iv) the same from the
+        untruncated moment estimate; (ii) the old optimiser (moment start, maxiter 5, ftol 1e-2) or, when it reports no success, the moment estimate
+        itself; (i) the previous iterate. The one with the smallest negative log-likelihood wins; ties go to the earlier one in the order (iii), (iv),
+        (ii), (i). Because (i) is a candidate the block's Q never falls."""
+        def f(p):
+            return _neg_duration_loglik(p, w, d_vals)
+
+        bounds = [(None, None), (1e-3, 5.0)]
+        prev_mu, prev_sigma = float(self.dur_mu[k]), float(self.dur_sigma[k])
+        start_prev = [prev_mu, float(np.clip(prev_sigma, 1e-3, 5.0))]
+        cands: list[tuple[str, float, float, bool, str]] = []
+        r3 = minimize(f, start_prev, method="L-BFGS-B", bounds=bounds, options={"maxiter": 200, "ftol": 1e-12})
+        cands.append(("lbfgsb_from_previous", float(r3.x[0]), float(r3.x[1]), bool(r3.success), str(getattr(r3, "message", ""))))
+        r4 = minimize(f, [init_mu, init_sigma], method="L-BFGS-B", bounds=bounds, options={"maxiter": 200, "ftol": 1e-12})
+        cands.append(("lbfgsb_from_moment_estimate", float(r4.x[0]), float(r4.x[1]), bool(r4.success), str(getattr(r4, "message", ""))))
+        r2 = minimize(f, [init_mu, init_sigma], method="L-BFGS-B", bounds=bounds, options={"maxiter": 5, "ftol": 1e-2})
+        if r2.success:
+            cands.append(("old_optimizer", float(r2.x[0]), float(r2.x[1]), True, str(getattr(r2, "message", ""))))
+        else:
+            cands.append(("moment_fallback", init_mu, init_sigma, False, str(getattr(r2, "message", "Optimization failed to converge"))))
+        cands.append(("previous_iterate", prev_mu, prev_sigma, True, "kept the previous iterate"))
+        values = [f([c[1], c[2]]) for c in cands]
+        best = int(np.argmin(values))             # first minimum: the tie order above
+        name, mu_new, sigma_new, success, msg = cands[best]
+        self.dur_mu[k] = mu_new
+        self.dur_sigma[k] = sigma_new
+        self.duration_optimizer_success_[k] = bool(success)
+        self.duration_optimizer_messages_[k] = f"safeguarded update: {name}; {msg}"
+        if name == "moment_fallback":
+            self.duration_fallback_used_ = True
+            warnings.warn(
+                f"[GaussianHSMM] Duration optimization fallback used for regime {k}: no candidate beat the untruncated moment estimate "
+                f"(mu={init_mu:.4f}, sigma={init_sigma:.4f}).",
+                UserWarning,
+                stacklevel=2,
+            )
 
     # ---------- model identity (baseline) ----------
 

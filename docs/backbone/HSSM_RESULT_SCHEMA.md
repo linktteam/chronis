@@ -80,7 +80,9 @@ Computed read-only properties and one method, derived from the CURRENT field val
 | `insights_withheld` | `bool` property | `withheld_reason is not None`. |
 | `publishable_outputs()` | method | `None` when withheld, otherwise a dict with the four output arrays (`p_t_estimate`, `p_t_posterior`, `m_t_posterior_mean`, `m_t_uncertainty`). The only supported way for the product layer to read them. |
 
-RULE: the insights are withheld when `fit_degraded` is `True`, or `fit_state == FitState.NUMERICAL_FAILURE`, or `states_pass_fallbacks > 0`, or `late_fallbacks > 0`.
+RULE: the insights are withheld when `fit_degraded` is `True`, or `fit_state == FitState.NUMERICAL_FAILURE`, or `states_pass_fallbacks > 0`, or `late_fallbacks > 0`, or (WP6 item 3, P0-07) the fit did not converge, reason prefix `fit_state_not_converged` (`fit_state` is `MAX_ITER_REACHED`, `REJECTED_UPDATE`, `FAILED` or `RUNNING`; `MODEL_SELECTION_CONTESTED` is judged by `convergence_metadata["fit_state"]`, absent means converged), or the selected baseline fit is collapsed (`fit_collapsed`, reason prefix `collapsed_regime`: a regime under `COLLAPSE_MIN_EFFECTIVE_DAYS` = 4 effective days).
+
+New fields (WP6 item 3, all defaulted, additive): `fit_collapsed: bool = False`, `collapse_report: dict = {}` (`effective_days`, `min_effective_days`, `n_variance_at_floor`, `min_effective_days_threshold`, `collapsed`), `restart_summary: dict = {}` (multi-start metadata, see `docs/INTEGRATION_CONTRACT_HSSM.md` section 8), `guard_repairs: int = 0`. The baseline `convergence_metadata` also gains the keys `restart_summary`, `collapse`, `guard_repairs`.
 
 Internal log: one WARNING per result on logger `backbone.hssm.fitting` (at build time, or the first time a result that became withheld later is read through `publishable_outputs()` or an alias). Nothing user-facing is added to the result.
 

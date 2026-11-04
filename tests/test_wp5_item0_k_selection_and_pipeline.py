@@ -105,7 +105,7 @@ def _fit_two_ks(dual_data, k2, k3):
                         timestamps=dual_data.timestamps, model_type="dual_timescale", latent_dim=2)
 
 
-def test_fit_hssm_dual_k_selection_skips_a_degraded_k_with_lower_bic(dual_data):
+def test_fit_hssm_dual_k_selection_skips_a_degraded_k_with_lower_bic(fast_dual_counts_as_converged, dual_data):
     r = _fit_two_ks(dual_data, k2=(1e6, True), k3=(-300.0, False))      # K=2 would win by BIC, but it is degraded
     assert r.K == 3 and r.model.K == 3
     assert r.fit_degraded is False and not r.insights_withheld

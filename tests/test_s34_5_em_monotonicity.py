@@ -15,9 +15,21 @@ def test_s34_5_t1_monotonicity_violation_triggers_rejected_update_and_preserves_
     """
     rng = np.random.default_rng(42)
     X = rng.normal(size=(50, 3))
-    # Seed 0 with 3 regimes on this data triggers a monotonicity decrease during EM
+    # Seed 0 with 3 regimes on this data triggers a monotonicity decrease during EM. WP6 item 3: that decrease is the inexact duration M-step and the
+    # engine now repairs it (see tests/test_wp6_item3_baseline_and_withholding.py). To keep testing the REJECTION path, the safeguarded update is made
+    # to return a deliberately bad duration (mu shifted by 3), so that the repaired update still lowers the log-likelihood.
+    real_safeguard = GaussianHSMM._safeguarded_duration_update
+
+    def bad_safeguard(self, k, w, d_vals, init_mu, init_sigma):
+        real_safeguard(self, k, w, d_vals, init_mu, init_sigma)
+        self.dur_mu[k] += 3.0
+
     model = GaussianHSMM(n_regimes=3, n_features=3, seed=0)
-    model.fit(X, n_iter=50)
+    GaussianHSMM._safeguarded_duration_update = bad_safeguard
+    try:
+        model.fit(X, n_iter=50)
+    finally:
+        GaussianHSMM._safeguarded_duration_update = real_safeguard
 
     assert model.fit_state_ == FitState.REJECTED_UPDATE
     assert model.converged_ is False

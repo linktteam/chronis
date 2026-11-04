@@ -21,12 +21,16 @@ from backbone.hssm.model import GaussianHSMM, KimHSSMModel, FitState, NotFittedE
 from backbone.hssm.dual_model import DualTimescaleHSSM
 from backbone.hssm.label_switching import canonicalize_labels
 from backbone.hssm.config import DEFAULT_FIT_CONFIG, HSSMFitConfig, DEFAULT_COLD_START_CONFIG, ColdStartConfig, SHARED_PRIOR_DEFAULT_N0, MAX_TIMESTAMP_SPAN_DAYS
+from backbone.hssm.config import BASELINE_VARIANCE_FLOOR, COLLAPSE_MIN_EFFECTIVE_DAYS, RESTART_EPSILON_NATS, RESTART_SAME_ARI
 from backbone.hssm.gating import ColdStartError, count_present_sessions
 
 if TYPE_CHECKING:     # the prototype module is imported lazily, only when a shared prior is passed: the default path never loads it
     from backbone.hssm.shrinkage import SharedPrior
 
 logger = logging.getLogger(__name__)   # internal log only; the hold-back (WP3 item 2) never produces a user-facing notice
+
+# WP6 item 3 (P0-07): a fit in one of these states is never publishable. NUMERICAL_FAILURE has its own, older reason.
+_NOT_CONVERGED_STATES = (FitState.MAX_ITER_REACHED, FitState.REJECTED_UPDATE, FitState.FAILED, FitState.RUNNING)
 
 
 def validate_timestamps_days(timestamps, n_rows: int | None = None) -> np.ndarray:
@@ -63,6 +67,88 @@ def validate_timestamps_days(timestamps, n_rows: int | None = None) -> np.ndarra
     return ts
 
 
+def adjusted_rand_index(a, b) -> float:
+    """Adjusted Rand index of two labellings of the same rows (invariant to a relabelling of either). 1.0 for identical partitions."""
+    a = np.asarray(a)
+    b = np.asarray(b)
+    if a.shape != b.shape or a.ndim != 1:
+        raise ValueError("labellings must be 1-D arrays of the same length")
+    n = len(a)
+    if n < 2:
+        return 1.0
+    ia = np.unique(a, return_inverse=True)[1]
+    ib = np.unique(b, return_inverse=True)[1]
+    cont = np.zeros((ia.max() + 1, ib.max() + 1))
+    np.add.at(cont, (ia, ib), 1.0)
+
+    def comb2(x):
+        return x * (x - 1.0) / 2.0
+
+    sum_ij = comb2(cont).sum()
+    sum_a = comb2(cont.sum(axis=1)).sum()
+    sum_b = comb2(cont.sum(axis=0)).sum()
+    expected = sum_a * sum_b / comb2(float(n))
+    denom = (sum_a + sum_b) / 2.0 - expected
+    if denom == 0.0:
+        return 1.0
+    return float((sum_ij - expected) / denom)
+
+
+def _restart_summary(run_log: list[dict], converged_records: list[dict], selected: dict) -> dict:
+    """Multi-start stability metadata (ledger N1; tests/PREDECLARED_CRITERIA_WP6.md 4.4). Descriptive only; nothing here changes what is published.
+    The labelling comparison uses the other converged restarts that are NOT collapsed, and only when the selected restart is not collapsed itself."""
+    states = [str(r["fit_state"].value if hasattr(r["fit_state"], "value") else r["fit_state"]) for r in run_log]
+    sel_ll = selected["ll"]
+    within = sum(1 for r in converged_records if abs(r["ll"] - sel_ll) <= RESTART_EPSILON_NATS)       # the selected restart counts itself
+    aris: list[float] = []
+    others_ll: list[float] = []
+    if not selected["collapsed"]:
+        for r in converged_records:
+            if r is selected or r["collapsed"]:
+                continue
+            aris.append(adjusted_rand_index(selected["labels"], r["labels"]))
+            others_ll.append(r["ll"])
+    distinct = [ll for ari, ll in zip(aris, others_ll) if ari < RESTART_SAME_ARI]
+    return {
+        "n_restarts": len(run_log),
+        "n_converged": len(converged_records),
+        "n_rejected_update": states.count("REJECTED_UPDATE"),
+        "n_max_iter": states.count("MAX_ITER_REACHED"),
+        "n_collapsed_converged": sum(1 for r in converged_records if r["collapsed"]),
+        "n_within_epsilon": within,
+        "epsilon_nats": float(RESTART_EPSILON_NATS),
+        "ari_to_selected": aris,
+        "ari_median": float(np.median(aris)) if aris else None,
+        "ari_min": float(np.min(aris)) if aris else None,
+        "n_other_same_solution": sum(1 for a in aris if a >= RESTART_SAME_ARI),
+        "same_solution_ari": float(RESTART_SAME_ARI),
+        "gap_to_next_distinct": float(sel_ll - max(distinct)) if distinct else None,
+    }
+
+
+def collapse_report(model: GaussianHSMM, X: np.ndarray, timestamps: np.ndarray | None = None) -> tuple[dict, np.ndarray]:
+    """Collapse measures of a fitted baseline model at its CURRENT parameters (WP6 item 3, tests/PREDECLARED_CRITERIA_WP6.md 4.3) and the hard
+    regime labelling (argmax of the smoothed regime posterior on the grid the model was fitted on).
+
+    A model is `collapsed` iff some regime holds fewer than COLLAPSE_MIN_EFFECTIVE_DAYS effective days (sum over rows of its posterior). A variance at
+    the floor is counted in `n_variance_at_floor` but does not make the model collapsed. The model's `log_likelihood_` is not changed."""
+    grid = model._build_calendar_grid(X, timestamps) if timestamps is not None else X
+    keep = model.log_likelihood_
+    try:
+        post = model._forward_backward(grid)[0]
+    finally:
+        model.log_likelihood_ = keep
+    eff = post.sum(axis=0)
+    report = {
+        "effective_days": [float(x) for x in eff],
+        "min_effective_days": float(eff.min()),
+        "n_variance_at_floor": int((model.var <= BASELINE_VARIANCE_FLOOR * 1.001).sum()),
+        "min_effective_days_threshold": float(COLLAPSE_MIN_EFFECTIVE_DAYS),
+        "collapsed": bool(eff.min() < COLLAPSE_MIN_EFFECTIVE_DAYS),
+    }
+    return report, post.argmax(axis=1)
+
+
 def fit_with_random_restarts(
     X: np.ndarray,
     n_regimes: int,
@@ -91,6 +177,9 @@ def fit_with_random_restarts(
     run_log = []
     best_model: GaussianHSMM | None = None
     best_ll = -np.inf
+    best_healthy_model: GaussianHSMM | None = None     # WP6 item 3: best CONVERGED restart that is not collapsed
+    best_healthy_ll = -np.inf
+    converged_records: list[dict] = []
 
     for i in range(n_init):
         model = GaussianHSMM(n_regimes=n_regimes, n_features=n_features,
@@ -115,13 +204,27 @@ def fit_with_random_restarts(
             ll_val = model.log_likelihood_ if model.log_likelihood_ is not None else 0.0
             print(f"  init {i}: fit_state={model.fit_state_}, converged={model.converged_}, ll={ll_val:.3f}")
 
+        # WP6 item 3: collapse measures for every restart whose parameters are finite (the E-step is not meaningful after NUMERICAL_FAILURE / FAILED)
+        labels = None
+        if model.fit_state_ in (FitState.CONVERGED, FitState.REJECTED_UPDATE, FitState.MAX_ITER_REACHED):
+            rep, labels = collapse_report(model, X, timestamps)
+            run_log[-1].update({"collapsed": rep["collapsed"], "min_effective_days": rep["min_effective_days"],
+                                "n_variance_at_floor": rep["n_variance_at_floor"], "guard_repairs": len(model.guard_repairs_)})
+        else:
+            rep = None
+            run_log[-1].update({"collapsed": None, "min_effective_days": None, "n_variance_at_floor": None, "guard_repairs": len(model.guard_repairs_)})
+
         if model.fit_state_ == FitState.CONVERGED:
             ll = model.log_likelihood_
             if ll is None:
                 raise InternalStateError("Log likelihood is None for converged model")
+            converged_records.append({"init": i, "model": model, "ll": ll, "labels": labels, "collapsed": bool(rep["collapsed"]), "report": rep})
             if ll > best_ll:
                 best_ll = ll
                 best_model = model
+            if (not rep["collapsed"]) and ll > best_healthy_ll:
+                best_healthy_ll = ll
+                best_healthy_model = model
 
     if best_model is None:
         raise FittingConvergenceError(
@@ -129,6 +232,12 @@ def fit_with_random_restarts(
             f"not something to paper over — check data quality, n_iter, or "
             f"max_duration before proceeding."
         )
+    # WP6 item 3 (4.3): the best non-collapsed converged restart wins; if every converged restart is collapsed the best one is returned and flagged.
+    if best_healthy_model is not None:
+        best_model = best_healthy_model
+    selected_record = next(r for r in converged_records if r["model"] is best_model)
+    best_model.collapse_report_ = selected_record["report"]
+    best_model.restart_summary_ = _restart_summary(run_log, converged_records, selected_record)
 
     convergence_rate = sum(1.0 if r["converged"] else 0.0 for r in run_log) / len(run_log)
     selected_model = best_model
@@ -141,6 +250,10 @@ def fit_with_random_restarts(
         )
     best_model = cast(GaussianHSMM, canonicalized_model)
     best_model.convergence_rate_ = convergence_rate
+    order = getattr(best_model, "_label_order_applied", None)
+    if order is not None and best_model.collapse_report_ is not None:       # keep the per-regime list in the model's (canonical) regime order
+        eff = best_model.collapse_report_["effective_days"]
+        best_model.collapse_report_ = {**best_model.collapse_report_, "effective_days": [eff[int(i)] for i in order]}
 
     return best_model, run_log
 
@@ -173,8 +286,10 @@ def fit_dual_with_random_restarts(
     Selection (WP4 item 1b, ledger A7 / decision D3): a restart whose fit was degraded (`fit_degraded_`: the -1e6 Cholesky
     fallback fired) is never chosen while a healthy restart exists, because that fit's log-likelihood contains the magic
     constant and can look better than a healthy one. Among healthy restarts the highest log-likelihood wins, first maximum on
-    ties (unchanged). If every usable restart is degraded, the highest-log-likelihood one is returned and the HSSMResult built
-    from it is withheld.
+    ties (unchanged), except (WP6 item 3, P0-07) that a CONVERGED healthy restart is preferred to a non-converged one with a higher
+    log-likelihood (the non-converged one would be withheld). If no healthy restart converged, the best healthy one is returned and the
+    HSSMResult built from it is withheld by the non-convergence rule. If every usable restart is degraded, the highest-log-likelihood
+    one is returned and the HSSMResult built from it is withheld.
     """
     if timestamps is not None:
         validate_timestamps_days(timestamps, len(X))          # WP6 item 1: calendar DAYS, checked before anything is allocated
@@ -197,6 +312,8 @@ def fit_dual_with_random_restarts(
     best_model: DualTimescaleHSSM | None = None
     best_degraded_ll = -np.inf
     best_degraded_model: DualTimescaleHSSM | None = None
+    best_conv_ll = -np.inf                          # WP6 item 3 (4.5): the best non-degraded CONVERGED restart, preferred over a non-converged one
+    best_conv_model: DualTimescaleHSSM | None = None
 
     for i in range(n_init):
         seed = base_seed + i * 31
@@ -226,10 +343,16 @@ def fit_dual_with_random_restarts(
                     if ll > best_degraded_ll:
                         best_degraded_ll = ll
                         best_degraded_model = model
-                elif ll > best_ll:
-                    best_ll = ll
-                    best_model = model
+                else:
+                    if ll > best_ll:
+                        best_ll = ll
+                        best_model = model
+                    if model.fit_state_ == FitState.CONVERGED and ll > best_conv_ll:
+                        best_conv_ll = ll
+                        best_conv_model = model
 
+    if best_conv_model is not None:
+        best_model = best_conv_model         # WP6 item 3: a converged restart beats a higher-likelihood one that is not (that one would be withheld)
     if best_model is None:
         best_model = best_degraded_model     # only reached when no healthy restart exists; the result is then withheld
     if best_model is None:
@@ -282,6 +405,7 @@ def select_k_by_bic(
     WP5 item 0a: a candidate whose selected model is degraded (`fit_degraded_` true: the -1e6 Cholesky fallback fired) is not chosen
     while any healthy candidate exists; if every candidate is degraded the lowest BIC wins as before (and the result built from it is
     withheld by the hold-back rule). Models without the flag (the baseline GaussianHSMM) count as healthy, so for them nothing changes.
+    WP6 item 3 (4.9): a candidate whose selected model is COLLAPSED (a regime under 4 effective days, `collapse_report_`) is demoted the same way.
     """
     if not k_candidates or len(k_candidates) == 0:
         raise ValueError("k_candidates must be a non-empty sequence of positive integers")
@@ -322,7 +446,9 @@ def select_k_by_bic(
             if verbose:
                 print(f"  K={k}: BIC={bic:.2f}, conv_rate={model.convergence_rate_:.2f}")
 
-            if getattr(model, "fit_degraded_", False):
+            cr = getattr(model, "collapse_report_", None)
+            collapsed_k = bool(cr["collapsed"]) if isinstance(cr, dict) else False
+            if getattr(model, "fit_degraded_", False) or collapsed_k:        # WP6 item 3 (4.9): a collapsed candidate K is demoted like a degraded one
                 if bic < best_degraded_bic:
                     best_degraded_bic = bic
                     best_degraded_k = k
@@ -341,7 +467,7 @@ def select_k_by_bic(
             if verbose:
                 print(f"  K={k}: No random restart converged")
 
-    if best_model is None:                 # no healthy candidate: choose among the degraded ones by BIC (the result is then withheld)
+    if best_model is None:                 # no healthy candidate: choose among the degraded / collapsed ones by BIC (the result is then withheld)
         best_k, best_model = best_degraded_k, best_degraded_model
     if best_model is None:
         raise FittingConvergenceError("None of the candidate Ks converged across random restarts")
@@ -549,6 +675,12 @@ class HSSMResult:
     used_shared_prior: bool = False                      # the fit started at a shared prior and was regularised toward it
     shared_prior_n0: Optional[float] = None              # its strength, in pseudo-steps per regime; None when no prior was used
 
+    # --- WP6 item 3 (tests/PREDECLARED_CRITERIA_WP6.md 4.3 to 4.5). Safe defaults for every path that does not fill them. ---
+    fit_collapsed: bool = False                          # the selected baseline fit has a regime under COLLAPSE_MIN_EFFECTIVE_DAYS effective days
+    collapse_report: dict = field(default_factory=dict)  # effective days per regime, minimum, variances at the floor, threshold, collapsed
+    restart_summary: dict = field(default_factory=dict)  # multi-start stability metadata (ledger N1); descriptive, never changes publishing
+    guard_repairs: int = 0                               # guard events of the selected fit that the duration repair resolved
+
     # --- Neural residual ---
     neural_residual_enabled: bool = False
     residual_mode: str = "DISABLED"
@@ -584,8 +716,20 @@ class HSSMResult:
     def withheld_reason(self) -> Optional[str]:
         """None when insights may be used; otherwise every cause that applies. RULE: withheld when `fit_degraded` is True,
         or `fit_state == FitState.NUMERICAL_FAILURE`, or `states_pass_fallbacks > 0` (the fallback fired in the estimate_states pass
-        that produced the outputs), or `late_fallbacks > 0` (it fired on the model after this result was built)."""
+        that produced the outputs), or `late_fallbacks > 0` (it fired on the model after this result was built).
+        WP6 item 3 (P0-07): also withheld when the fit did not converge (`fit_state` is MAX_ITER_REACHED, REJECTED_UPDATE, FAILED or RUNNING),
+        and when the selected baseline fit is collapsed (`fit_collapsed`). MODEL_SELECTION_CONTESTED is judged by the fit's own state in
+        `convergence_metadata["fit_state"]` (a result without it counts as converged), so a contested result stays publishable."""
         reasons = []
+        underlying = self.fit_state
+        if underlying == FitState.MODEL_SELECTION_CONTESTED:       # a model-selection state of a fit that converged: read the fit's own state
+            underlying = (self.convergence_metadata or {}).get("fit_state", FitState.CONVERGED)
+        if underlying in _NOT_CONVERGED_STATES:
+            reasons.append(f"fit_state_not_converged: fit_state is {getattr(underlying, 'value', underlying)}, the EM fit did not reach convergence")
+        if self.fit_collapsed:
+            cr = self.collapse_report or {}
+            reasons.append(f"collapsed_regime: a regime holds {cr.get('min_effective_days', float('nan')):.2f} effective days "
+                           f"(minimum {cr.get('min_effective_days_threshold', COLLAPSE_MIN_EFFECTIVE_DAYS)})")
         if self.fit_degraded:
             reasons.append(f"fit_degraded: the -1e6 Cholesky fallback fired {self.fit_cholesky_fallbacks} time(s) during fit")
         if self.fit_state == FitState.NUMERICAL_FAILURE:
@@ -997,6 +1141,10 @@ def fit_hssm(
         "duration_optimizer_success": not getattr(model, "duration_fallback_used_", False),
         "duration_fallback_used": getattr(model, "duration_fallback_used_", False),
         "per_regime_optimizer_status": getattr(model, "duration_optimizer_success_", {}),
+        # WP6 item 3 (additive)
+        "restart_summary": getattr(model, "restart_summary_", None),
+        "collapse": getattr(model, "collapse_report_", None),
+        "guard_repairs": list(getattr(model, "guard_repairs_", [])),
     }
 
     # Collect warnings and limitations
@@ -1072,6 +1220,10 @@ def fit_hssm(
         selected_k=report["selected_k"],
         model_class=model.__class__.__name__,
         convergence_metadata=convergence_metadata,
+        fit_collapsed=bool((getattr(model, "collapse_report_", None) or {}).get("collapsed", False)),
+        collapse_report=dict(getattr(model, "collapse_report_", None) or {}),
+        restart_summary=dict(getattr(model, "restart_summary_", None) or {}),
+        guard_repairs=len(getattr(model, "guard_repairs_", [])),
     )
     _log_holdback(baseline_result, random_seed)
     return baseline_result

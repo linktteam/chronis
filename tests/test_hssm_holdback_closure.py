@@ -25,6 +25,7 @@ from backbone.hssm.fitting import HSSMResult, fit_dual_with_random_restarts, fit
 from backbone.hssm.gating import ColdStartError, fit_hssm_gated, fit_hssm_gated_result
 from backbone.hssm.model import FitState, FittingConvergenceError, HSSMError, InsightsWithheldError
 from data.synthetic_dual import generate_synthetic_dual_timescale_data
+from tests.utils.iteration_limit_as_converged import iteration_limit_counts_as_converged
 
 LOGGER_NAME = "backbone.hssm.fitting"
 FAST = dict(n_initializations=2, max_iter=4, random_seed=42, allow_fast_test_fit=True)
@@ -123,8 +124,9 @@ def baseline_X():
 
 @pytest.fixture(scope="module")
 def clean_dual(dual_data):
-    return fit_hssm(matrix=dual_data.X, candidate_ks=(2,), timestamps=dual_data.timestamps, user_id="u", dataset_hash="h",
-                    model_type="dual_timescale", latent_dim=2, **FAST)
+    with iteration_limit_counts_as_converged():          # WP6 item 3 (P0-07): see tests/utils/iteration_limit_as_converged.py
+        return fit_hssm(matrix=dual_data.X, candidate_ks=(2,), timestamps=dual_data.timestamps, user_id="u", dataset_hash="h",
+                        model_type="dual_timescale", latent_dim=2, **FAST)
 
 
 @pytest.fixture(scope="module")
@@ -173,7 +175,7 @@ def test_gated_signature_and_return_type_are_unchanged():
     assert extra == ["model_type", "latent_dim"]
 
 
-def test_gated_result_function_returns_a_withheld_result_without_raising_and_honours_model_type(dual_data):
+def test_gated_result_function_returns_a_withheld_result_without_raising_and_honours_model_type(fast_dual_counts_as_converged, dual_data):
     with patch.object(DualTimescaleHSSM, "_init_params", _break_one_regime(DualTimescaleHSSM._init_params)), \
          patch.object(fitting_module, "fit_hssm", _as_dual_with_few_iterations(fitting_module.fit_hssm)):
         degraded = fit_hssm_gated_result(dual_data.X, n_regimes=2, n_features=3, n_init=2, base_seed=42, timestamps=dual_data.timestamps,
@@ -218,7 +220,7 @@ def test_gated_result_function_still_gates_cold_start_and_feature_count(baseline
         fit_hssm_gated_result(baseline_X, n_regimes=2, n_features=0)
 
 
-def test_gated_call_raises_on_a_degraded_dual_fit_and_not_on_a_healthy_one(dual_data):
+def test_gated_call_raises_on_a_degraded_dual_fit_and_not_on_a_healthy_one(fast_dual_counts_as_converged, dual_data):
     kw = dict(n_regimes=2, n_features=3, n_init=2, base_seed=42, timestamps=dual_data.timestamps)
     with patch.object(fitting_module, "fit_hssm", _as_dual_with_few_iterations(fitting_module.fit_hssm)):
         model, run_log = fit_hssm_gated(dual_data.X, **kw)               # negative control: healthy dual fit passes through
@@ -275,7 +277,7 @@ def test_selection_when_every_restart_is_degraded_picks_the_highest_loglik_and_t
     assert r.insights_withheld and r.publishable_outputs() is None
 
 
-def test_selection_end_to_end_with_one_degraded_restart_gives_a_result_that_is_not_withheld(dual_data):
+def test_selection_end_to_end_with_one_degraded_restart_gives_a_result_that_is_not_withheld(fast_dual_counts_as_converged, dual_data):
     real_init, calls = DualTimescaleHSSM._init_params, {"n": 0}
 
     def break_only_the_first(self, X_):

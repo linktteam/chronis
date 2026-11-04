@@ -153,14 +153,22 @@ def test_the_cold_start_gate_is_not_changed_by_a_prior():
 def test_the_hold_back_applies_to_prior_fits():
     real_fit = ShrinkageDualHSSM.fit
 
-    def degraded_fit(self, *a, **k):
+    def as_converged_fit(self, *a, **k):
+        # WP6 item 3 (P0-07): these prior fits are deliberately short and end at the iteration limit or with a guard rejection, which now withholds
+        # them. This test is about the numerical-health rule, so the short fit is treated as converged here (the P0-07 rule has its own tests).
         out = real_fit(self, *a, **k)
+        self.fit_state_ = FitState.CONVERGED
+        return out
+
+    def degraded_fit(self, *a, **k):
+        out = as_converged_fit(self, *a, **k)
         self.fit_degraded_, self.fit_cholesky_fallbacks_ = True, 2
         return out
     with patch.object(ShrinkageDualHSSM, "fit", degraded_fit):
         r = prior_fit()
     assert r.fit_degraded and r.insights_withheld and r.publishable_outputs() is None and r.used_shared_prior
-    healthy = prior_fit()
+    with patch.object(ShrinkageDualHSSM, "fit", as_converged_fit):
+        healthy = prior_fit()
     assert not healthy.insights_withheld and healthy.publishable_outputs() is not None
 
 

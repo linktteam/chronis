@@ -22,6 +22,7 @@ from backbone.hssm.dual_model import DualTimescaleHSSM
 from backbone.hssm.fitting import HSSMResult, _dual_health_fields, fit_hssm
 from backbone.hssm.model import FitState, FittingConvergenceError
 from data.synthetic_dual import generate_synthetic_dual_timescale_data
+from tests.utils.iteration_limit_as_converged import iteration_limit_counts_as_converged
 
 LOGGER_NAME = "backbone.hssm.fitting"
 
@@ -67,7 +68,8 @@ def dual_data():
 
 @pytest.fixture(scope="module")
 def clean(dual_data):
-    return _fit_dual_capturing_log(dual_data)
+    with iteration_limit_counts_as_converged():          # WP6 item 3 (P0-07): see tests/utils/iteration_limit_as_converged.py
+        return _fit_dual_capturing_log(dual_data)
 
 
 @pytest.fixture(scope="module")
