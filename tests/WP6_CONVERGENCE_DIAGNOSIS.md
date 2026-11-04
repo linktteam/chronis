@@ -89,4 +89,13 @@ Baseline iterations to convergence: median 12 to 18, 90th percentile 22 to 25, m
 
 ## Addendum Q4b (dual continuation to 400 iterations), dated 2026-11-01
 
-To be filled with the numbers of `diag_dual_CONT.jsonl` before the dual stopping rule (candidate C2) is designed.
+Filled in on 2026-11-03/04 from `wp6_evidence/summary_dual_CONT.txt` (script `diag_dual_cont.py`; users 5101..5108, plain EM continued to 400 iterations, reference = the fit at iteration 200). READ from that file:
+
+* The log-likelihood keeps rising: median gain 1.51 nats from iteration 200 to 400 (maximum 6.94); median gain 1.63 from 100 to 200; the gain over 200 more iterations is 0.82 of the gain over the previous 100 to 200 (median ratio). The EM is sublinear, not converged at 200 iterations for any of the eight users.
+* The MAP regime labels barely move after iteration 200: median 0 of the rows changed, maximum 0.86% of the rows (user 5102).
+* The continuous state `m_t` moves more: largest change over the record 0.05 to 0.62 standard deviations of `m_t` (median 0.21), mean absolute change 0.012 to 0.18 sd (median 0.044).
+* The movement follows the remaining gain. With the trailing 10-iteration gain per row below 2.0e-4 at iteration 200 (users 5107 and 5108: 1.87e-4 and 1.11e-4 per row) the largest `m_t` change was 0.08 and 0.05 sd and the label change at most 0.62% of the rows; above 3.6e-4 per row it was 0.13 sd or more.
+* First iteration at which the trailing-10 gain falls below x nats (users 5101..5108): 0.50 nats at iterations 131, 69, 56, 51, 38, 246, 44, 50; 0.20 nats at 281, 147, 104, 88, 185, 361, 69, 70; 0.10 nats at none, 246, 187, 144, 384, none, 101, 97; 0.05 nats and below for most users not within 400 iterations.
+* Of the 20 NEW users (5101..5120) at 200 iterations, 2 (10%) have a trailing gain per row below 2.0e-4.
+
+Consequence used by item 3 part 2 (tests/PREDECLARED_CRITERIA_WP6.md section 5.1): certify at the iteration limit when the trailing 10-iteration gain per row is below 2.0e-4; about 90% of dual fits at the default 200 iterations stay `MAX_ITER_REACHED` and are withheld. A larger `max_iter` or an accelerated EM would raise the share (out of scope for WP6).
