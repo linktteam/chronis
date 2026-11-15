@@ -204,6 +204,9 @@ def fit_with_random_restarts(
             ll_val = model.log_likelihood_ if model.log_likelihood_ is not None else 0.0
             print(f"  init {i}: fit_state={model.fit_state_}, converged={model.converged_}, ll={ll_val:.3f}")
 
+        if model.fit_state_ == FitState.CONVERGED and model.log_likelihood_ is None:
+            raise InternalStateError("Log likelihood is None for converged model")          # checked before the collapse measures, which need a fitted model
+
         # WP6 item 3: collapse measures for every restart whose parameters are finite (the E-step is not meaningful after NUMERICAL_FAILURE / FAILED)
         labels = None
         if model.fit_state_ in (FitState.CONVERGED, FitState.REJECTED_UPDATE, FitState.MAX_ITER_REACHED):

@@ -70,8 +70,11 @@ def test_117_hssm_result_full_metadata_contract():
     assert isinstance(result.limitations, list)
 
 
-def test_118_dual_model_handoff_to_attractor_detector():
-    """Test 118: DualTimescaleHSSM result.m_t directly feeds into compute_attractor_stats."""
+def test_118_dual_model_handoff_to_attractor_detector(fast_dual_counts_as_converged):
+    """Test 118: DualTimescaleHSSM result.m_t directly feeds into compute_attractor_stats.
+
+    WP6 item 3 (P0-07): a fit that stops at its iteration limit is withheld, so this 15-iteration fit would have no m_t; the fixture treats the iteration
+    limit as converged here (the handoff, not the stopping rule, is under test)."""
     data = generate_synthetic_dual_timescale_data(n_regimes=2, n_features=4, latent_dim=2, n_segments=6, seed=42)
     
     result = fit_hssm(

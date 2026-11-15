@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from backbone.hssm.model import GaussianHSMM, NotFittedError
+from backbone.hssm.model import GaussianHSMM, InsightsWithheldError, NotFittedError
 from backbone.hssm.fitting import select_k_by_bic, fit_hssm
 from backbone.hssm.gating import count_present_sessions, fit_hssm_gated, ColdStartError
 from backbone.shared.feature_reduction import reduce_dimensionality
@@ -171,9 +171,14 @@ def test_s34_1_step3_cold_start_confidence_contract_tiers_fixed():
     X_tier_0_25[:, :3] = np.nan
     assert count_present_sessions(X_tier_0_25) == 0, "Tier < 0.5 must be excluded (0)"
 
-    # Verify fit_hssm_gated fits Tier 0.75 without raising ColdStartError
-    best_model, _ = fit_hssm_gated(X_tier_0_75, n_regimes=2, n_features=4, n_init=10)
+    # Verify fit_hssm_gated fits Tier 0.75 without raising ColdStartError. WP6 item 3: the matrix of ones above is constant, a degenerate input whose fit
+    # collapses a regime and is now withheld (InsightsWithheldError, not a cold-start error), so the fit check uses data with the same missingness pattern.
+    X_tier_0_75_fit = np.random.default_rng(35).normal(size=(T, 4))
+    X_tier_0_75_fit[:, 0] = np.nan
+    best_model, _ = fit_hssm_gated(X_tier_0_75_fit, n_regimes=2, n_features=4, n_init=10)
     assert best_model._is_fitted
+    with pytest.raises(InsightsWithheldError):
+        fit_hssm_gated(X_tier_0_75, n_regimes=2, n_features=4, n_init=10)
 
     # Verify fit_hssm_gated raises ColdStartError for Tier < 0.5
     with pytest.raises(ColdStartError):
