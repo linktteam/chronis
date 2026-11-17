@@ -1,9 +1,9 @@
-# RESUME (updated 2026-11-17 UTC, start-up)
-Branch/head: ledger/wp7r @ (see `git log -1`) ; backup remote: NONE YET (owner is creating a private repo; no push done) ; last export: none
-Done: Section 1 start-up locally: ledger/wp6 rebuilt WITH full history from wp6_full.bundle + the public upstream branch Final_3-4 (61 commits, fsck clean), head c95cb5d, tree identical to chronis_hssm_wp6_tree.tar.gz (RUN, diff -r); scripts/repro_collapse.py RUN: ten CONV, `CONVERGED False`, seconds-as-days raises ValueError.
-Next: Item 0 (contract doc additions, scripts/hssm_contract_smoke.py, 5 doc tests with mutants), then first export + restore test.
+# RESUME (updated 2026-11-17 11:11 UTC, after item 0)
+Branch/head: ledger/wp7r (see `git log -1`) ; backup remote: linktteam/chronis (PUBLIC, owner accepted public; attached with add_repo) BUT pushes are REFUSED (403: the Claude GitHub App is not installed on linktteam/chronis); remote `backup` is configured locally; last export: /mnt/user-data/outputs/wp7r_item0/ (patch, tree tarball, bundle, evidence zip, SHA256SUMS.txt; presented in chat)
+Done: Section 1 start-up (ledger/wp6 rebuilt WITH full history, 61 commits, tree identical to the supplied tarball, repro RUN as stated). Item 0: contract doc section 9 (FitState table, withheld semantics, metadata map, no per-session confidence, max_iter guidance RE-RUN from wp6_evidence, corrections list 9.6) + `PriorBuildError` row added to section 6; scripts/hssm_contract_smoke.py (11 s, 6 checks PASS); tests/test_wp7r_item0_contract_doc.py (5 tests, 11 s); mutants 24/24 killed (wp7r_evidence/mutation_item0.txt). Full suite NOT re-run for item 0 (no engine change; the WP6 full suite took 1610 s = 27 min contended).
+Next: Item 1 (does more EM make the dual model predict worse?): first write and commit tests/PREDECLARED_CRITERIA_WP7R.md, then scripts in integration_report/wp7r/scripts/. Push as soon as the owner installs the Claude GitHub App on linktteam/chronis: `git push backup ledger/wp6 ledger/wp7r`.
 Running jobs: none
-Seeds used so far: none in WP7-R (7601..7612 are development-only: the lost session looked at 7601..7606)
-Open owner questions: name of the private backup repo (owner said they will create it).
-Findings to re-verify: all of 02_WP7_SALVAGE_NOTES.md (REPORTED only).
-Restore recipe if the container is lost: clone the backup branch; else rebuild from wp6_full.bundle: `git init; echo bf031b00ec716a8c102bee7a938998b226f783c7 > .git/shallow; git fetch <bundle> ledger/wp6:refs/heads/ledger/wp6; rm .git/shallow; git fetch --refetch https://github.com/chronishq-ai/foundation-chronis Final_3-4:refs/upstream/Final_3-4`, then apply wp7r_itemN.patch.
+Seeds used so far: none in WP7-R (7601..7612 are development-only; the lost session looked at 7601..7606)
+Open owner questions: install the Claude GitHub App on linktteam/chronis so that pushes work.
+Findings to re-verify: all of 02_WP7_SALVAGE_NOTES.md (REPORTED only); Item 1 does this.
+Restore recipe if the container is lost: (1) clone linktteam/chronis branch ledger/wp7r if a push ever succeeded; (2) else rebuild from the owner-held files: `git init; echo bf031b00ec716a8c102bee7a938998b226f783c7 > .git/shallow; git fetch wp6_full.bundle ledger/wp6:refs/heads/ledger/wp6; rm .git/shallow; git fetch --refetch https://github.com/chronishq-ai/foundation-chronis Final_3-4:refs/upstream/Final_3-4`, then `git checkout -b ledger/wp7r ledger/wp6; git apply wp7r_itemN.patch`; (3) run `PYTHONPATH=. python3 scripts/hssm_contract_smoke.py`.

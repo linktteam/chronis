@@ -45,6 +45,7 @@ The product layer reads regime and latent outputs **only** through `result.publi
 | `InsightsWithheldError` | `fit_hssm_gated` only | The fit finished but its insights are withheld; carries `reason` and the full `result`. |
 | `InternalStateError` | engine | An internal invariant was violated (a log-likelihood that is `None` after a pass; canonicalisation postcondition). A bug, not an input problem. |
 | `NotFittedError` | models | A fitted-only attribute is read before `fit()`. |
+| `PriorBuildError` (an `HSSMError`) | `build_shared_prior` in `backbone.hssm.shrinkage` | The shared prior cannot be built: fewer usable users than the minimum, no healthy reference fit, or too few users survive the alignment rounds. NOT raised by `fit_hssm` (WP5; READ). |
 | `MemoryError` | numpy | Not covered by any guard other than the timestamp span; the lattice is `T_grid x K x Dmax` float64 per array. |
 
 Warnings: a `UserWarning` is emitted when the duration optimiser falls back; a `print` line when the baseline monotonicity guard fires (READ). Internal log: one WARNING per withheld result on logger `backbone.hssm.fitting`.
@@ -65,3 +66,69 @@ Warnings: a `UserWarning` is emitted when the duration optimiser falls back; a `
 * **Dual-timescale restart selection** prefers a converged restart to a non-converged one with a higher log-likelihood (the latter would be withheld).
 * **Dual stopping rule at the iteration limit (C2).** The existing rule (`|ll - previous| < tol`) is unchanged and ends the fit `CONVERGED` with `convergence_criterion_ = "abs_tol"`. If the iteration limit is reached instead, the fit is certified `CONVERGED` (`convergence_criterion_ = "window_gain_at_cap"`) only if the log-likelihood gained less than `DUAL_CAP_CERT_GAIN_PER_ROW` = 2.0e-4 nats per row over the last `DUAL_CAP_WINDOW` = 10 iterations (`window_gain_at_cap_` holds the gain, also when it does not certify); otherwise it stays `MAX_ITER_REACHED` and the result is withheld (P0-07). `n_iter_` is now the number of iterations run (it used to stay 0 at the limit). In the diagnosis 10% of dual fits at the default 200 iterations met the certification rule, so **about 90% of dual fits at the default `max_iter` are withheld**; a larger `max_iter` or an accelerated EM would raise that share (not done in WP6). Evidence: `tests/WP6_CONVERGENCE_DIAGNOSIS.md`, addendum Q4b: a certified fit kept its regime labels (at most 0.62% of rows changed) and its `m_t` within 0.1 sd over 200 further iterations.
 * **Dual duration box (D1).** The duration update could run to a flat, meaningless optimum (sigma at the optimiser wall 10, mu from -165 to 146, in 10 of 40 regimes of the diagnosis fits). `DualTimescaleHSSM.fit` now runs the fit as before and, only if it ENDS with a regime duration outside the box (mu in [-5, ln(10 Dmax)], sigma at most 3, finite), runs it once more from the same starting point with the box active (an update that leaves the box is redone from the previous iterate with a penalty outside the box). A fit that ends inside the box is never touched (bit-identical). The first fit is described in `model.duration_box_refit_` and `convergence_metadata["duration_box"]["first_fit"]`; `convergence_metadata["duration_box"]` also carries `refit`, `n_applications` and `applied` (iteration, regime, from and to values of every redo of the final fit); `result.duration_at_bound[k]` is True when regime k's final duration is within 1e-3 of a wall of the box (a regime whose best unconstrained pmf needs sigma above 3 loses a little log-likelihood; that is what the flag reports). A fit that is refitted costs about twice the time. Nothing is withheld because of the box. Switch: `DualTimescaleHSSM.DURATION_BOX_REFIT` (class attribute, default True).
+
+## 9. WP7-R item 0 additions (what the caller must do, per state)
+
+Labels as above. Everything in 9.1 to 9.3 is READ from `backbone/hssm/` at the WP6 head and is checked by `tests/test_wp7r_item0_contract_doc.py`; the numbers in 9.5 are RE-RUN from the WP6 evidence files and say so. Smoke run that prints every field named here on a planted case, through `fit_hssm`, in about 11 s: `PYTHONPATH=. python3 scripts/hssm_contract_smoke.py` (exit code 0 when all six contract checks hold).
+
+### 9.1 Every `FitState` value
+
+`result.fit_state` (and `convergence_metadata["fit_state"]`, which keeps the MODEL's own state) takes one of these values. The caller never needs to branch on the state to stay safe: `result.publishable_outputs()` already returns `None` whenever `insights_withheld` is True. The table says what each state means and what to do with it.
+
+| `FitState` | Meaning | Withheld? | What the caller does |
+|---|---|---|---|
+| `CONVERGED` | The EM stopped by its rule. Baseline: `|ll - previous| < tol`. Dual: `convergence_criterion_` is `"abs_tol"` (same rule) or `"window_gain_at_cap"` (certified at the iteration limit, section 8). | No, unless another hold-back rule fires (9.2) | Read outputs only through `publishable_outputs()`. |
+| `MAX_ITER_REACHED` | The iteration limit was reached and the fit is not certified. This is the normal outcome of the dual model at 200 iterations (9.5). | **Yes**, `fit_state_not_converged` | Show nothing. A larger `max_iter` may change the state (9.5); otherwise treat the record as "no model yet". |
+| `REJECTED_UPDATE` | The monotonicity guard stopped the fit (the log-likelihood fell by more than 1e-4 baseline, 1e-3 dual) and, for the baseline, the one repair of WP6 did not cure it. | **Yes**, `fit_state_not_converged` | Show nothing; the details are in `run_log` and `convergence_metadata["guard_repairs"]`. |
+| `NUMERICAL_FAILURE` | The Cholesky / covariance fallback fired in the fit, or the fit hit a numerical error. | **Yes**, `fit_state is NUMERICAL_FAILURE` (the dual also sets `fit_degraded`) | Show nothing; the data are probably degenerate (a constant feature, too few usable rows). |
+| `FAILED` | The fit raised or produced no model (the value a model has before `fit()` and after a failed one). | **Yes**, `fit_state_not_converged` | Show nothing. Most cases raise `FittingConvergenceError` instead of returning (section 6). |
+| `RUNNING` | Internal, transient state of a fit in progress. | Treated as not converged | `fit_hssm` does not return it; if a stored result carries it, treat the fit as failed. |
+| `MODEL_SELECTION_CONTESTED` | Baseline path only: the two lowest BICs over the candidate Ks differ by less than 2.0 (and a held-out score could be computed). It replaces `result.fit_state`; the model's own state stays in `convergence_metadata["fit_state"]`. | Judged by `convergence_metadata["fit_state"]` (a result without that key counts as converged) | Publishable if the model's own state is `CONVERGED`. Do not present the chosen K as settled; the BICs are in `convergence_metadata["bic_by_k"]`. |
+
+### 9.2 Withheld semantics (one place)
+
+`result.insights_withheld` is True exactly when `result.withheld_reason` is not `None`; the reason is a `"; "`-joined list of EVERY cause, each starting with one of these prefixes:
+
+| Prefix | Fires when | Applies to |
+|---|---|---|
+| `fit_state_not_converged` | the (underlying) fit state is `MAX_ITER_REACHED`, `REJECTED_UPDATE`, `FAILED` or `RUNNING` | both models |
+| `collapsed_regime` | a regime has fewer than `COLLAPSE_MIN_EFFECTIVE_DAYS` = 4 effective days (column sum of `p_t_posterior`) | **baseline only** at the WP6 head; the dual result never sets `fit_collapsed`, so a collapsed dual regime is NOT withheld by this rule (READ; WP7-R item 5 is where a dual rule is proposed) |
+| `fit_degraded` | the -1e6 Cholesky fallback fired during `fit()` | dual |
+| `fit_state is NUMERICAL_FAILURE` | the fit state is `NUMERICAL_FAILURE` | both |
+| `states_pass` | the fallback fired in the `estimate_states` pass of `fit_hssm` | dual |
+| `late_fallbacks` | the fallback fired on the model after the result was built | dual |
+
+A fit can be withheld although its state is `CONVERGED` (collapse, degradation, a fallback). A degenerate dual duration (`mu` or `sigma` far outside the sensible range) is NOT a withheld reason at the WP6 head: the duration box (section 8) refits it, and `duration_at_bound` reports a regime that ends at a wall of the box; that flag is metadata only. The raw arrays stay readable for diagnostics and must not reach a user; the aliases `p_t`, `regime_posterior` and `m_t` follow the same rule as `publishable_outputs()`.
+
+### 9.3 Metadata: where each field lives
+
+| Field | Where | Meaning |
+|---|---|---|
+| `convergence_criterion` | `convergence_metadata["convergence_criterion"]`, model attribute `convergence_criterion_` | dual only: `"abs_tol"`, `"window_gain_at_cap"` or `None` (not converged) |
+| `window_gain_at_cap` | `convergence_metadata["window_gain_at_cap"]` | dual only: the log-likelihood gain of the last 10 iterations that the certification rule looked at |
+| `duration_box` | `convergence_metadata["duration_box"]` | dual only: `refit`, `n_applications`, `applied`, `first_fit` (what the first, unconstrained fit looked like); switch `DualTimescaleHSSM.DURATION_BOX_REFIT` (class attribute, default True) |
+| `duration_at_bound` | `result.duration_at_bound` (dict regime to bool) | dual only; empty for the baseline; metadata, never withholds |
+| `collapse_report`, `fit_collapsed` | `result.collapse_report`, `convergence_metadata["collapse"]` | baseline only; the dual result carries an empty report |
+| `restart_summary` | `result.restart_summary`, `convergence_metadata["restart_summary"]` | baseline only; descriptive multi-start summary, never withholds |
+| `guard_repairs` | `result.guard_repairs`, `convergence_metadata["guard_repairs"]` | baseline only |
+| `bic_by_k`, `loglik_by_k`, `convergence_rate_by_k` | `convergence_metadata` | per candidate K |
+| `used_shared_prior`, `shared_prior_n0` | `result` | WP5 shrinkage; `None` / False without a prior |
+| `fit_degraded`, `fit_cholesky_fallbacks`, `fit_exceptions` | `result` | numerical-health record of the dual fit |
+
+### 9.4 What `HSSMResult` does not contain
+
+There is **no per-session confidence** in `HSSMResult` (RUN: the smoke script and a doc test check that no field named `confidence`, `session_confidence` or `p_t_confidence` exists). `p_t_posterior` is the filtered regime posterior of the fitted model (the model's own probability given its parameters, not a calibrated confidence). `m_t_uncertainty` (dual) is a posterior standard deviation that leaves out parameter uncertainty: in the WP6 evaluation the +-2 sd band covered 0.716 of the truth (nominal 0.9545) and the Hessian-term prototype reached 0.818 (`tests/WP6_N17_RESULT.md`), and it was not integrated. It must not be shown as a calibrated interval. `restart_summary`, `collapse_report` and `convergence_metadata` describe the FIT, not a session. Until N17 passes the product shows no numeric confidence derived from these fields.
+
+### 9.5 `max_iter` guidance (RE-RUN from `wp6_evidence/recovery_after.jsonl`, WP6 item 4; K = 3, F = 7, T = 75 baseline designs B-F2 and B-F3, 24 datasets x 10 restarts each, after the WP6 repair)
+
+* **Baseline:** all 480 restarts converged. Iterations to convergence: median 16 (B-F2) and 15 (B-F3), 90th percentile 26 and 27, maximum 93 and 63; 98.75% and 99.58% of the restarts converged within 60 iterations and all within 100. The integration run used `max_iter = 60`: enough for about 99% of restarts on data like this; a restart that needs more ends `MAX_ITER_REACHED` and is skipped. The default 200 is the safe choice (a converged restart stops early, so the higher limit costs nothing). Wall time of a 10-restart baseline fit at T = 75: 3.6 to 5.9 s mean in the WP6 runs (contended cores).
+* **Dual-timescale:** 200 iterations are NOT enough. In the WP6 item 4 population run 22 of 24 dual fits ended `MAX_ITER_REACHED` at `max_iter = 200` and were withheld (2 certified by the window rule); mean wall time 76 s per fit on contended cores (range 37 to 170 s). In the WP6 diagnosis every one of the 44 dual fits (30, 100 and 200 iterations) ended `MAX_ITER_REACHED` and was still rising (`tests/WP6_CONVERGENCE_DIAGNOSIS.md`, point 7). How many iterations a dual fit needs is not established by this contract (WP7-R item 1 looks at it from the prediction side); the dual-timescale model remains a research engine, not a pilot engine.
+
+### 9.6 Corrections to earlier statements (READ against the WP6 evidence; nothing in the code changes)
+
+* Section 8 (dual stopping rule) says a certified fit kept its labels and its `m_t` within 0.1 sd over 200 further iterations (diagnosis addendum Q4b). The WP6 item 4 check on the two fits that WP6 actually certified (seeds 7204, 7221; `wp6_evidence/summary_item4_recovery.txt`, line S5) measured a largest `m_t` change of 0.29 sd and 2.24 sd, with 0 and 0.39% of the labels changed, and the continuation fits themselves were still `MAX_ITER_REACHED` at 200 and at 400 further iterations. So `window_gain_at_cap` is a weaker certificate than `abs_tol`: it supports the labels, not a tight `m_t`.
+* Section 7, item 4 quotes N17 coverage 0.68 (WP5 study); the WP6 evaluation measured 0.716 (E0) at +-2 against 0.9545 nominal. Both say the same thing: the reported `m_t_uncertainty` is too narrow.
+
+### 9.7 Integrator checklist
+
+1. z-score each person's matrix yourself; 2. pass calendar DAYS as `timestamps` (span at most `MAX_TIMESTAMP_SPAN_DAYS` = 20,000; seconds raise `ValueError`); 3. at least 30 present sessions or `ColdStartError`; 4. at least 10 restarts, default `max_iter` 200 (60 is enough for about 99% of baseline restarts); 5. read regime and latent outputs only through `publishable_outputs()`; 6. show no numeric confidence; 7. treat the dual model as research only.

@@ -1,0 +1,25 @@
+D01 doc: drop the NUMERICAL_FAILURE row: KILLED
+D02 doc: drop the RUNNING row: KILLED
+D03 doc: drop the MODEL_SELECTION_CONTESTED row: KILLED
+D04 doc: empty the 'what the caller does' cell of FAILED: KILLED
+D05 doc: drop PriorBuildError row: KILLED
+D06 doc: drop InternalStateError row: KILLED
+D07 doc: drop the late_fallbacks prefix: KILLED
+D08 doc: claim the dual collapse IS withheld: KILLED
+D09 doc: claim degenerate duration IS a withheld reason: KILLED
+D10 doc: drop 'no per-session confidence': KILLED
+D11 doc: wrong span limit in the checklist: KILLED
+D12 doc: wrong default max_iter in the checklist: KILLED
+D13 doc: forget window_gain_at_cap in the metadata table: KILLED
+D14 doc: wrong COLLAPSE threshold: KILLED
+C01 code: new FitState value: KILLED
+C02 code: rename the late_fallbacks reason prefix: KILLED
+C03 code: add a not-converged state to the tuple: KILLED
+C04 code: add a confidence field to HSSMResult: KILLED
+C05 code: timestamp span limit: KILLED
+C06 code: default max_iter: KILLED
+C07 code: a new exception class under the library base is not documented: KILLED
+C08 code: dual result now sets duration box keys differently: KILLED
+C09 code: collapse threshold: KILLED
+C10 code: cold-start threshold: KILLED
+24/24 killed
