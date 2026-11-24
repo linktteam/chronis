@@ -50,9 +50,10 @@ def params_equal(a, b):
 
 # ------------------------------------------------------------------ signatures and defaults
 def test_new_arguments_are_last_optional_and_default_to_none():
-    for fn in (fit_hssm, fit_dual_with_random_restarts):
+    for fn, tail in ((fit_hssm, ["shared_prior", "shared_prior_n0", "max_duration_retry"]), (fit_dual_with_random_restarts, ["shared_prior", "shared_prior_n0"])):
         params = list(inspect.signature(fn).parameters.values())
-        assert [p.name for p in params[-2:]] == ["shared_prior", "shared_prior_n0"] and all(p.default is None for p in params[-2:]), fn.__name__
+        # WP7-R item 5 added `max_duration_retry` after the WP5 arguments of fit_hssm (new arguments stay last, optional, default None): the WP5 pair keeps its place
+        assert [p.name for p in params[-len(tail):]] == tail and all(p.default is None for p in params[-len(tail):]), fn.__name__
     assert [p for p in inspect.signature(fit_hssm).parameters][:6] == ["matrix", "candidate_ks", "n_initializations", "max_iter", "random_seed", "allow_fast_test_fit"]
     assert SHARED_PRIOR_DEFAULT_N0 == 5.0                                                              # the value frozen by the development study (tests/N0_FROZEN_WP5.md)
     assert "Frozen n0 = 5" in (ROOT / "tests" / "N0_FROZEN_WP5.md").read_text()
