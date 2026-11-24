@@ -1,0 +1,26 @@
+development seeds 6001..6012: shrinkage minus single Gaussian (WP5 statistic)
+  n0 1  len  30:  +0.540 se  0.310 mean-3se  -0.391 favour  8/12 dropped 0
+  n0 1  len  60:  +0.682 se  0.175 mean-3se  +0.156 favour 11/12 dropped 0
+  n0 1  len 120:  +1.317 se  0.155 mean-3se  +0.851 favour 12/12 dropped 0
+  n0 1  score (min over lengths of mean - 3 se) = -0.3909
+  n0 2  len  30:  +0.928 se  0.279 mean-3se  +0.092 favour 11/12 dropped 0
+  n0 2  len  60:  +0.931 se  0.149 mean-3se  +0.483 favour 12/12 dropped 0
+  n0 2  len 120:  +1.343 se  0.141 mean-3se  +0.920 favour 12/12 dropped 0
+  n0 2  score (min over lengths of mean - 3 se) = +0.0920
+  n0 5  len  30:  +1.018 se  0.304 mean-3se  +0.106 favour 11/12 dropped 0
+  n0 5  len  60:  +1.131 se  0.187 mean-3se  +0.569 favour 12/12 dropped 0
+  n0 5  len 120:  +1.329 se  0.148 mean-3se  +0.885 favour 12/12 dropped 0
+  n0 5  score (min over lengths of mean - 3 se) = +0.1063
+  stored WP5 n0 = 5 lower bounds (reference only): 30: +0.1046  60: +0.5686  120: +0.8857
+  reproduced     n0 = 5 lower bounds (this head):  30: +0.1063  60: +0.5686  120: +0.8854
+   arm    1 len  30: n 12  errors 0  non-finite 0  withheld (class-path proxy: not CONVERGED or degraded) 12/12
+   arm    1 len  60: n 12  errors 0  non-finite 0  withheld (class-path proxy: not CONVERGED or degraded) 12/12
+   arm    1 len 120: n 12  errors 0  non-finite 0  withheld (class-path proxy: not CONVERGED or degraded) 12/12
+   arm    2 len  30: n 12  errors 0  non-finite 0  withheld (class-path proxy: not CONVERGED or degraded) 12/12
+   arm    2 len  60: n 12  errors 0  non-finite 0  withheld (class-path proxy: not CONVERGED or degraded) 12/12
+   arm    2 len 120: n 12  errors 0  non-finite 0  withheld (class-path proxy: not CONVERGED or degraded) 12/12
+   arm    5 len  30: n 12  errors 0  non-finite 0  withheld (class-path proxy: not CONVERGED or degraded) 12/12
+   arm    5 len  60: n 12  errors 0  non-finite 0  withheld (class-path proxy: not CONVERGED or degraded) 12/12
+   arm    5 len 120: n 12  errors 0  non-finite 0  withheld (class-path proxy: not CONVERGED or degraded) 12/12
+
+RULE 6b.1: neither n0 = 1 nor n0 = 2 has a STRICTLY larger score than n0 = 5. Nothing further is run; the default n0 = 5 stands.
