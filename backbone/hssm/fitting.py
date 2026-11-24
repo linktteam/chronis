@@ -149,6 +149,32 @@ def collapse_report(model: GaussianHSMM, X: np.ndarray, timestamps: np.ndarray |
     return report, post.argmax(axis=1)
 
 
+def dual_collapse_report(p_t_posterior: np.ndarray) -> dict:
+    """WP7-R item 5 (R1): collapse measure of a fitted DUAL model, from the filtered regime posterior the result carries (the dual model returns no smoothed
+    regime posterior). Effective days of regime k = the sum over rows of `p_t_posterior[:, k]`; the fit is `collapsed` iff the minimum over regimes is strictly
+    below COLLAPSE_MIN_EFFECTIVE_DAYS (the baseline rule and constant; see tests/PREDECLARED_CRITERIA_WP7R.md section 5)."""
+    eff = np.asarray(p_t_posterior, dtype=float).sum(axis=0)
+    return {
+        "effective_days": [float(x) for x in eff],
+        "min_effective_days": float(eff.min()),
+        "min_effective_days_threshold": float(COLLAPSE_MIN_EFFECTIVE_DAYS),
+        "collapsed": bool(eff.min() < COLLAPSE_MIN_EFFECTIVE_DAYS),
+        "source": "filtered_regime_posterior",
+    }
+
+
+def dual_duration_degeneracy(model: DualTimescaleHSSM) -> dict:
+    """WP7-R item 5 (R2): which regimes of a fitted DUAL model have a degenerate duration. A regime is degenerate iff its duration parameters are at a wall
+    of the duration box (`duration_at_bound_`: mu or sigma within DUAL_DURATION_BOUND_TOL of a wall, which includes sigma at its wall) or its duration pmf is
+    still RISING at the last lattice step (`pmf[Dmax] > pmf[Dmax - 1]`: the mode lies beyond Dmax, so the fitted duration law is truncated)."""
+    at_bound = model.duration_at_bound_
+    logpmf = model._duration_logpmf()
+    rising = [bool(model.Dmax >= 2 and logpmf[k, -1] > logpmf[k, -2]) for k in range(model.K)]
+    regimes = [k for k in range(model.K) if bool(at_bound.get(k, False)) or rising[k]]
+    return {"at_bound": {int(k): bool(at_bound.get(k, False)) for k in range(model.K)}, "pmf_rising_at_end": rising,
+            "degenerate_regimes": regimes, "degenerate": bool(regimes), "Dmax": int(model.Dmax)}
+
+
 def fit_with_random_restarts(
     X: np.ndarray,
     n_regimes: int,
@@ -685,6 +711,10 @@ class HSSMResult:
     guard_repairs: int = 0                               # guard events of the selected fit that the duration repair resolved
     # WP6 item 3 part 2 (dual model): per regime, True when the final duration parameters lie at a wall of the duration box. Empty for the baseline.
     duration_at_bound: dict = field(default_factory=dict)
+    # WP7-R item 5 (dual model only; safe defaults elsewhere): R2, a regime with a degenerate duration (at a wall of the box, or the duration pmf still rising at
+    # the last lattice step). `fit_collapsed` / `collapse_report` above are filled for the dual model too (R1, from the filtered regime posterior).
+    fit_duration_degenerate: bool = False
+    duration_degenerate_report: dict = field(default_factory=dict)
 
     # --- Neural residual ---
     neural_residual_enabled: bool = False
@@ -735,6 +765,10 @@ class HSSMResult:
             cr = self.collapse_report or {}
             reasons.append(f"collapsed_regime: a regime holds {cr.get('min_effective_days', float('nan')):.2f} effective days "
                            f"(minimum {cr.get('min_effective_days_threshold', COLLAPSE_MIN_EFFECTIVE_DAYS)})")
+        if self.fit_duration_degenerate:
+            dr = self.duration_degenerate_report or {}
+            reasons.append(f"degenerate_duration: regime(s) {dr.get('degenerate_regimes', [])} have duration parameters at a wall of the box or a duration pmf "
+                           f"still rising at the last lattice step (Dmax {dr.get('Dmax')})")
         if self.fit_degraded:
             reasons.append(f"fit_degraded: the -1e6 Cholesky fallback fired {self.fit_cholesky_fallbacks} time(s) during fit")
         if self.fit_state == FitState.NUMERICAL_FAILURE:
@@ -898,6 +932,7 @@ def fit_hssm(
     latent_dim: int = 2,
     shared_prior: "SharedPrior | None" = None,
     shared_prior_n0: float | None = None,
+    max_duration_retry: int | None = None,
 ) -> HSSMResult:
     """Canonical fitting entrypoint for backbone.hssm per directive.
 
@@ -921,6 +956,10 @@ def fit_hssm(
                   `SHARED_PRIOR_DEFAULT_N0`). K is the prior's K (it must be among `candidate_ks`; no BIC search over K), one fit is run (see
                   `fit_dual_with_random_restarts`), and the result records `used_shared_prior=True` and `shared_prior_n0`. The cold-start gate below
                   is NOT changed by a prior (a caller may pass a `config` with a lower minimum). Default `None`: identical to before.
+      max_duration_retry (WP7-R item 5, R3, off by default): only for the dual-timescale model without a shared prior; an integer larger than `max_duration`.
+                  If the selected dual fit ends with a degenerate duration (`degenerate_duration`, see `dual_duration_degeneracy`), the selected K is
+                  fitted once more with `max_duration = max_duration_retry` (same seeds, restarts and iterations) and the retry replaces the first fit
+                  only if it is NOT degenerate. `convergence_metadata["dmax_retry"]` records what happened. Default `None`: identical to before.
     """
     if isinstance(matrix, pd.DataFrame):
         X = matrix.to_numpy(dtype=float)
@@ -934,6 +973,14 @@ def fit_hssm(
 
     if timestamps is not None:
         validate_timestamps_days(timestamps, X.shape[0])      # WP6 item 1: first, so a malformed argument raises ValueError even for a too-short record
+
+    if max_duration_retry is not None:
+        if model_type not in ("dual_timescale", "dual", "full_hssm"):
+            raise ValueError("max_duration_retry applies to the dual-timescale model only (model_type='dual_timescale')")
+        if shared_prior is not None:
+            raise ValueError("max_duration_retry cannot be combined with a shared prior")
+        if isinstance(max_duration_retry, bool) or not isinstance(max_duration_retry, (int, np.integer)) or int(max_duration_retry) <= int(max_duration):
+            raise ValueError(f"max_duration_retry must be an integer larger than max_duration ({max_duration}); got {max_duration_retry!r}")
 
     if shared_prior is None:
         if shared_prior_n0 is not None:
@@ -1006,6 +1053,25 @@ def fit_hssm(
         if best_dual_model is None or best_k is None:
             raise FittingConvergenceError("None of the candidate Ks converged across random restarts")
 
+        # WP7-R item 5 (R3, opt-in): a degenerate selected fit is fitted once more with a larger Dmax; the retry replaces it only if it is not degenerate.
+        dmax_retry_info = None
+        if max_duration_retry is not None and dual_duration_degeneracy(best_dual_model)["degenerate"]:
+            retry_model, retry_log = fit_dual_with_random_restarts(
+                X, n_regimes=best_k, n_features=n_features, latent_dim=latent_dim, n_init=n_initializations, n_iter=max_iter,
+                max_duration=int(max_duration_retry), base_seed=(random_seed or 0) + best_k * 1000, bypass_init_gate=allow_fast_test_fit, timestamps=timestamps,
+            )
+            adopted = not dual_duration_degeneracy(retry_model)["degenerate"]
+            dmax_retry_info = {"requested": int(max_duration_retry), "from": int(max_duration), "first_fit_degenerate": True, "adopted": bool(adopted),
+                               "retry_fit_state": str(getattr(retry_model.fit_state_, "value", retry_model.fit_state_))}
+            full_run_log.extend(dict(e, dmax_retry=True) for e in retry_log)
+            if adopted:
+                n_obs = n_present_sessions if n_present_sessions > 0 else X.shape[0]
+                best_dual_model = retry_model
+                best_bic = float(retry_model.bic(n_observations=n_obs))
+                bic_by_k[best_k] = best_bic
+                loglik_by_k[best_k] = float(retry_model.log_likelihood_ or 0.0)
+                conv_by_k[best_k] = retry_model.convergence_rate_
+
         # WP4 item 1c: the estimate_states pass runs AFTER fit() finished and BEFORE the result exists, so a firing inside it is not
         # in `fit_degraded`. Count it, and remember the model's cumulative count so that later firings (late_fallbacks) are visible too.
         count_before_states = int(best_dual_model.cholesky_fallback_count_)
@@ -1014,6 +1080,8 @@ def fit_hssm(
         aic_val = float(best_dual_model.aic())
         used_prior = bool(getattr(best_dual_model, "used_shared_prior", False))
         prior_n0 = float(best_dual_model.n0) if used_prior else None
+        dual_collapse = dual_collapse_report(p_t_post)                  # WP7-R item 5, R1
+        dual_degeneracy = dual_duration_degeneracy(best_dual_model)     # WP7-R item 5, R2
 
         dual_result = HSSMResult(
             model=best_dual_model,
@@ -1084,7 +1152,13 @@ def fit_hssm(
             duration_at_bound=dict(best_dual_model.duration_at_bound_),
             used_shared_prior=used_prior,
             shared_prior_n0=prior_n0,
+            fit_collapsed=bool(dual_collapse.get("collapsed", False)),
+            collapse_report=dual_collapse,
+            fit_duration_degenerate=bool(dual_degeneracy["degenerate"]),
+            duration_degenerate_report=dual_degeneracy,
         )
+        if dmax_retry_info is not None:     # recorded only when the option was used and a retry ran: the default result's metadata is unchanged
+            dual_result.convergence_metadata["dmax_retry"] = dmax_retry_info
         if used_prior:      # recorded only when a prior was used: the default result's metadata is unchanged
             dual_result.convergence_metadata["shared_prior"] = {
                 "n0": prior_n0, "n_users": int(best_dual_model.shared_prior.n_users), "k_fixed_by_prior": True, "n_fits_run": 1,

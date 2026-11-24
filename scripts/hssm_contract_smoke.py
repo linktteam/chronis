@@ -48,6 +48,8 @@ def _contract_fields(r) -> dict:
         "restart_summary_keys": sorted((r.restart_summary or {}).keys()),
         "duration_at_bound": dict(r.duration_at_bound or {}),
         "duration_box_keys": sorted((meta.get("duration_box") or {}).keys()),
+        "fit_duration_degenerate": bool(r.fit_duration_degenerate),
+        "duration_degenerate_keys": sorted((r.duration_degenerate_report or {}).keys()),
         "used_shared_prior": bool(r.used_shared_prior),
         "shared_prior_n0": r.shared_prior_n0,
         "K": int(r.K),
