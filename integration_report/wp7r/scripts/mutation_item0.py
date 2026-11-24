@@ -23,7 +23,7 @@ MUTANTS = [
     ("D11 doc: wrong span limit in the checklist", DOC, "(span at most `MAX_TIMESTAMP_SPAN_DAYS` = 20,000;", "(span at most `MAX_TIMESTAMP_SPAN_DAYS` = 30,000;"),
     ("D12 doc: wrong default max_iter in the checklist", DOC, "default `max_iter` 200", "default `max_iter` 100"),
     ("D13 doc: forget window_gain_at_cap in the metadata table", DOC, "| `window_gain_at_cap` |", "| `window_gain_xx` |"),
-    ("D14 doc: wrong COLLAPSE threshold", DOC, "`COLLAPSE_MIN_EFFECTIVE_DAYS` = 4 effective days (column sum", "`COLLAPSE_MIN_EFFECTIVE_DAYS` = 5 effective days (column sum"),
+    ("D14 doc: wrong COLLAPSE threshold", DOC, "`COLLAPSE_MIN_EFFECTIVE_DAYS` = 4 effective days (strictly below;", "`COLLAPSE_MIN_EFFECTIVE_DAYS` = 5 effective days (strictly below;"),
     ("C01 code: new FitState value", "backbone/hssm/model.py", '    MODEL_SELECTION_CONTESTED = "MODEL_SELECTION_CONTESTED"\n', '    MODEL_SELECTION_CONTESTED = "MODEL_SELECTION_CONTESTED"\n    STALE = "STALE"\n'),
     ("C02 code: rename the late_fallbacks reason prefix", "backbone/hssm/fitting.py", 'reasons.append(f"late_fallbacks:', 'reasons.append(f"late_fb:'),
     ("C03 code: add a not-converged state to the tuple", "backbone/hssm/fitting.py", "_NOT_CONVERGED_STATES = (FitState.MAX_ITER_REACHED, FitState.REJECTED_UPDATE, FitState.FAILED, FitState.RUNNING)",

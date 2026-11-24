@@ -1,0 +1,138 @@
+
+================ STAGE A  (max_iter 20, 24 seeds 7901..7924) ================
+
+--- 1. withheld tally: personal
+  L= 30: n=24 withheld=24 (100%) publishable=0  all states {'MAX_ITER_REACHED': 24}  reasons {'fit_state_not_converged': 24}  iterations run median 20 (min 20, max 20)  criterion {'None': 24}  exceptions 0  degraded 0
+  L= 60: n=24 withheld=24 (100%) publishable=0  all states {'MAX_ITER_REACHED': 24}  reasons {'fit_state_not_converged': 24}  iterations run median 20 (min 20, max 20)  criterion {'None': 24}  exceptions 0  degraded 0
+  L=120: n=24 withheld=24 (100%) publishable=0  all states {'MAX_ITER_REACHED': 24}  reasons {'fit_state_not_converged': 24}  iterations run median 20 (min 20, max 20)  criterion {'None': 24}  exceptions 0  degraded 0
+
+--- 1. withheld tally: shrink5
+  L= 30: n=24 withheld=24 (100%) publishable=0  all states {'REJECTED_UPDATE': 8, 'MAX_ITER_REACHED': 16}  reasons {'fit_state_not_converged': 24}  iterations run median 20 (min 2, max 20)  criterion {'None': 24}  exceptions 0  degraded 0
+  L= 60: n=24 withheld=24 (100%) publishable=0  all states {'MAX_ITER_REACHED': 14, 'REJECTED_UPDATE': 10}  reasons {'fit_state_not_converged': 24}  iterations run median 20 (min 2, max 20)  criterion {'None': 24}  exceptions 0  degraded 0
+  L=120: n=24 withheld=24 (100%) publishable=0  all states {'MAX_ITER_REACHED': 16, 'REJECTED_UPDATE': 8}  reasons {'fit_state_not_converged': 24}  iterations run median 20 (min 2, max 20)  criterion {'None': 24}  exceptions 0  degraded 0
+
+--- 2. publishable-fit statistic: personal minus gauss (judged needs n >= 8)
+  L= 30: publishable 0/24 used 0 nonfinite 0 judged=False  arm +nan gauss +nan  mean +nan se nan mean-3se +nan fav 0/0
+  L= 60: publishable 0/24 used 0 nonfinite 0 judged=False  arm +nan gauss +nan  mean +nan se nan mean-3se +nan fav 0/0
+  L=120: publishable 0/24 used 0 nonfinite 0 judged=False  arm +nan gauss +nan  mean +nan se nan mean-3se +nan fav 0/0
+  VERDICT (survives on publishable fits): cannot be judged
+--- 3. risk-coverage (withheld = no prediction -> single Gaussian): personal minus gauss over all seeds
+  L= 30: coverage 0% (0/24)  mean +0.000 se 0.000 mean-3se +0.000
+  L= 60: coverage 0% (0/24)  mean +0.000 se 0.000 mean-3se +0.000
+  L=120: coverage 0% (0/24)  mean +0.000 se 0.000 mean-3se +0.000
+  NET DEPLOYMENT GAIN: not shown
+--- 4. WP5 statistic (ALL fits, withheld included, not a publishable-fit statement): personal minus gauss
+  L= 30: n 24 dropped 0  mean -221.847 se 199.615 mean-3se -820.691 fav 0/24
+  L= 60: n 24 dropped 0  mean -3.937 se 2.396 mean-3se -11.125 fav 12/24
+  L=120: n 24 dropped 0  mean +1.150 se 0.095 mean-3se +0.865 fav 24/24
+--- 2b. personal minus shared on publishable fits
+  L= 30: used 0 judged=False  mean +nan se nan mean-3se +nan fav 0/0
+  L= 60: used 0 judged=False  mean +nan se nan mean-3se +nan fav 0/0
+  L=120: used 0 judged=False  mean +nan se nan mean-3se +nan fav 0/0
+--- 5. eligibility: seeds with >= 30 training rows (production cold-start gate)
+  L= 30: eligible 15/24, eligible and publishable 0   T_train range 16..46
+  L= 60: eligible 24/24, eligible and publishable 0   T_train range 36..85
+  L=120: eligible 24/24, eligible and publishable 0   T_train range 72..162
+
+--- 2. publishable-fit statistic: shrink5 minus gauss (judged needs n >= 8)
+  L= 30: publishable 0/24 used 0 nonfinite 0 judged=False  arm +nan gauss +nan  mean +nan se nan mean-3se +nan fav 0/0
+  L= 60: publishable 0/24 used 0 nonfinite 0 judged=False  arm +nan gauss +nan  mean +nan se nan mean-3se +nan fav 0/0
+  L=120: publishable 0/24 used 0 nonfinite 0 judged=False  arm +nan gauss +nan  mean +nan se nan mean-3se +nan fav 0/0
+  VERDICT (survives on publishable fits): cannot be judged
+--- 3. risk-coverage (withheld = no prediction -> single Gaussian): shrink5 minus gauss over all seeds
+  L= 30: coverage 0% (0/24)  mean +0.000 se 0.000 mean-3se +0.000
+  L= 60: coverage 0% (0/24)  mean +0.000 se 0.000 mean-3se +0.000
+  L=120: coverage 0% (0/24)  mean +0.000 se 0.000 mean-3se +0.000
+  NET DEPLOYMENT GAIN: not shown
+--- 4. WP5 statistic (ALL fits, withheld included, not a publishable-fit statement): shrink5 minus gauss
+  L= 30: n 24 dropped 0  mean +1.221 se 0.141 mean-3se +0.800 fav 23/24
+  L= 60: n 24 dropped 0  mean +0.962 se 0.157 mean-3se +0.491 fav 23/24
+  L=120: n 24 dropped 0  mean +1.327 se 0.089 mean-3se +1.059 fav 24/24
+--- 2b. shrink5 minus shared on publishable fits
+  L= 30: used 0 judged=False  mean +nan se nan mean-3se +nan fav 0/0
+  L= 60: used 0 judged=False  mean +nan se nan mean-3se +nan fav 0/0
+  L=120: used 0 judged=False  mean +nan se nan mean-3se +nan fav 0/0
+--- 5. eligibility: seeds with >= 30 training rows (production cold-start gate)
+  L= 30: eligible 15/24, eligible and publishable 0   T_train range 16..46
+  L= 60: eligible 24/24, eligible and publishable 0   T_train range 36..85
+  L=120: eligible 24/24, eligible and publishable 0   T_train range 72..162
+
+--- 2c. shrink5 minus personal on the seeds where BOTH are publishable
+  L= 30: n both publishable 0  judged=False  no statistic
+  L= 60: n both publishable 0  judged=False  no statistic
+  L=120: n both publishable 0  judged=False  no statistic
+
+--- context: mean held-out score per arm over ALL seeds (finite only), per length
+  gauss    L=30:   -6.075 (n finite 24)  L=60:   -5.552 (n finite 24)  L=120:   -5.365 (n finite 24)
+  shared   L=30:  -10.140 (n finite 24)  L=60:  -10.348 (n finite 24)  L=120:  -10.557 (n finite 24)
+  personal L=30: -227.922 (n finite 24)  L=60:   -9.489 (n finite 24)  L=120:   -4.215 (n finite 24)
+  shrink5  L=30:   -4.854 (n finite 24)  L=60:   -4.589 (n finite 24)  L=120:   -4.038 (n finite 24)
+
+================ STAGE B  (max_iter 200, 24 seeds 7901..7924) ================
+
+--- 1. withheld tally: personal
+  L= 30: n=24 withheld=24 (100%) publishable=0  all states {'MAX_ITER_REACHED': 23, 'CONVERGED': 1}  reasons {'fit_state_not_converged': 23, 'collapsed_regime': 1}  iterations run median 200 (min 200, max 200)  criterion {'None': 23, 'window_gain_at_cap': 1}  exceptions 0  degraded 0
+  L= 60: n=24 withheld=24 (100%) publishable=0  all states {'MAX_ITER_REACHED': 24}  reasons {'fit_state_not_converged': 24}  iterations run median 200 (min 200, max 200)  criterion {'None': 24}  exceptions 0  degraded 0
+  L=120: n=24 withheld=24 (100%) publishable=0  all states {'CONVERGED': 1, 'MAX_ITER_REACHED': 23}  reasons {'degenerate_duration': 1, 'fit_state_not_converged': 23}  iterations run median 200 (min 200, max 200)  criterion {'window_gain_at_cap': 1, 'None': 23}  exceptions 0  degraded 0
+
+--- 1. withheld tally: shrink5
+  L= 30: n=24 withheld=16 (67%) publishable=8  all states {'REJECTED_UPDATE': 9, 'CONVERGED': 14, 'MAX_ITER_REACHED': 1}  reasons {'fit_state_not_converged': 10, 'degenerate_duration': 4, 'collapsed_regime': 3}  iterations run median 75 (min 2, max 200)  criterion {'None': 10, 'abs_tol': 9, 'window_gain_at_cap': 5}  exceptions 0  degraded 0
+  L= 60: n=24 withheld=15 (62%) publishable=9  all states {'CONVERGED': 13, 'REJECTED_UPDATE': 10, 'MAX_ITER_REACHED': 1}  reasons {'fit_state_not_converged': 11, 'degenerate_duration': 4, 'collapsed_regime': 1}  iterations run median 41 (min 2, max 200)  criterion {'abs_tol': 10, 'window_gain_at_cap': 3, 'None': 11}  exceptions 0  degraded 0
+  L=120: n=24 withheld=19 (79%) publishable=5  all states {'CONVERGED': 11, 'MAX_ITER_REACHED': 4, 'REJECTED_UPDATE': 9}  reasons {'fit_state_not_converged': 13, 'degenerate_duration': 6}  iterations run median 106 (min 2, max 200)  criterion {'abs_tol': 7, 'None': 13, 'window_gain_at_cap': 4}  exceptions 0  degraded 0
+
+--- 2. publishable-fit statistic: personal minus gauss (judged needs n >= 8)
+  L= 30: publishable 0/24 used 0 nonfinite 0 judged=False  arm +nan gauss +nan  mean +nan se nan mean-3se +nan fav 0/0
+  L= 60: publishable 0/24 used 0 nonfinite 0 judged=False  arm +nan gauss +nan  mean +nan se nan mean-3se +nan fav 0/0
+  L=120: publishable 0/24 used 0 nonfinite 0 judged=False  arm +nan gauss +nan  mean +nan se nan mean-3se +nan fav 0/0
+  VERDICT (survives on publishable fits): cannot be judged
+--- 3. risk-coverage (withheld = no prediction -> single Gaussian): personal minus gauss over all seeds
+  L= 30: coverage 0% (0/24)  mean +0.000 se 0.000 mean-3se +0.000
+  L= 60: coverage 0% (0/24)  mean +0.000 se 0.000 mean-3se +0.000
+  L=120: coverage 0% (0/24)  mean +0.000 se 0.000 mean-3se +0.000
+  NET DEPLOYMENT GAIN: not shown
+--- 4. WP5 statistic (ALL fits, withheld included, not a publishable-fit statement): personal minus gauss
+  L= 30: n 24 dropped 0  mean -286.076 se 247.275 mean-3se -1027.901 fav 0/24
+  L= 60: n 24 dropped 0  mean -21.233 se 17.959 mean-3se -75.109 fav 11/24
+  L=120: n 24 dropped 0  mean +1.093 se 0.100 mean-3se +0.793 fav 24/24
+--- 2b. personal minus shared on publishable fits
+  L= 30: used 0 judged=False  mean +nan se nan mean-3se +nan fav 0/0
+  L= 60: used 0 judged=False  mean +nan se nan mean-3se +nan fav 0/0
+  L=120: used 0 judged=False  mean +nan se nan mean-3se +nan fav 0/0
+--- 5. eligibility: seeds with >= 30 training rows (production cold-start gate)
+  L= 30: eligible 15/24, eligible and publishable 0   T_train range 16..46
+  L= 60: eligible 24/24, eligible and publishable 0   T_train range 36..85
+  L=120: eligible 24/24, eligible and publishable 0   T_train range 72..162
+
+--- 2. publishable-fit statistic: shrink5 minus gauss (judged needs n >= 8)
+  L= 30: publishable 8/24 used 8 nonfinite 0 judged=True  arm -4.833 gauss -5.944  mean +1.111 se 0.239 mean-3se +0.393 fav 8/8
+  L= 60: publishable 9/24 used 9 nonfinite 0 judged=True  arm -5.173 gauss -5.800  mean +0.626 se 0.302 mean-3se -0.280 fav 8/9
+  L=120: publishable 5/24 used 5 nonfinite 0 judged=False  arm -3.979 gauss -5.263  mean +1.284 se 0.122 mean-3se +0.918 fav 5/5
+  VERDICT (survives on publishable fits): does not survive
+--- 3. risk-coverage (withheld = no prediction -> single Gaussian): shrink5 minus gauss over all seeds
+  L= 30: coverage 33% (8/24)  mean +0.370 se 0.133 mean-3se -0.029
+  L= 60: coverage 38% (9/24)  mean +0.235 se 0.126 mean-3se -0.143
+  L=120: coverage 21% (5/24)  mean +0.267 se 0.111 mean-3se -0.066
+  NET DEPLOYMENT GAIN: not shown
+--- 4. WP5 statistic (ALL fits, withheld included, not a publishable-fit statement): shrink5 minus gauss
+  L= 30: n 24 dropped 0  mean +1.215 se 0.145 mean-3se +0.780 fav 23/24
+  L= 60: n 24 dropped 0  mean +0.959 se 0.156 mean-3se +0.491 fav 23/24
+  L=120: n 24 dropped 0  mean +1.329 se 0.087 mean-3se +1.068 fav 24/24
+--- 2b. shrink5 minus shared on publishable fits
+  L= 30: used 8 judged=True  mean +3.853 se 0.343 mean-3se +2.825 fav 8/8
+  L= 60: used 9 judged=True  mean +5.354 se 1.042 mean-3se +2.228 fav 9/9
+  L=120: used 5 judged=False  mean +6.426 se 1.476 mean-3se +1.999 fav 5/5
+--- 5. eligibility: seeds with >= 30 training rows (production cold-start gate)
+  L= 30: eligible 15/24, eligible and publishable 4   T_train range 16..46
+  L= 60: eligible 24/24, eligible and publishable 9   T_train range 36..85
+  L=120: eligible 24/24, eligible and publishable 5   T_train range 72..162
+
+--- 2c. shrink5 minus personal on the seeds where BOTH are publishable
+  L= 30: n both publishable 0  judged=False  no statistic
+  L= 60: n both publishable 0  judged=False  no statistic
+  L=120: n both publishable 0  judged=False  no statistic
+
+--- context: mean held-out score per arm over ALL seeds (finite only), per length
+  gauss    L=30:   -6.075 (n finite 24)  L=60:   -5.552 (n finite 24)  L=120:   -5.365 (n finite 24)
+  shared   L=30:  -10.140 (n finite 24)  L=60:  -10.348 (n finite 24)  L=120:  -10.557 (n finite 24)
+  personal L=30: -292.151 (n finite 24)  L=60:  -26.785 (n finite 24)  L=120:   -4.272 (n finite 24)
+  shrink5  L=30:   -4.860 (n finite 24)  L=60:   -4.593 (n finite 24)  L=120:   -4.036 (n finite 24)

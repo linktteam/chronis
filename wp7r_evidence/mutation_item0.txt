@@ -5,8 +5,12 @@ D04 doc: empty the 'what the caller does' cell of FAILED: KILLED
 D05 doc: drop PriorBuildError row: KILLED
 D06 doc: drop InternalStateError row: KILLED
 D07 doc: drop the late_fallbacks prefix: KILLED
-D08 doc: claim the dual collapse IS withheld: KILLED
-D09 doc: claim degenerate duration IS a withheld reason: KILLED
+D08 doc: say the dual collapse is NOT withheld (the pre-item-5 claim): KILLED
+D09 doc: change the rising-pmf definition: KILLED
+D25 doc: dual collapse said to use the SMOOTHED posterior: KILLED
+D26 doc: wrong bound tolerance: KILLED
+D27 doc: drop the dmax_retry metadata row: KILLED
+D28 doc: drop the fit_duration_degenerate metadata row: KILLED
 D10 doc: drop 'no per-session confidence': KILLED
 D11 doc: wrong span limit in the checklist: KILLED
 D12 doc: wrong default max_iter in the checklist: KILLED
@@ -22,4 +26,4 @@ C07 code: a new exception class under the library base is not documented: KILLED
 C08 code: dual result now sets duration box keys differently: KILLED
 C09 code: collapse threshold: KILLED
 C10 code: cold-start threshold: KILLED
-24/24 killed
+28/28 killed
