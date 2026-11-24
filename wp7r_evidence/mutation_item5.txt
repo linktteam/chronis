@@ -1,0 +1,32 @@
+F01 R1 threshold is not strict (<=): KILLED
+F02 R1 reports the maximum as the minimum: KILLED
+F03 R1 sums over regimes instead of rows: KILLED
+F04 R1 collapsed always False: KILLED
+F05 R1 result.fit_collapsed not wired: KILLED
+F06 R1 result.collapse_report not wired: KILLED
+F07 R1 computed on all rows but the last: KILLED
+F08 R2 rising test reversed: KILLED
+F09 R2 rising test is >=: KILLED
+F10 R2 rising compares with the wrong step: KILLED
+F11 R2 one-step lattice guard removed: KILLED
+F12 R2 ignores the wall of the box: KILLED
+F13 R2 ignores a rising pmf: KILLED
+F14 R2 degenerate always False: KILLED
+F15 R2 result.fit_duration_degenerate not wired: KILLED
+F16 R2 reason prefix renamed: KILLED
+F17 R2 reason never added: KILLED
+F18 R2 reason drops the regime list: KILLED
+F19 R3 retries even when the fit is not degenerate: KILLED
+F20 R3 always adopts the retry: KILLED
+F21 R3 never adopts the retry: KILLED
+F22 R3 retry runs with the original Dmax: KILLED
+F23 R3 BIC of the retry not recorded: KILLED
+F24 R3 metadata record not written: KILLED
+F25 R3 retry run-log entries not tagged: KILLED
+F26 R3 validation lets retry == max_duration through: KILLED
+F27 R3 validation drops the shared-prior check: KILLED
+F28 R3 validation drops the model-type check: KILLED
+F29 R3 validation accepts a float: KILLED
+F30 R3 record says the wrong 'from': KILLED
+F31 R3 record says the first fit was not degenerate: KILLED
+31/31 killed

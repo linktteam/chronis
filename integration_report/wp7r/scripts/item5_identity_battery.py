@@ -23,7 +23,7 @@ def _parse(txt):
 
 
 def one(job):
-    tree, seed = job
+    tree, seed, prior_path = job
     sys.path.insert(0, tree)
     logging.disable(logging.CRITICAL)
     from backbone.hssm.config import ColdStartConfig
@@ -34,8 +34,13 @@ def one(job):
     with warnings.catch_warnings(), contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
         warnings.simplefilter("ignore")
         u = generate_population_user(seed, 12, 0, PopulationSpec())
+        kw = {}
+        if prior_path:                                                    # supplementary battery 5.5: the shared-prior path (prior loaded with the tree's own SharedPrior class)
+            import json
+            from backbone.hssm.shrinkage import SharedPrior
+            kw = dict(shared_prior=SharedPrior.from_dict(json.load(open(prior_path))), shared_prior_n0=5.0)
         r = fit_hssm(matrix=u.X_train, candidate_ks=(2,), n_initializations=1, max_iter=200, random_seed=seed - 2000, allow_fast_test_fit=True,
-                     config=ColdStartConfig(min_present_sessions=1), max_duration=25, model_type="dual_timescale", latent_dim=2)
+                     config=ColdStartConfig(min_present_sessions=1), max_duration=25, model_type="dual_timescale", latent_dim=2, **kw)
     for n in NUMERIC:
         rec[n] = np.array(getattr(r, n), copy=True)
     rec.update(duration_parameters={k: list(v) for k, v in r.duration_parameters.items()}, BIC=float(r.BIC), fit_state=str(r.fit_state.value), Dmax=int(r.Dmax),
@@ -47,7 +52,7 @@ def one(job):
 
 
 def cmd_fit(a):
-    jobs = [(a.tree, s) for s in _parse(a.seeds)]
+    jobs = [(a.tree, s, a.shared_prior) for s in _parse(a.seeds)]
     with mp.Pool(min(a.workers, len(jobs))) as pool:
         recs = pool.map(one, jobs)
     pickle.dump(sorted(recs, key=lambda r: r["seed"]), open(a.out, "wb"))
@@ -96,7 +101,8 @@ def cmd_compare(a):
 
 def main():
     ap = argparse.ArgumentParser(); sub = ap.add_subparsers(dest="cmd", required=True)
-    p = sub.add_parser("fit"); p.add_argument("--tree", required=True); p.add_argument("--seeds", required=True); p.add_argument("--out", required=True); p.add_argument("--workers", type=int, default=2); p.set_defaults(f=cmd_fit)
+    p = sub.add_parser("fit"); p.add_argument("--tree", required=True); p.add_argument("--seeds", required=True); p.add_argument("--out", required=True); p.add_argument("--workers", type=int, default=2)
+    p.add_argument("--shared-prior", default=None, help="absolute path of a SharedPrior json: fit through the shared-prior path with shared_prior_n0 = 5.0 (supplementary battery, section 5.5)"); p.set_defaults(f=cmd_fit)
     p = sub.add_parser("compare"); p.add_argument("ref"); p.add_argument("new"); p.set_defaults(f=cmd_compare)
     a = ap.parse_args(); a.f(a)
 
