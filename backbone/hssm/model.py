@@ -97,6 +97,12 @@ def _neg_duration_loglik(params, w: np.ndarray, d_vals: np.ndarray) -> float:
 
 
 class GaussianHSMM:
+    # WP7-R item 2 (P1-01): how n_params() counts the transition matrix in AIC / BIC. "legacy" (the default, unchanged since WP1) counts K*(K-1)
+    # entries; "free" counts the K*(K-2) that are free, because the M-step forces a zero diagonal (dwell time lives in the duration law) so each
+    # row has K-1 non-zero entries that sum to 1. The legacy count over-counts by K parameters. Changing the default moves model selection, so it
+    # needs the owner's approval; the switch is a class attribute (or set it on an instance).
+    n_params_convention: str = "legacy"
+
     def __init__(
         self,
         n_regimes: int | None = None,
@@ -623,7 +629,13 @@ class GaussianHSMM:
     def n_params(self) -> int:
         self._require_fitted()
         K, F = self.K, self.F
-        return (K - 1) + K * (K - 1) + K * F + K * F + K * 2
+        if self.n_params_convention == "legacy":
+            n_transition = K * (K - 1)
+        elif self.n_params_convention == "free":
+            n_transition = K * (K - 2)
+        else:
+            raise ValueError(f"n_params_convention must be 'legacy' or 'free', got {self.n_params_convention!r}")
+        return (K - 1) + n_transition + K * F + K * F + K * 2
 
     def bic(self, n_observations: int | None = None) -> float:
         self._require_fitted()

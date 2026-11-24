@@ -1,0 +1,41 @@
+datasets ok: 48 errors: []
+
+VALIDITY GATE (offline re-derivation at 4 days reproduces the actual selected K, collapse flags, BICs and collapsed-withheld status): 48/48
+
+================ design easy (n=24)
+planted-K recovery: 20/24 (0.64, 0.93) {2: '8/8 (0.68, 1.0)', 3: '7/8 (0.53, 0.98)', 4: '5/8 (0.31, 0.86)'}
+selected K distribution by planted K: {2: {2: 8}, 3: {3: 7, 2: 1}, 4: {4: 5, 2: 2, 3: 1}}
+WORD recovery: BIC RECOVERS the planted K
+hard (i) served collapsed fits: 0 []
+hard (ii) collapsed K selected while a healthy candidate exists: 0 []
+(iii) datasets with some collapsed candidate K: 0; lowest-BIC K collapsed (demotion changes the choice): 0 []; helps 0, harms 0
+WORD demotion: never triggered
+served (not withheld): 24/24; served ARI median 1.000 min 0.669 (n=24)
+WORD ARI: ADEQUATE (median >= 0.80)
+withheld/served by reason: {'served': 24}  by planted K: {2: 0, 3: 0, 4: 0}
+fit states: {'CONVERGED': 24}
+P1-01: legacy recovery 20/24, free-count recovery 20/24; datasets whose selected K changes under the free count: 0 []
+WORD P1-01: the count does not move selection in this study
+  threshold 3 d: recovery 20/24, withheld by collapse 0/24, selected K differs from the 4-day choice in 0 []
+  threshold 4 d: recovery 20/24, withheld by collapse 0/24, selected K differs from the 4-day choice in 0 []
+  threshold 6 d: recovery 20/24, withheld by collapse 0/24, selected K differs from the 4-day choice in 0 []
+
+================ design hard (n=24)
+planted-K recovery: 8/24 (0.18, 0.53) {2: '8/8 (0.68, 1.0)', 3: '0/8 (0.0, 0.32)', 4: '0/8 (0.0, 0.32)'}
+selected K distribution by planted K: {2: {2: 8}, 3: {2: 8}, 4: {3: 1, 2: 7}}
+WORD recovery: BIC does NOT reliably recover the planted K
+hard (i) served collapsed fits: 0 []
+hard (ii) collapsed K selected while a healthy candidate exists: 0 []
+(iii) datasets with some collapsed candidate K: 0; lowest-BIC K collapsed (demotion changes the choice): 0 []; helps 0, harms 0
+WORD demotion: never triggered
+served (not withheld): 24/24; served ARI median 0.732 min 0.349 (n=24)
+WORD ARI: NOT adequate (median < 0.80)  [hard design: reported only]
+withheld/served by reason: {'served': 24}  by planted K: {2: 0, 3: 0, 4: 0}
+fit states: {'CONVERGED': 24}
+P1-01: legacy recovery 8/24, free-count recovery 8/24; datasets whose selected K changes under the free count: 0 []
+WORD P1-01: the count does not move selection in this study
+  threshold 3 d: recovery 8/24, withheld by collapse 0/24, selected K differs from the 4-day choice in 0 []
+  threshold 4 d: recovery 8/24, withheld by collapse 0/24, selected K differs from the 4-day choice in 0 []
+  threshold 6 d: recovery 8/24, withheld by collapse 0/24, selected K differs from the 4-day choice in 0 []
+
+wrong-K datasets: [('easy', 7815, 3, 2), ('easy', 7819, 4, 2), ('easy', 7822, 4, 2), ('easy', 7824, 4, 3), ('hard', 7809, 3, 2), ('hard', 7810, 3, 2), ('hard', 7811, 3, 2), ('hard', 7812, 3, 2), ('hard', 7813, 3, 2), ('hard', 7814, 3, 2), ('hard', 7815, 3, 2), ('hard', 7817, 4, 3), ('hard', 7816, 3, 2), ('hard', 7818, 4, 2), ('hard', 7820, 4, 2), ('hard', 7819, 4, 2), ('hard', 7821, 4, 2), ('hard', 7822, 4, 2), ('hard', 7824, 4, 2), ('hard', 7823, 4, 2)]
