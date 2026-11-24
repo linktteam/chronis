@@ -1,0 +1,35 @@
+band +-2: [0.9145, 0.9945]   band +-1: [0.6427, 0.7227]
+
+=== 4.2 coverage (12 seeds 9101..9112), seed-level mean over the two latent dimensions ===
+T0            fits 12 errors [] withheld 0  ALL: c2 0.944 (se 0.008) c1 0.700  seeds with c2<0.80: 0  | PUBLISHABLE n=12: c2 0.944 (se 0.008) c1 0.700  in band: True
+              fit states {'TRUTH': 12}
+shrink5_200   fits 12 errors [] withheld 1  ALL: c2 0.933 (se 0.024) c1 0.681  seeds with c2<0.80: 1  | PUBLISHABLE n=11: c2 0.934 (se 0.026) c1 0.681  in band: True
+              fit states {'CONVERGED': 12}
+shrink5_20    fits 12 errors [] withheld 12  ALL: c2 0.932 (se 0.024) c1 0.684  seeds with c2<0.80: 1  | PUBLISHABLE n=0
+              fit states {'MAX_ITER_REACHED': 12}
+personal_200  fits 12 errors [] withheld 12  ALL: c2 0.589 (se 0.053) c1 0.363  seeds with c2<0.80: 10  | PUBLISHABLE n=0
+              fit states {'MAX_ITER_REACHED': 12}
+personal_20   fits 12 errors [] withheld 12  ALL: c2 0.733 (se 0.045) c1 0.479  seeds with c2<0.80: 7  | PUBLISHABLE n=0
+              fit states {'MAX_ITER_REACHED': 12}
+
+harness control T0 in band: True
+4.2 WORD (publishable shrinkage-fitted fits, max_iter 200): reaches the band
+
+=== 4.3 parametric bootstrap (seeds 9101..9106, personal, 20 iterations, B=30, warm start) ===
+seed 9101: T 81 fit_state MAX_ITER_REACHED replicates ok 30 failed 0  E0 c2 0.883 c1 0.599 | EB c2 0.988 c1 0.698  std ratio 1.45  3.72 s/replicate, 118.5 s/seed
+seed 9102: T 65 fit_state MAX_ITER_REACHED replicates ok 30 failed 0  E0 c2 0.700 c1 0.446 | EB c2 0.838 c1 0.515  std ratio 1.36  3.48 s/replicate, 110.4 s/seed
+seed 9103: T 67 fit_state MAX_ITER_REACHED replicates ok 30 failed 0  E0 c2 0.821 c1 0.522 | EB c2 0.933 c1 0.813  std ratio 2.33  2.88 s/replicate, 89.1 s/seed
+seed 9104: T 56 fit_state MAX_ITER_REACHED replicates ok 30 failed 0  E0 c2 0.375 c1 0.170 | EB c2 0.482 c1 0.241  std ratio 1.79  2.87 s/replicate, 88.6 s/seed
+seed 9105: T 51 fit_state MAX_ITER_REACHED replicates ok 30 failed 0  E0 c2 0.873 c1 0.627 | EB c2 0.980 c1 0.794  std ratio 1.72  2.2 s/replicate, 68.0 s/seed
+seed 9106: T 37 fit_state MAX_ITER_REACHED replicates ok 0 failed 30  E0 c2 0.635 c1 0.405 | EB c2 nan c1 nan  std ratio nan  2.3 s/replicate, 73.3 s/seed
+mean over 5 seeds: E0 c2 0.730 (se 0.095) c1 0.473 (se 0.082) | EB c2 0.844 (se 0.094) c1 0.612 (se 0.107)
+EB - E0 (c2): mean +0.114 paired se 0.006; seeds improved 5/5; mean ratio std_boot/std 1.73
+4.3 WORD: improves but does not reach
+time: one 20-iteration fit 4.0 s, one replicate (simulate + warm refit + smooth) 2.9 s, B=30 bootstrap 87 s per fit
+
+=== 4.4 cost ===
+P50 {'K': 2, 'F': 4, 'L': 2, 'T': 81, 'P': 50, 't_fit20_s': 6.95, 't_pass_s': 0.0952, 't_smooth_s': 0.1366, 'n_pass_hessian': 1351, 'n_smooth_jacobian': 100, 'est_hessian_s': 128.6, 'est_jacobian_s': 13.7, 'est_bootstrap_30_s': 208.5, 'est_bootstrap_100_s': 694.9, 'measured_full_hessian': True, 'hessian_s_measured': 128.2, 'jacobian_s_measured': 13.2}
+P204 {'K': 3, 'F': 10, 'L': 3, 'T': 83, 'P': 204, 't_fit20_s': 5.78, 't_pass_s': 0.1674, 't_smooth_s': 0.2467, 'n_pass_hessian': 21217, 'n_smooth_jacobian': 408, 'est_hessian_s': 3551.2, 'est_jacobian_s': 100.6, 'est_bootstrap_30_s': 173.3, 'est_bootstrap_100_s': 577.7, 'measured_full_hessian': False}
+
+=== 4.5 recommendation (rule fixed in advance) ===
+RECOMMENDATION: shrinkage-only uncertainty (favourable-case caveat)

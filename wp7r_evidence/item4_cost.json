@@ -1,0 +1,38 @@
+{
+ "P50": {
+  "K": 2,
+  "F": 4,
+  "L": 2,
+  "T": 81,
+  "P": 50,
+  "t_fit20_s": 6.95,
+  "t_pass_s": 0.0952,
+  "t_smooth_s": 0.1366,
+  "n_pass_hessian": 1351,
+  "n_smooth_jacobian": 100,
+  "est_hessian_s": 128.6,
+  "est_jacobian_s": 13.7,
+  "est_bootstrap_30_s": 208.5,
+  "est_bootstrap_100_s": 694.9,
+  "measured_full_hessian": true,
+  "hessian_s_measured": 128.2,
+  "jacobian_s_measured": 13.2
+ },
+ "P204": {
+  "K": 3,
+  "F": 10,
+  "L": 3,
+  "T": 83,
+  "P": 204,
+  "t_fit20_s": 5.78,
+  "t_pass_s": 0.1674,
+  "t_smooth_s": 0.2467,
+  "n_pass_hessian": 21217,
+  "n_smooth_jacobian": 408,
+  "est_hessian_s": 3551.2,
+  "est_jacobian_s": 100.6,
+  "est_bootstrap_30_s": 173.3,
+  "est_bootstrap_100_s": 577.7,
+  "measured_full_hessian": false
+ }
+}
