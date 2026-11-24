@@ -1,0 +1,29 @@
+# WP7-R item 6a: audit of the 14 older tests that WP6 adjusted (READ-ONLY; no test or code is changed here)
+
+Method (RUN): `git diff 871a3ab c95cb5d -- tests` (871a3ab = the last WP5 commit, c95cb5d = the WP6 head), restricted to files that existed before WP6 and were MODIFIED (not added): 7 files, +51 / -17 lines. Then a mechanical scan of every removed and every added line for `assert`, `raises` and `==`. Nothing was run again for this audit beyond that; the 14 tests are part of the full-suite run reported in `WP7R_REPORT.md`.
+
+**Result (READ + RUN): no assertion on a healthy fit was removed or weakened.** Of the 17 removed lines, exactly ONE contains an assertion: the metadata key set in `test_wp5_integration.py`, replaced by a strict superset (see row 13). All other changes alter how the fit under test is produced, not what is asserted about it.
+
+| # | Test (file) | Before | After | Assertion on a healthy fit weakened? |
+|---|---|---|---|---|
+| 1 | `test_118_dual_model_handoff_to_attractor_detector` (`test_handoff.py`) | 15-iteration dual fit, used as the healthy fit that feeds the attractor detector | same fit under the `fast_dual_counts_as_converged` fixture (an iteration-limit fit counts as converged inside the test) | No. Assertions untouched. The handoff, not the stopping rule, is under test. |
+| 2 | `test_aliases_return_the_stored_arrays_on_a_healthy_fit` (`test_hssm_holdback_closure.py`) | uses fixture `clean_dual`, a 4-iteration dual fit | `clean_dual` built inside `iteration_limit_counts_as_converged()` | No. |
+| 3 | `test_a_healthy_fit_records_the_count_at_build_and_has_no_late_or_states_pass_firings` (same file) | same `clean_dual` | same | No. |
+| 4 | `test_estimate_states_without_firing_changes_nothing` (same file) | same `clean_dual` | same | No. |
+| 5 | `test_late_firing_in_a_later_estimate_states_withholds_the_result_and_logs_once` (same file) | same `clean_dual` | same | No. |
+| 6 | `test_gated_result_function_returns_a_withheld_result_without_raising_and_honours_model_type` (same file) | short dual fits under a patched `fit_hssm` | the function takes the `fast_dual_counts_as_converged` fixture | No. |
+| 7 | `test_gated_call_raises_on_a_degraded_dual_fit_and_not_on_a_healthy_one` (same file) | healthy control = short dual fit | fixture added; the "not on a healthy one" control still asserts no raise | No. |
+| 8 | `test_selection_end_to_end_with_one_degraded_restart_gives_a_result_that_is_not_withheld` (same file) | healthy restart = short dual fit | fixture added; still asserts `not insights_withheld` | No. |
+| 9 | `test_clean_dual_fit_carries_health_fields_is_not_withheld_and_returns_outputs` (`test_hssm_result_holdback.py`) | fixture `clean`: short dual fit | built inside `iteration_limit_counts_as_converged()` | No. |
+| 10 | `test_s34_1_step3_cold_start_confidence_contract_tiers_fixed` (`test_s34_1_partial_missingness.py`) | fitted a CONSTANT matrix with a NaN column at tier 0.75 and asserted `_is_fitted` | fits random data with the same missingness pattern and asserts `_is_fitted`; the constant matrix now asserts `InsightsWithheldError` (a collapsed regime is withheld, and it is NOT a `ColdStartError`) | No for healthy data (same assertion, healthy input). The constant-data case changed from "fits" to "is withheld", which is the P0-07 behaviour and is not a healthy fit. |
+| 11 | `test_s34_5_t1_monotonicity_violation_triggers_rejected_update_and_preserves_...` (`test_s34_5_em_monotonicity.py`) | relied on a natural monotonicity decrease (the inexact duration M-step) | the safeguarded duration update is patched to add a deliberately bad shift (mu + 3), so the REJECTION path is still exercised | No. All assertions (REJECTED_UPDATE, not converged, parameters preserved) are unchanged. NOTE: the test now exercises an induced rejection; a natural one no longer occurs on that data because the engine repairs it (WP6 item 3). |
+| 12 | `test_the_default_result_records_no_prior_and_its_metadata_is_unchanged` (`test_wp5_integration.py`), the key-set line | `set(convergence_metadata) == {8 keys}` | `== {the same 8 keys + convergence_criterion, window_gain_at_cap, duration_box}` | No: still an exact equality, over a strict superset; every WP5 key is still required. (The dual keys added in WP6 part 2.) |
+| 13 | `test_the_hold_back_applies_to_prior_fits` (same file) | `healthy = prior_fit()` | `healthy` is built with a patched `fit` that sets `CONVERGED` (the short prior fit ends at the limit or with a rejection, which P0-07 withholds) | No. The assertions `not healthy.insights_withheld` and `publishable_outputs() is not None` are unchanged. |
+| 14 | `test_fit_hssm_dual_k_selection_skips_a_degraded_k_with_lower_bic` (`test_wp5_item0_k_selection_and_pipeline.py`) | healthy K = short dual fit | fixture added | No. |
+
+(The 14 count: row 1, rows 2 to 5 (four tests built on `clean_dual`), rows 6 to 8, row 9, row 10, row 11, rows 12 and 13, row 14.)
+
+## What the audit does NOT say
+* **The "healthy" controls in rows 1 to 9, 13 and 14 are now partly synthetic**: the fit state is forced to `CONVERGED` inside the test, so these tests can no longer detect a regression in the stopping rule or in the P0-07 non-convergence rule (those have their own tests, `tests/test_wp6_item3_baseline_and_withholding.py` and `tests/test_wp6_item3b_dual_cap_and_box.py`). They still test the rule each was written for (numerical-health hold-back, handoff, selection).
+* Not checked: whether any of these tests was already weak before WP6, and whether the mutation checks of WP3 to WP5 that targeted them still kill their mutants (the WP6 mutation runs `mutation_item3*.txt` are in the WP6 evidence; they were not re-run here).
+* The WP7-R item 5 change of one more assertion (the Item 0 doc test that said a dual collapse is "NOT withheld") is reported in `WP7R_REPORT.md`, not here.
