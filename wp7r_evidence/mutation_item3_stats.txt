@@ -1,0 +1,23 @@
+S01 judged threshold 8 -> 7: KILLED
+S02 judged threshold 8 -> 9: KILLED
+S03 judged uses >: KILLED
+S04 subset ignores the publishable flag: KILLED
+S05 non-finite publishable not excluded: KILLED
+S06 non-finite reference not excluded: KILLED
+S07 non-finite publishable not counted: KILLED
+S08 paired difference sign reversed: KILLED
+S09 margin multiplier 3 -> 2: KILLED
+S10 coverage counts used not publishable: KILLED
+S11 fallback skips withheld seeds (drops them) instead of 0: KILLED
+S12 fallback serves withheld fits: KILLED
+S13 fallback serves non-finite publishable as zero-score: KILLED
+S14 fallback keeps seeds with a non-finite reference: KILLED
+S15 fallback n_served counts every seed: KILLED
+S16 survives uses >= 0: KILLED
+S17 survives lets unjudged lengths veto: KILLED
+S18 survives drops the partly-judged word: KILLED
+S19 tally counts publishable fits as withheld states: KILLED
+S20 tally rate uses publishable: KILLED
+S21 prefix regex accepts colons inside text: KILLED
+S22 numerical failure not recognised: KILLED
+22/22 killed
