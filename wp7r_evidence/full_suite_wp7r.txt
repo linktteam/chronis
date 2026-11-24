@@ -1,0 +1,23 @@
+=== full suite RUN 1 (head fd87c9c + uncommitted nothing; before the two test fixes) ===
+FAILED tests/test_handoff.py::test_118_dual_model_handoff_to_attractor_detector
+FAILED tests/test_wp5_integration.py::test_new_arguments_are_last_optional_and_default_to_none
+2 failed, 548 passed, 5 xfailed, 172 warnings in 1321.54s (0:22:01)
+real	22m2.991s
+
+=== full suite RUN 2 (head 0e32c09; RESUME.md added after it, no code) ===
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+550 passed, 5 xfailed, 177 warnings in 1344.84s (0:22:24)
+real	22m26.464s
+user	22m9.991s
+
+WP6 reference (REPORTED, wp6_evidence/full_suite_wp6_item4.txt): 510 passed, 5 xfailed in 1610 s (contended).
