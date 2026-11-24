@@ -2,7 +2,7 @@
 
 Method (RUN): `git diff 871a3ab c95cb5d -- tests` (871a3ab = the last WP5 commit, c95cb5d = the WP6 head), restricted to files that existed before WP6 and were MODIFIED (not added): 7 files, +51 / -17 lines. Then a mechanical scan of every removed and every added line for `assert`, `raises` and `==`. Nothing was run again for this audit beyond that; the 14 tests are part of the full-suite run reported in `WP7R_REPORT.md`.
 
-**Result (READ + RUN): no assertion on a healthy fit was removed or weakened.** Of the 17 removed lines, exactly ONE contains an assertion: the metadata key set in `test_wp5_integration.py`, replaced by a strict superset (see row 13). All other changes alter how the fit under test is produced, not what is asserted about it.
+**Result (READ + RUN): no assertion on a healthy fit was removed or weakened.** Of the 17 removed lines, exactly ONE contains an assertion: the metadata key set in `test_wp5_integration.py`, replaced by a strict superset (see row 12). All other changes alter how the fit under test is produced, not what is asserted about it.
 
 | # | Test (file) | Before | After | Assertion on a healthy fit weakened? |
 |---|---|---|---|---|
