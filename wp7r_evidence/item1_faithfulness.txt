@@ -1,0 +1,9 @@
+seed 202: shipped(fit n_iter=20, box refit on) -6.188929  checkpoint20 -6.181344  bit-identical False  refit fired True  engine_scores equals shipped: None
+seed 404: shipped(fit n_iter=20, box refit on) -3.916820  checkpoint20 -3.916820  bit-identical True  refit fired False  engine_scores equals shipped: True
+seed 505: shipped(fit n_iter=20, box refit on) -7.755110  checkpoint20 -7.755110  bit-identical True  refit fired False  engine_scores equals shipped: True
+seed 606: shipped(fit n_iter=20, box refit on) -4.680032  checkpoint20 -4.680032  bit-identical True  refit fired False  engine_scores equals shipped: True
+seed 707: shipped(fit n_iter=20, box refit on) -8.918176  checkpoint20 -8.918176  bit-identical True  refit fired False  engine_scores equals shipped: True
+seed 808: shipped(fit n_iter=20, box refit on) -4.717516  checkpoint20 -4.717516  bit-identical True  refit fired False  engine_scores equals shipped: True
+seed 909: shipped(fit n_iter=20, box refit on) -5.248557  checkpoint20 -5.248557  bit-identical True  refit fired False  engine_scores equals shipped: True
+seed 1010: shipped(fit n_iter=20, box refit on) -4.499828  checkpoint20 -4.499828  bit-identical True  refit fired False  engine_scores equals shipped: True
+7 of 8 bit-identical; differing seeds: [202]; of those, refit fired: [202]

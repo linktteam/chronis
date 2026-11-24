@@ -1,0 +1,44 @@
+seeds done: {'N18': 8, 'DPOP': 20, 'POOLED': 28}
+non-finite held-out scores: []
+
+== N18 (n=8)
+mean held-out by checkpoint: {'20': -5.7397, '40': -5.9586, '80': -6.0086, '160': -6.0953}
+mean train ll/row:           {'20': -3.1134, '40': -3.0935, '80': -3.0787, '160': -3.0614}
+share dual > Gaussian:       {'20': 0.375, '40': 0.25, '80': 0.25, '160': 0.25}  mean dual-Gauss: {'20': -0.682, '40': -0.901, '80': -0.951, '160': -1.038}
+degenerate at checkpoint:    {'20': 1, '40': 1, '80': 1, '160': 1}  fit states: {'MAX_ITER_REACHED': 8}
+  20->40: held-out diff mean -0.2190 se 0.1294 n=8 better:1   | train ll/row diff mean +0.0199 (higher in 8)
+  40->80: held-out diff mean -0.0499 se 0.0429 n=8 better:2   | train ll/row diff mean +0.0148 (higher in 8)
+  80->160: held-out diff mean -0.0868 se 0.0656 n=8 better:3   | train ll/row diff mean +0.0173 (higher in 8)
+  20->160: held-out diff mean -0.3557 se 0.2046 n=8 better:2   | train ll/row diff mean +0.0520 (higher in 8)
+
+== DPOP (n=20)
+mean held-out by checkpoint: {'20': -3.9712, '40': -3.9757, '80': -3.9616, '160': -3.9498}
+mean train ll/row:           {'20': -3.499, '40': -3.4806, '80': -3.4629, '160': -3.445}
+share dual > Gaussian:       {'20': 1.0, '40': 1.0, '80': 1.0, '160': 1.0}  mean dual-Gauss: {'20': 1.397, '40': 1.392, '80': 1.406, '160': 1.418}
+degenerate at checkpoint:    {'20': 9, '40': 9, '80': 8, '160': 8}  fit states: {'MAX_ITER_REACHED': 20}
+  20->40: held-out diff mean -0.0045 se 0.0144 n=20 better:13   | train ll/row diff mean +0.0184 (higher in 20)
+  40->80: held-out diff mean +0.0141 se 0.0086 n=20 better:13   | train ll/row diff mean +0.0177 (higher in 20)
+  80->160: held-out diff mean +0.0118 se 0.0085 n=20 better:12   | train ll/row diff mean +0.0178 (higher in 20)
+  20->160: held-out diff mean +0.0214 se 0.0254 n=20 better:11   | train ll/row diff mean +0.0539 (higher in 20)
+
+== POOLED (n=28)
+mean held-out by checkpoint: {'20': -4.4765, '40': -4.5422, '80': -4.5464, '160': -4.5628}
+mean train ll/row:           {'20': -3.3888, '40': -3.37, '80': -3.3531, '160': -3.3354}
+share dual > Gaussian:       {'20': 0.821, '40': 0.786, '80': 0.786, '160': 0.786}  mean dual-Gauss: {'20': 0.803, '40': 0.737, '80': 0.733, '160': 0.716}
+degenerate at checkpoint:    {'20': 10, '40': 10, '80': 9, '160': 9}  fit states: {'MAX_ITER_REACHED': 28}
+  20->40: held-out diff mean -0.0658 se 0.0411 n=28 better:14   | train ll/row diff mean +0.0188 (higher in 28)
+  40->80: held-out diff mean -0.0042 se 0.0143 n=28 better:15   | train ll/row diff mean +0.0169 (higher in 28)
+  80->160: held-out diff mean -0.0164 se 0.0207 n=28 better:15   | train ll/row diff mean +0.0177 (higher in 28)
+  20->160: held-out diff mean -0.0863 se 0.0671 n=28 better:13   | train ll/row diff mean +0.0534 (higher in 28)
+
+slope (nats/step per doubling): pooled mean -0.0263 se 0.0213 t -1.23; negative 15/28; N18 mean -0.1117; DPOP mean +0.0078
+WORD (1.3): NO CONSISTENT TREND
+
+S1: seeds stopped before 160 by abs_tol: 0; median rate 0.9923 (n=28); median extrapolated iterations 863 (n=27); range 430..2670
+S1 word: RE-VERIFIED (rate and count in range); the observation-block share is NOT RE-VERIFIED
+
+S2: degenerate&long 7, degenerate&not-long 2, ok&long 2, ok&not-long 17; Fisher two-sided p 0.0009 odds ratio 29.75
+S2 word: RE-VERIFIED
+degenerate seeds at 160 (S3 candidates): [202, 5203, 5204, 5207, 5208, 5211, 5212, 5213, 5215] | by group: {'N18': [202], 'DPOP': [5203, 5204, 5207, 5208, 5211, 5212, 5213, 5215]}
+
+S3: cured 8 of 9 at Dmax=60; word: RE-VERIFIED

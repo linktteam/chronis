@@ -115,7 +115,10 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--workers", type=int, default=2)
     ap.add_argument("--max-iter", type=int, default=160)
+    ap.add_argument("--dmax", type=int, default=25, help="max_duration of the model (the S3 check uses 60)")
     a = ap.parse_args()
+    global DMAX
+    DMAX = a.dmax
     seeds = _parse_seeds(a.seeds)
     done = set()
     if os.path.exists(a.out):
