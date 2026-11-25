@@ -1,0 +1,66 @@
+"""Mutation check for the Item 4 tests (lineage, engines, label convention). usage: PYTHONPATH=. python3 integration_report/wp8/scripts/mutation_item4.py [out.txt]"""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from mutation_runner import run
+
+LN, LS, FT = "backbone/hssm/lineage.py", "backbone/hssm/label_switching.py", "backbone/hssm/fitting.py"
+MUTANTS = [
+    ("L01 assignment maximises the cost", LN, "rows, cols = linear_sum_assignment(cost)", "rows, cols = linear_sum_assignment(-cost)"),
+    ("L02 second best includes the best", LN, "if tuple(q) != perm]", "if True]"),
+    ("L03 margin_diff multiplied by K", LN, "((C2 - C1) / K)", "((C2 - C1) * K)"),
+    ("L04 margin_ratio inverted", LN, "ratio = (C1 / C2) if C2 > 0 else 1.0", "ratio = (C2 / C1) if C1 > 0 else 1.0"),
+    ("L05 diff rule is strict", LN, 'ok_diff = strict and al["margin_diff"] >= th.tau', 'ok_diff = strict and al["margin_diff"] > th.tau'),
+    ("L06 ratio rule is strict", LN, 'ok_ratio = strict and al["margin_ratio"] <= th.rho', 'ok_ratio = strict and al["margin_ratio"] < th.rho'),
+    ("L07 a tie is accepted", LN, 'strict = al["C1"] < al["C2"]', 'strict = al["C1"] <= al["C2"]'),
+    ("L08 'both' is 'either'", LN, '"both": ok_diff and ok_ratio', '"both": ok_diff or ok_ratio'),
+    ("L09 distance not divided by the anchor's scale", LN, "v = summary.raw_means / scale", "v = summary.raw_means"),
+    ("L10 anchor rows in raw order, not stable order", LN, "a_vec = a_vec_raw[list(anchor.stable_to_raw)]", "a_vec = a_vec_raw"),
+    ("L11 inherited names inverted", LN, "r2s[raw] = i                                                  # the new regime matched to old stable id i takes that name", "r2s[i] = raw"),
+    ("L12 anchor identifiability not checked", LN, "if anchor.summary.separation_min < config.min_separation:", "if False:"),
+    ("L13 new fit identifiability not checked", LN, "if summary.separation_min < config.min_separation:", "if False:"),
+    ("L14 margin not checked", LN, "if not margin_ok(th, al):", "if False:"),
+    ("L15 a changed K is not detected", LN, "if summary.K != anchor.summary.K:", "if False:"),
+    ("L16 the anchor does not move after ALIGNED", LN, "new_anchor = Anchor(summary, tuple(r2s), fit_index, anchor.activity_rung, anchor.ordering_verified)", "new_anchor = anchor"),
+    ("L17 the anchor moves on an unverified fit", LN, "    return rec, replace(state, n_fits=state.n_fits + 1, pending=pending)\n\n\ndef apply_user_choice",
+     "    return rec, replace(state, anchor=Anchor(summary, tuple(r2s), fit_index, anchor.activity_rung, anchor.ordering_verified), n_fits=state.n_fits + 1, pending=pending)\n\n\ndef apply_user_choice"),
+    ("L18 the unconfirmed message changed", LN, 'MESSAGE_UNCONFIRMED = "cannot confirm this is the same as before"', 'MESSAGE_UNCONFIRMED = "continuity unknown"'),
+    ("L19 NEW_LINEAGE may claim 'same as before'", LN, "return state == ALIGNED", "return state in (ALIGNED, NEW_LINEAGE)"),
+    ("L20 no response behaves as NEW_NAMES", LN, 'return "KEEP_OLD" if choice is None else choice', 'return "NEW_NAMES" if choice is None else choice'),
+    ("L21 NEW_NAMES does not start a new epoch", LN, "new_epoch = state.epoch + 1", "new_epoch = state.epoch"),
+    ("L22 the old-to-new mapping is not kept", LN, "epoch_history=state.epoch_history + (entry,)", "epoch_history=state.epoch_history"),
+    ("L23 KEEP_OLD leaves the proposal pending", LN, 'return replace(record, user_choice="KEEP_OLD"), replace(state, pending=None)', 'return replace(record, user_choice="KEEP_OLD"), state'),
+    ("L24 a stale record may be resolved", LN, "if pend is None or pend.fit_index != record.fit_index:", "if pend is None:"),
+    ("L25 a choice on an aligned record is accepted", LN, "if record.continuity_state not in (CONTINUITY_UNVERIFIED, K_CHANGED):", "if False:"),
+    ("L26 invalid choices accepted", LN, "if choice not in USER_CHOICES:", "if False:"),
+    ("L27 separation uses no within-regime sd", LN, "sd = np.sqrt(np.where(n > 0, ss / np.maximum(n, 1), 0.0)); sd = np.where(sd > 0, sd, 1.0)", "sd = np.ones(F)"),
+    ("L28 separation is the largest pair, not the smallest", LN, "return float(min(np.linalg.norm((means[i] - means[j]) / sd) for i in range(K) for j in range(i + 1, K)))", "return float(max(np.linalg.norm((means[i] - means[j]) / sd) for i in range(K) for j in range(i + 1, K)))"),
+    ("L29 per-session ids are the raw labels", LN, "stable = np.asarray(raw_to_stable, dtype=int)[summary.labels]", "stable = summary.labels.copy()"),
+    ("L30 fresh ids can collide with old names", LN, "nxt = anchor.summary.K", "nxt = 0"),
+    ("L31 a lone nearest regime is called a split", LN, "if len(kids) >= 2:", "if len(kids) >= 1:"),
+    ("L32 a lone nearest regime is called a merge", LN, "if len(group) >= 2:", "if len(group) >= 1:"),
+    ("L33 cross-engine pairs use the same-engine thresholds", LN, "th = config.cross_engine if cross else config.same_engine", "th = config.same_engine"),
+    ("L34 an engine switch is not detected", LN, "cross = summary.engine != anchor.summary.engine", "cross = False"),
+    ("L35 expert review marked as done", LN, 'EXPERT_REVIEW_STATUS = "PENDING"', 'EXPERT_REVIEW_STATUS = "REVIEWED"'),
+    ("L36 no K ceiling for the matching", LN, "if summary.K > MAX_MATCH_K:", "if False:"),
+    ("L37 an aligned fit does not inherit the rung", LN, '"regimes matched to the previous accepted fit", r2s, anchor.activity_rung,', '"regimes matched to the previous accepted fit", r2s, 0,'),
+    ("L38 proposed names bypass the ladder", LN, "prop_r2s, prop_rung, prop_verified, _ = name_fit(summary, registry, config.ladder)", "prop_r2s, prop_rung, prop_verified, _ = tuple(range(summary.K)), 0, False, None"),
+    ("L39 ladder order applied inverted", LN, "        raw_to_stable[raw] = pos\n", "        raw_to_stable[pos] = raw\n"),
+    ("L40 infinite numbers left in the json", LN, "return None if not np.isfinite(x) else float(x)", "return float(x)"),
+    ("L41 baseline raw means not in raw units", LN, "raw_means = scaler_mean + scaler_std * z", "raw_means = z"),
+    ("L42 decoded label is the least likely regime", LN, "labels = np.asarray(result.p_t_posterior).argmax(axis=1)", "labels = np.asarray(result.p_t_posterior).argmin(axis=1)"),
+    ("L43 dual summary reported as baseline", LN, 'z = regime_observation_means(extract_params(model)); engine = "dual"', 'z = regime_observation_means(extract_params(model)); engine = "baseline"'),
+    ("L44 annotate does not add the record", LN, "result.lineage = record.as_dict()", "result.lineage = None"),
+    ("F01 the lineage field is missing", FT, "    lineage: Optional[dict] = None\n", ""),
+    ("S01 label order descending", LS, "order = np.argsort(activity)", "order = np.argsort(-activity)"),
+    ("S02 label order by the L1 norm", LS, "    activity = np.linalg.norm(model.mu, axis=1)\n    order", "    activity = np.abs(model.mu).sum(axis=1)\n    order"),
+    ("S03 pi not permuted", LS, "    model.pi = model.pi[order]\n", ""),
+    ("S04 constant value changed", LS, 'LABEL_ORDER_CONVENTION = "mean_L2_norm_of_regime_mean_vector"', 'LABEL_ORDER_CONVENTION = "activity"'),
+    ("S05 the old name no longer points at the value", LS, "ACTIVITY_LEVEL_CONVENTION = LABEL_ORDER_CONVENTION", 'ACTIVITY_LEVEL_CONVENTION = "activity"'),
+    ("S06 the activity claim is back in the module docstring", LS, "NOT an activity ordering", "an activity ordering"),
+    ("S07 activity_levels returns the L1 norm", LS, "    return np.linalg.norm(model.mu, axis=1)\n", "    return np.abs(model.mu).sum(axis=1)\n"),
+]
+
+if __name__ == "__main__":
+    sys.exit(run(MUTANTS, ["tests/test_wp8_item4_lineage.py", "tests/test_wp8_item4_engines.py", "tests/test_wp8_item4_label_convention.py"], sys.argv[1] if len(sys.argv) > 1 else None, workers=1))

@@ -60,6 +60,7 @@ The `HSSMResult` dataclass in `backbone.hssm.fitting` is the single canonical re
 | `fallback_count_at_build` | `int` or `None` | The model's cumulative fallback count when the result was built; `None` if not recorded (WP4) | `None` | Integer $\ge 0$ |
 | `used_shared_prior` | `bool` | The fit started at a shared prior and was regularised toward it (WP5; section 3b) | `False` | `True` iff `fit_hssm(..., shared_prior=<SharedPrior>)` was used |
 | `shared_prior_n0` | `float` or `None` | Strength of that prior in pseudo-steps per regime (WP5; section 3b) | `None` | Float $\ge 0$ when a prior was used (default `SHARED_PRIOR_DEFAULT_N0` = 5.0), else `None` |
+| `lineage` | `dict` or `None` | WP8 Item 4 (additive, section 3c): the lineage record of this fit (stable regime names, continuity state, margins, scaler, `expert_review_status`), added by the application with `backbone.hssm.lineage.annotate_result` | `None` (`fit_hssm` never fills it) | `dict` after annotation |
 
 ---
 
@@ -111,6 +112,19 @@ With a `backbone.hssm.shrinkage.SharedPrior` (aggregate parameters of a populati
 - the EM monotonicity guard compares the unpenalised log-likelihood, so a regularised fit can stop early with `fit_state == REJECTED_UPDATE` (about a third of the fits in the WP5 study); the hold-back rule of section 3 is unchanged;
 - the cold-start gate (30 present sessions) is NOT changed by a prior; a caller may pass a `config` with a lower minimum, which is a product decision;
 - fail closed: a prior whose (K, F, L) differ from the request, a prior that is not aggregate-only (attribute whitelist), a negative or non-finite strength, a strength without a prior, a prior with `model_type="baseline"`, or a fit that did not finish raises (`ValueError` / `FittingConvergenceError`); there is no silent fall-back to a prior-free fit.
+
+---
+
+## 3c. Regime identity across refits (WP8 Item 4; additive, nothing in a raw output changes)
+
+The raw regime ids of a fit mean nothing across fits (the same user refitted on a longer window or with another seed names the regimes differently; the baseline's `canonicalize_labels` sorts by the L2 norm of the z-scored regime means, which is **not** an activity ordering). `backbone/hssm/lineage.py` adds a second set of names, the **stable ids**, in a new column and leaves the raw record untouched (owner decision A4):
+
+* `stable_regime_id` (per session: the stable id of the regime the session was decoded into), `lineage_id`, `lineage_epoch`, `continuity_state`, `alignment_margin`, `activity_rung`, `scaler_mean`, `scaler_std`, `expert_review_status`, plus `proposed_new_names`, `user_choice`, `message`, `split_merge_candidates`, `reasons`, `raw_to_stable` and every margin and per-regime distance of the alignment. `HSSMResult.lineage` carries this record as a dict after `lineage.annotate_result(result, record)`.
+* `continuity_state` is `ALIGNED`, `CONTINUITY_UNVERIFIED`, `K_CHANGED` or `NEW_LINEAGE`. **A consumer may say "same as before" only when it is `ALIGNED`** (`lineage.may_claim_same_as_before`, fail closed). On `CONTINUITY_UNVERIFIED` and `K_CHANGED` the old names are kept and the record says "cannot confirm this is the same as before"; the user may choose new names (`user_choice` = `NEW_NAMES`, which starts a new epoch and stores the old-to-new mapping permanently); `None` (no response) behaves as `KEEP_OLD`.
+* The stable ids are named at a lineage's first accepted fit by the score ladder `backbone/hssm/ordering.py` (`activity_rung` 1, 2 or 3; 0 = not verified, ids then follow first-fit order and nothing about activity may be claimed) and inherited by alignment on later fits; they are never re-sorted.
+* Alignment is by regime means in raw physical units (the scaler of the fit window is stored with every record), for both engines and across an engine switch. The dual engine's regime means are `regime_observation_means(params)`; its regime-indexed parameters are permuted with `permute_regimes`.
+* `expert_review_status` is `"PENDING"` on every record: the matching distance, the ladder weights and the thresholds are awaiting an expert's sign-off (owner decision A7).
+Design, thresholds and evidence: `tests/PREDECLARED_CRITERIA_WP8.md`, `tests/WP8_ITEM4_RESULTS.md`.
 
 ---
 

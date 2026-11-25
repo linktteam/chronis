@@ -730,6 +730,11 @@ class HSSMResult:
     model_class: str = ""
     convergence_metadata: dict[str, Any] = field(default_factory=dict)
 
+    # --- WP8 Item 4 (additive; owner decision A4: the raw record above is never changed) ---
+    # The lineage record of this fit (stable regime names, continuity state, margins, scaler, expert_review_status), added by the application with
+    # `backbone.hssm.lineage.annotate_result`. `fit_hssm` never fills it, so every previously healthy result is bit-identical.
+    lineage: Optional[dict] = None
+
     def __post_init__(self) -> None:
         # private once-flag for the internal WARNING (not a dataclass field: not compared, not in asdict, not in the schema)
         self._holdback_logged = False
