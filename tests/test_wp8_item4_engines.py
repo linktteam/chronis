@@ -21,7 +21,9 @@ from backbone.hssm.ordering import LadderConfig
 from backbone.hssm.shrinkage import extract_params, permute_regimes, regime_observation_means
 from data.synthetic_identity import REGISTRY, generate_identity_stream
 
-CFG = AlignmentConfig(min_separation=0.0, ladder=LadderConfig(n_bootstrap=40))
+# The mechanism of the dual and cross-engine alignment is tested with thresholds that are calibrated BY THE TEST; the product defaults of these two classes are UNKNOWN (not calibrated)
+# and never serve ALIGNED (tests/test_wp8_item4_freeze.py).
+CFG = AlignmentConfig(min_separation=0.0, ladder=LadderConfig(n_bootstrap=40), dual_engine=PairThreshold("ratio", rho=0.5), cross_engine=PairThreshold("ratio", rho=0.5))
 K, F, LAT, DMAX = 3, 7, 2, 12
 
 

@@ -1,0 +1,26 @@
+{
+ "h": 4.0,
+ "classes": {
+  "baseline": {
+   "unknown": false,
+   "distance": "raw",
+   "rule": "b",
+   "tau": null,
+   "rho": 0.5,
+   "coverage": 0.3734567901234568,
+   "n": 648,
+   "served": 242,
+   "n_passing": 242
+  },
+  "dual": {
+   "unknown": true,
+   "n": 216,
+   "n_passing": 4
+  },
+  "cross": {
+   "unknown": true,
+   "n": 480,
+   "n_passing": 16
+  }
+ }
+}

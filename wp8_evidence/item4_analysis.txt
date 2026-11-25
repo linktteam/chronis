@@ -1,0 +1,57 @@
+development fits read: 960 (baseline 720, dual 240); accepted dual 31
+class baseline: 648 alignments; both fits recoverable 549/648 = 84.7%; permutation errors among those (raw distance): 4; strict-correct overall 545/648 = 84.1%
+class dual: 216 alignments; both fits recoverable 54/216 = 25.0%; permutation errors among those (raw distance): 9; strict-correct overall 45/216 = 20.8%
+class cross: 480 alignments; both fits recoverable 168/480 = 35.0%; permutation errors among those (raw distance): 28; strict-correct overall 140/480 = 29.2%
+
+== identifiability gate h (rule: smallest grid value with no strict-wrong alignment among those whose two fits are both >= h; baseline class, raw distance)
+  h     pass share (all alignments)   strict-wrong among passing   recoverable-pair permutation errors among passing
+  0.0         648/648 = 100.0%        103          4
+  0.5         648/648 = 100.0%        103          4
+  1.0         648/648 = 100.0%        103          4
+  1.5          640/648 = 98.8%         95          1
+  2.0          598/648 = 92.3%         62          1
+  2.5          515/648 = 79.5%         19          0
+  3.0          411/648 = 63.4%          3          0
+  3.5          333/648 = 51.4%          1          0
+  4.0          242/648 = 37.3%          0          0
+  4.5          174/648 = 26.9%          0          0
+  5.0          111/648 = 17.1%          0          0
+  h = 4.0 (the smallest grid value with 0 strict-wrong passing alignments)
+  same h on class dual: pass share 4/216 = 1.9%; strict-wrong among passing 0
+  same h on class cross: pass share 16/480 = 3.3%; strict-wrong among passing 0
+
+== margin thresholds, class baseline: 648 alignments, 242 pass the gate (h = 4.0)
+  distance z      rule (a) vacuous (excluded) tau=0.0 rho=-: coverage 37.3% (242/648), wrong served 0
+  distance z      rule (b)                    tau=- rho=0.5: coverage 37.3% (242/648), wrong served 0
+  distance z      rule (c) vacuous (excluded) tau=0.0 rho=0.5: coverage 37.3% (242/648), wrong served 0
+  distance raw    rule (a) vacuous (excluded) tau=0.0 rho=-: coverage 37.3% (242/648), wrong served 0
+  distance raw    rule (b)                    tau=- rho=0.5: coverage 37.3% (242/648), wrong served 0
+  distance raw    rule (c) vacuous (excluded) tau=0.0 rho=0.5: coverage 37.3% (242/648), wrong served 0
+  distance dur0.5 rule (a) vacuous (excluded) tau=0.0 rho=-: coverage 37.3% (242/648), wrong served 0
+  distance dur0.5 rule (b)                    tau=- rho=0.5: coverage 37.3% (242/648), wrong served 0
+  distance dur0.5 rule (c) vacuous (excluded) tau=0.0 rho=0.5: coverage 37.3% (242/648), wrong served 0
+  distance dur1   rule (a) vacuous (excluded) tau=0.0 rho=-: coverage 37.3% (242/648), wrong served 0
+  distance dur1   rule (b)                    tau=- rho=0.5: coverage 37.3% (242/648), wrong served 0
+  distance dur1   rule (c) vacuous (excluded) tau=0.0 rho=0.5: coverage 37.3% (242/648), wrong served 0
+  CHOSEN: distance raw, rule (b), tau=-, rho=0.5: coverage 37.3% (242/648), 0 wrong served on development  SHORTFALL: below the declared 80%, reported, criteria not loosened
+  context: both-fits-recoverable pairs 549; among them permutation errors 4; ALIGNED among all alignments 242/648 = 37.3%
+
+== margin thresholds, class dual: 216 alignments, 4 pass the gate (h = 4.0)
+  fewer than 20 alignments pass the gate: thresholds for this class are UNKNOWN (reported, not chosen)
+
+== margin thresholds, class cross: 480 alignments, 16 pass the gate (h = 4.0)
+  fewer than 20 alignments pass the gate: thresholds for this class are UNKNOWN (reported, not chosen)
+
+== reported: coverage and wrong-served of the chosen baseline rule for other gate values
+  h=0.0: coverage 585/648 = 90.3%; strict-wrong served 43; permutation errors served 1
+  h=1.5: coverage 584/648 = 90.1%; strict-wrong served 42; permutation errors served 1
+  h=2.0: coverage 561/648 = 86.6%; strict-wrong served 27; permutation errors served 1
+  h=2.5: coverage 506/648 = 78.1%; strict-wrong served 11; permutation errors served 0
+  h=3.0: coverage 410/648 = 63.3%; strict-wrong served 3; permutation errors served 0
+  h=3.5: coverage 332/648 = 51.2%; strict-wrong served 1; permutation errors served 0
+  h=4.0: coverage 242/648 = 37.3%; strict-wrong served 0; permutation errors served 0
+
+== by drift (baseline class, chosen rule): ALIGNED share and strict-wrong served
+  drift 0.0: 216 alignments, ALIGNED 78/216 = 36.1%, strict-wrong served 0
+  drift 1.0: 216 alignments, ALIGNED 82/216 = 38.0%, strict-wrong served 0
+  drift 2.5: 216 alignments, ALIGNED 82/216 = 38.0%, strict-wrong served 0

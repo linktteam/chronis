@@ -308,11 +308,11 @@ def test_an_engine_switch_uses_its_own_thresholds_and_moves_the_anchor_when_alig
     lenient_within_strict_across = AlignmentConfig(min_separation=0.0, ladder=CFG.ladder, same_engine=PairThreshold("ratio", rho=0.5), cross_engine=PairThreshold("ratio", rho=0.0))
     rec, st1 = step(st, n, lenient_within_strict_across, REGISTRY)
     assert rec.continuity_state == CONTINUITY_UNVERIFIED and rec.anchor_engine == "baseline" and rec.engine == "dual" and rec.threshold["rho"] == 0.0 and st1.anchor.summary.engine == "baseline"
-    lenient = AlignmentConfig(min_separation=0.0, ladder=CFG.ladder, same_engine=PairThreshold("ratio", rho=0.0), cross_engine=PairThreshold("ratio", rho=0.5))
+    lenient = AlignmentConfig(min_separation=0.0, ladder=CFG.ladder, same_engine=PairThreshold("ratio", rho=0.5), dual_engine=PairThreshold("ratio", rho=0.0), cross_engine=PairThreshold("ratio", rho=0.5))
     rec, st2 = step(st, n, lenient, REGISTRY)
     assert rec.continuity_state == ALIGNED and rec.engine == "dual" and rec.anchor_engine == "baseline" and st2.anchor.summary.engine == "dual"
     again, _ = step(st2, _summary(means, seed=3, engine="dual"), lenient, REGISTRY)
-    assert again.threshold["rho"] == 0.0                                                      # now same-engine
+    assert again.threshold["rho"] == 0.0                                                      # now dual to dual: the dual class, not the baseline one (rho 0.5 here)
 
 
 def test_every_record_carries_the_columns_of_the_brief_is_json_ready_and_says_expert_review_is_pending():

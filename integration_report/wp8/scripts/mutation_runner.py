@@ -6,7 +6,15 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
-IGNORE = shutil.ignore_patterns(".git", "__pycache__", "wp7r_evidence", "wp8_evidence", ".pytest_cache")
+_BASE_IGNORE = shutil.ignore_patterns(".git", "__pycache__", "wp7r_evidence", ".pytest_cache")
+EVIDENCE_KEPT = ("item4_thresholds.json",)          # the only evidence file a test reads (the frozen numbers); the rest of wp8_evidence is large and is left out of the throw-away copy
+
+
+def IGNORE(dirpath, names):
+    skip = set(_BASE_IGNORE(dirpath, names))
+    if Path(dirpath).name == "wp8_evidence":
+        skip |= {n for n in names if n not in EVIDENCE_KEPT}
+    return skip
 
 
 def _one(args):

@@ -1,0 +1,2 @@
+L47 cross-engine class calibrated by default: KILLED
+1/1 killed

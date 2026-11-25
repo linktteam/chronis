@@ -20,7 +20,7 @@ MUTANTS = [
     ("L11 inherited names inverted", LN, "r2s[raw] = i                                                  # the new regime matched to old stable id i takes that name", "r2s[i] = raw"),
     ("L12 anchor identifiability not checked", LN, "if anchor.summary.separation_min < config.min_separation:", "if False:"),
     ("L13 new fit identifiability not checked", LN, "if summary.separation_min < config.min_separation:", "if False:"),
-    ("L14 margin not checked", LN, "if not margin_ok(th, al):", "if False:"),
+    ("L14 margin not checked", LN, "elif not margin_ok(th, al):", "elif False:"),
     ("L15 a changed K is not detected", LN, "if summary.K != anchor.summary.K:", "if False:"),
     ("L16 the anchor does not move after ALIGNED", LN, "new_anchor = Anchor(summary, tuple(r2s), fit_index, anchor.activity_rung, anchor.ordering_verified)", "new_anchor = anchor"),
     ("L17 the anchor moves on an unverified fit", LN, "    return rec, replace(state, n_fits=state.n_fits + 1, pending=pending)\n\n\ndef apply_user_choice",
@@ -40,7 +40,7 @@ MUTANTS = [
     ("L30 fresh ids can collide with old names", LN, "nxt = anchor.summary.K", "nxt = 0"),
     ("L31 a lone nearest regime is called a split", LN, "if len(kids) >= 2:", "if len(kids) >= 1:"),
     ("L32 a lone nearest regime is called a merge", LN, "if len(group) >= 2:", "if len(group) >= 1:"),
-    ("L33 cross-engine pairs use the same-engine thresholds", LN, "th = config.cross_engine if cross else config.same_engine", "th = config.same_engine"),
+    ("L33 cross-engine pairs use the same-engine thresholds", LN, 'th = config.cross_engine if cross else (config.dual_engine if summary.engine == "dual" else config.same_engine)', "th = config.same_engine"),
     ("L34 an engine switch is not detected", LN, "cross = summary.engine != anchor.summary.engine", "cross = False"),
     ("L35 expert review marked as done", LN, 'EXPERT_REVIEW_STATUS = "PENDING"', 'EXPERT_REVIEW_STATUS = "REVIEWED"'),
     ("L36 no K ceiling for the matching", LN, "if summary.K > MAX_MATCH_K:", "if False:"),
@@ -52,6 +52,19 @@ MUTANTS = [
     ("L42 decoded label is the least likely regime", LN, "labels = np.asarray(result.p_t_posterior).argmax(axis=1)", "labels = np.asarray(result.p_t_posterior).argmin(axis=1)"),
     ("L43 dual summary reported as baseline", LN, 'z = regime_observation_means(extract_params(model)); engine = "dual"', 'z = regime_observation_means(extract_params(model)); engine = "baseline"'),
     ("L44 annotate does not add the record", LN, "result.lineage = record.as_dict()", "result.lineage = None"),
+    ("L45 gate h back at the provisional 3.0", LN, "min_separation: float = 4.0 ", "min_separation: float = 3.0 "),
+    ("L46 baseline rule changed to diff", LN, 'same_engine: PairThreshold = PairThreshold("ratio", 0.0, AMBIGUITY_RATIO) ', 'same_engine: PairThreshold = PairThreshold("diff", 0.0, AMBIGUITY_RATIO) '),
+    ("L47 cross-engine class calibrated by default", LN, 'PairThreshold("ratio", 0.0, AMBIGUITY_RATIO, calibrated=False)   # baseline to dual and dual to baseline: UNKNOWN', 'PairThreshold("ratio", 0.0, AMBIGUITY_RATIO)   # baseline to dual and dual to baseline: UNKNOWN'),
+    ("L48 dual class calibrated by default", LN, 'PairThreshold("ratio", 0.0, AMBIGUITY_RATIO, calibrated=False)    # dual to dual: UNKNOWN', 'PairThreshold("ratio", 0.0, AMBIGUITY_RATIO)    # dual to dual: UNKNOWN'),
+    ("L49 margin_ok ignores the calibration flag", LN, "    if not th.calibrated:\n        return False\n    if al[\"C2\"] == float(\"inf\"):", "    if al[\"C2\"] == float(\"inf\"):"),
+    ("L50 the calibration flag is checked after the single-regime shortcut", LN, "    if not th.calibrated:\n        return False\n    if al[\"C2\"] == float(\"inf\"):\n        return True\n",
+     "    if al[\"C2\"] == float(\"inf\"):\n        return True\n    if not th.calibrated:\n        return False\n"),
+    ("L51 the uncalibrated reason is not recorded", LN, "        if not th.calibrated:\n            reasons.append(\"threshold_not_calibrated\")\n        elif not margin_ok(th, al):", "        if False:\n            reasons.append(\"threshold_not_calibrated\")\n        elif not margin_ok(th, al):"),
+    ("L52 dual pairs use the baseline threshold", LN, '(config.dual_engine if summary.engine == "dual" else config.same_engine)', "config.same_engine"),
+    ("L53 the record does not carry the calibration flag", LN, "dict(rule=th.rule, tau=th.tau, rho=th.rho, calibrated=th.calibrated)", "dict(rule=th.rule, tau=th.tau, rho=th.rho)"),
+    ("L54 duration coordinate on by default", LN, "duration_weight: float = 0.0   ", "duration_weight: float = 0.5   "),
+    ("L55 the gate is strict at h", LN, "if summary.separation_min < config.min_separation:", "if summary.separation_min <= config.min_separation:"),
+    ("L56 baseline rho above the WP5 rule is silently allowed", LN, "if self.tau < 0 or not (0.0 <= self.rho <= AMBIGUITY_RATIO):", "if self.tau < 0:"),
     ("F01 the lineage field is missing", FT, "    lineage: Optional[dict] = None\n", ""),
     ("S01 label order descending", LS, "order = np.argsort(activity)", "order = np.argsort(-activity)"),
     ("S02 label order by the L1 norm", LS, "    activity = np.linalg.norm(model.mu, axis=1)\n    order", "    activity = np.abs(model.mu).sum(axis=1)\n    order"),
@@ -63,4 +76,6 @@ MUTANTS = [
 ]
 
 if __name__ == "__main__":
-    sys.exit(run(MUTANTS, ["tests/test_wp8_item4_lineage.py", "tests/test_wp8_item4_engines.py", "tests/test_wp8_item4_label_convention.py"], sys.argv[1] if len(sys.argv) > 1 else None, workers=1))
+    only = sys.argv[2:]                                   # optional: mutant ids (e.g. L47) to re-run alone
+    chosen = [m for m in MUTANTS if not only or m[0].split()[0] in only]
+    sys.exit(run(chosen, ["tests/test_wp8_item4_lineage.py", "tests/test_wp8_item4_engines.py", "tests/test_wp8_item4_label_convention.py", "tests/test_wp8_item4_freeze.py"], sys.argv[1] if len(sys.argv) > 1 else None, workers=1))

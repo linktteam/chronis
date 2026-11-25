@@ -11,7 +11,8 @@ every accepted fit a SECOND set of names, the stable ids, and says how far that 
   * A3: on CONTINUITY_UNVERIFIED and K_CHANGED the OLD names are kept, the result says "cannot confirm this is the same as before" and carries `proposed_new_names`; `user_choice` is
     None, KEEP_OLD or NEW_NAMES and None behaves as KEEP_OLD. NEW_NAMES starts a new epoch and the old-to-new mapping is kept in the state's history for good. The application makes the
     choice (`apply_user_choice`); nothing here decides for the user.
-  * Fail closed: `may_claim_same_as_before(record)` is True only for ALIGNED. The anchor moves only on ALIGNED and NEW_LINEAGE.
+  * Fail closed: `may_claim_same_as_before(record)` is True only for ALIGNED. The anchor moves only on ALIGNED and NEW_LINEAGE. A class of pair whose threshold could not be
+    calibrated on the development data (dual to dual, baseline to dual and back: `PairThreshold.calibrated = False`) is never ALIGNED (reason `threshold_not_calibrated`).
   * Engines: the baseline's regime means are `mu`; the dual model's are `regime_observation_means(params)` (the stationary mean d_k + C_k m_k). Both are put into raw units with the
     scaler of the window the fit was made on, so a switch of engine is aligned exactly like a refit, with its own thresholds.
 EXPERT_REVIEW(identity-distance): the matching distance, the identifiability gate and every threshold below are defined here and are awaiting expert sign-off (A7); every record says so.
@@ -39,12 +40,14 @@ AMBIGUITY_RATIO = 0.5                       # the WP5 production rule of shrinka
 RECORD_COLUMNS = ("stable_regime_id", "lineage_id", "lineage_epoch", "continuity_state", "alignment_margin", "activity_rung", "scaler_mean", "scaler_std", "expert_review_status")
 
 
-# EXPERT_REVIEW(identity-distance): the alignment acceptance thresholds. Provisional values until the Item 4 design freeze (tests/PREDECLARED_CRITERIA_WP8.md, section 8) fixes them.
+# EXPERT_REVIEW(identity-distance): the alignment acceptance thresholds, frozen in the Item 4 design freeze (tests/PREDECLARED_CRITERIA_WP8.md, section 8). `calibrated=False` means the
+# development data could not support a value for this class of pair (fewer than 20 alignments passed the gate): an alignment of that class is never served as ALIGNED.
 @dataclass(frozen=True)
 class PairThreshold:
     rule: str = "ratio"              # "diff": margin_diff >= tau; "ratio": margin_ratio <= rho; "both"
     tau: float = 0.0
     rho: float = AMBIGUITY_RATIO
+    calibrated: bool = True          # False = UNKNOWN threshold: fail closed (reason `threshold_not_calibrated`), whatever the margins are
 
     def __post_init__(self) -> None:
         if self.rule not in ("diff", "ratio", "both"):
@@ -54,13 +57,20 @@ class PairThreshold:
 
 
 # EXPERT_REVIEW(identity-distance): the identifiability gate `min_separation`, the optional duration coordinate of the matching distance and the thresholds per pair class.
+# FROZEN 2026-11-25 (Item 4 design freeze, 960 development fits, seeds 8201..8212; evidence wp8_evidence/item4_analysis.txt):
+#   h = 4.0: the smallest grid value at which no alignment between two fits that both pass it was strict-wrong on development (coverage at h = 4.0: 37.3% of all baseline alignments,
+#            well below the declared 80%: the shortfall is reported, not hidden by loosening the gate);
+#   distance = raw units / anchor scaler, no duration coordinate (raw, dur0.5 and dur1 tied on coverage, ties go to the simpler one);
+#   baseline pairs: rule (b), rho = 0.5 (the declared floor: every passing development alignment was correct, so the smallest tau is 0 and is vacuous);
+#   dual pairs and cross-engine pairs: UNKNOWN (4 and 16 of 216 and 480 development alignments pass the gate, fewer than 20), so `calibrated=False`: never ALIGNED.
 @dataclass(frozen=True)
 class AlignmentConfig:
-    min_separation: float = 3.0                  # h: a fit whose regimes are closer than this (within-regime sd units) is not identifiable
+    min_separation: float = 4.0                  # h: a fit whose regimes are closer than this (within-regime sd units) is not identifiable
     duration_weight: float = 0.0                 # lambda: weight of log expected duration as one more coordinate of the matching distance (0 = off)
-    same_engine: PairThreshold = PairThreshold()
-    cross_engine: PairThreshold = PairThreshold()
+    same_engine: PairThreshold = PairThreshold("ratio", 0.0, AMBIGUITY_RATIO)                      # baseline to baseline
+    cross_engine: PairThreshold = PairThreshold("ratio", 0.0, AMBIGUITY_RATIO, calibrated=False)   # baseline to dual and dual to baseline: UNKNOWN
     ladder: LadderConfig = LadderConfig()
+    dual_engine: PairThreshold = PairThreshold("ratio", 0.0, AMBIGUITY_RATIO, calibrated=False)    # dual to dual: UNKNOWN
 
     def __post_init__(self) -> None:
         if self.min_separation < 0 or self.duration_weight < 0:
@@ -292,7 +302,10 @@ def alignment(anchor_vec: np.ndarray, new_vec: np.ndarray) -> dict:
 
 
 def margin_ok(th: PairThreshold, al: dict) -> bool:
-    """EXPERT_REVIEW(identity-distance): the acceptance rule. A tie between the best and the second best assignment is never accepted."""
+    """EXPERT_REVIEW(identity-distance): the acceptance rule. A tie between the best and the second best assignment is never accepted, and a threshold that is not calibrated
+    (UNKNOWN for its class of pair) accepts nothing, whatever the margins are."""
+    if not th.calibrated:
+        return False
     if al["C2"] == float("inf"):
         return True
     strict = al["C1"] < al["C2"]
@@ -342,7 +355,7 @@ def _record(fit_index, summary, anchor, epoch, lineage_id, state_name, message, 
         nearest_other_distances=None if al is None else al["nearest_other"], separation_min=summary.separation_min,
         anchor_separation_min=None if anchor is None else anchor.summary.separation_min, scaler_mean=summary.scaler_mean, scaler_std=summary.scaler_std,
         proposed_new_names=proposed, split_merge_candidates=tuple(candidates), reasons=tuple(reasons),
-        threshold=None if th is None else dict(rule=th.rule, tau=th.tau, rho=th.rho))
+        threshold=None if th is None else dict(rule=th.rule, tau=th.tau, rho=th.rho, calibrated=th.calibrated))
 
 
 def step(state: LineageState | None, summary: FitSummary, config: AlignmentConfig = AlignmentConfig(), registry=None, lineage_id: str | None = None) -> tuple[LineageRecord, LineageState]:
@@ -363,7 +376,7 @@ def step(state: LineageState | None, summary: FitSummary, config: AlignmentConfi
     a_vec = a_vec_raw[list(anchor.stable_to_raw)]                          # rows in stable-id order
     n_vec = _vectors(summary, scale, config.duration_weight)
     cross = summary.engine != anchor.summary.engine
-    th = config.cross_engine if cross else config.same_engine
+    th = config.cross_engine if cross else (config.dual_engine if summary.engine == "dual" else config.same_engine)
     def proposal():
         """The names this fit would get on its own (what NEW_NAMES would adopt), computed only when continuity is not confirmed."""
         prop_r2s, prop_rung, prop_verified, _ = name_fit(summary, registry, config.ladder)
@@ -395,7 +408,9 @@ def step(state: LineageState | None, summary: FitSummary, config: AlignmentConfi
             reasons.append("anchor_not_identifiable")
         if summary.separation_min < config.min_separation:
             reasons.append("fit_not_identifiable")
-        if not margin_ok(th, al):
+        if not th.calibrated:
+            reasons.append("threshold_not_calibrated")
+        elif not margin_ok(th, al):
             reasons.append("margin_below_threshold")
     if not reasons:
         r2s = [0] * summary.K

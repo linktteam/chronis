@@ -164,7 +164,7 @@ for c in ("baseline", "dual", "cross"):
 P("\n== reported: coverage and wrong-served of the chosen baseline rule for other gate values")
 chosen = summary["classes"].get("baseline")
 if chosen and not chosen.get("unknown"):
-    for hh in (0.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, h):
+    for hh in sorted({0.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, h}):
         served = []
         for r in base:
             m = r["modes"][chosen["distance"]]
