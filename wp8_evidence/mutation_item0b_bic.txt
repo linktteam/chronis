@@ -1,0 +1,14 @@
+C01 default convention flipped back to legacy: KILLED
+C02 free count equals the legacy count: KILLED
+C03 free count too small: KILLED
+C04 unknown convention silently accepted: KILLED
+C05 legacy count off by one: KILLED
+C06 BIC ignores the convention: KILLED
+C07 AIC ignores the convention: KILLED
+C08 legacy and free swapped: KILLED
+C09 variances not counted: KILLED
+D01 doc says the default is legacy: KILLED
+D02 doc drops the over-count size: KILLED
+D03 doc drops the owner decision: KILLED
+C10 initial distribution counted as K: KILLED
+13/13 killed

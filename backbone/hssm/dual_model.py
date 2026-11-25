@@ -234,7 +234,9 @@ class DualTimescaleHSSM:
 
     @property
     def duration_model_identity(self) -> str:
-        return "explicit_truncated_gaussian"
+        """The duration law the code actually fits (see `_duration_logpmf`): a discrete log-normal truncated to 1..Dmax and renormalised. Until WP8 this
+        said "explicit_truncated_gaussian", which was never true."""
+        return "explicit_truncated_lognormal"
 
     @property
     def duration_unit_source(self) -> str:
@@ -249,11 +251,19 @@ class DualTimescaleHSSM:
             "supports_slow_state_p_t": True,
             "supports_explicit_duration": True,
             "supports_neural_residual": False,
-            "is_production_grade_full_hssm": True,
+            "is_production_grade_full_hssm": self.is_certified_fit_,
             "is_baseline_model": False,
             "fast_state_supported": True,
             "latent_dimension": self.L,
         }
+
+    @property
+    def is_certified_fit_(self) -> bool:
+        """WP8 item 0e (metadata honesty): the key `is_production_grade_full_hssm` used to be the constant True for every dual model, fitted or not.
+        It now reports what happened to THIS object: True iff it has been fitted, its fit state is CONVERGED, no Cholesky fallback fired during the fit,
+        and no regime's duration parameters sit at a wall of the duration box. This is the model-level part of the publish rule only (the collapsed-regime
+        and rising-pmf rules need the filtered posterior and are applied in `fit_hssm`); the full decision is `HSSMResult.insights_withheld`."""
+        return bool(self._is_fitted and self.fit_state_ == FitState.CONVERGED and not self.fit_degraded_ and not any(self.duration_at_bound_.values()))
 
     @property
     def converged_(self) -> bool:

@@ -1,0 +1,6 @@
+ast.dump identical between 27c591c and working tree: True
+--- base
++++ now
+@@ -155 +155 @@
+-# - Status: accepted as the official rule. No acceptance date and no re-check trigger are recorded (owner decision); see the ledger open items.
++# - Status: accepted as the official rule; no acceptance date recorded; Re-check trigger: before the first pilot.

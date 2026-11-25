@@ -1116,7 +1116,7 @@ def fit_hssm(
             AIC=aic_val,
             heldout_predictive_log_likelihood=None,
             fit_state=best_dual_model.fit_state_,
-            optimizer_success=True,
+            optimizer_success=not best_dual_model.duration_fallback_used_,                # WP8 item 0e: was the constant True; now what happened (as in the baseline path)
             fallback_used=best_dual_model.duration_fallback_used_,
             run_log=full_run_log,
             warnings=[],

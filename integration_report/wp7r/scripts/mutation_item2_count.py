@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 M = "backbone/hssm/model.py"
 MUTANTS = [
-    ("C01 default convention flipped to free", M, 'n_params_convention: str = "legacy"', 'n_params_convention: str = "free"'),
+    ("C01 default convention flipped back to legacy", M, 'n_params_convention: str = "free"', 'n_params_convention: str = "legacy"'),
     ("C02 free count equals the legacy count", M, "n_transition = K * (K - 2)", "n_transition = K * (K - 1)"),
     ("C03 free count too small", M, "n_transition = K * (K - 2)", "n_transition = K * (K - 3)"),
     ("C04 unknown convention silently accepted", M, '''        else:
@@ -16,9 +16,9 @@ MUTANTS = [
     ("C07 AIC ignores the convention", M, "return -2 * self.log_likelihood_ + 2 * self.n_params()", "return -2 * self.log_likelihood_ + 2 * ((self.K - 1) + self.K * (self.K - 1) + 2 * self.K * self.F + 2 * self.K)"),
     ("C08 legacy and free swapped", M, 'if self.n_params_convention == "legacy":', 'if self.n_params_convention == "free":'),
     ("C09 variances not counted", M, "return (K - 1) + n_transition + K * F + K * F + K * 2", "return (K - 1) + n_transition + K * F + K * 2"),
-    ("D01 doc says the default is free", "docs/INTEGRATION_CONTRACT_HSSM.md", '`n_params_convention = "legacy"`', '`n_params_convention = "free"`'),
+    ("D01 doc says the default is legacy", "docs/INTEGRATION_CONTRACT_HSSM.md", "the default is the free count", "the default is the legacy count"),
     ("D02 doc drops the over-count size", "docs/INTEGRATION_CONTRACT_HSSM.md", "too large by **K**", "too large by **2K**"),
-    ("D03 doc drops the approval sentence", "docs/INTEGRATION_CONTRACT_HSSM.md", "needs the owner's approval", "is free to change"),
+    ("D03 doc drops the owner decision", "docs/INTEGRATION_CONTRACT_HSSM.md", "owner decision B1", "an engineering choice"),
     ("C10 initial distribution counted as K", M, "return (K - 1) + n_transition + K * F + K * F + K * 2", "return K + n_transition + K * F + K * F + K * 2"),
 ]
 

@@ -1,0 +1,6 @@
+datasets in both runs: 48 (old 48, new 48)
+selected K identical: 48 of 48
+log-likelihoods per K bit-identical: 48 of 48
+BIC(old) - BIC(new) == K*ln(n) for every K: 48 of 48 (largest deviation 1.28e-13)
+easy: planted-K recovery legacy 20/24, free 20/24
+hard: planted-K recovery legacy 8/24, free 8/24

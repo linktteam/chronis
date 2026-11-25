@@ -1,0 +1,25 @@
+third-party distributions imported under backbone, data, tests: 5
+  numpy            imports ['numpy'] in 82 file(s) (backbone, data, tests), e.g. backbone/attractors/calibration.py:14 -> requirements.txt ==2.2.6
+  pandas           imports ['pandas'] in 3 file(s) (backbone, tests), e.g. backbone/hssm/fitting.py:17 -> requirements.txt ==2.3.3
+  pytest           imports ['pytest'] in 46 file(s) (tests), e.g. tests/conftest.py:2 -> requirements.txt ==9.1.1
+  scikit-learn     imports ['sklearn'] in 3 file(s) (backbone, tests), e.g. backbone/shared/feature_reduction.py:21 -> requirements.txt ==1.9.1
+  scipy            imports ['scipy'] in 16 file(s) (backbone, data, tests), e.g. backbone/hssm/dual_model.py:31 -> requirements.txt ==1.15.3
+pinned but not imported by the scanned directories (30): ast-serialize, bertopic, bocd, colorama, exceptiongroup, hdbscan, iniconfig, joblib, librt, mlflow, mypy, mypy-extensions, narwhals, openai-whisper, opensmile, packaging, pathspec, patsy, pip-audit, pluggy, pyannote-audio, pygments, python-dateutil, pytz, six, statsmodels, threadpoolctl, tomli, typing-extensions, tzdata
+  optional ast-serialize==0.8.0: not imported anywhere in this repo
+  optional bertopic==0.16.0: not imported anywhere in this repo
+  optional bocd==0.1.1: not imported anywhere in this repo
+  optional hdbscan==0.8.33: not imported anywhere in this repo
+  optional librt==0.15.0: not imported anywhere in this repo
+  optional mlflow==2.20.1: not imported anywhere in this repo
+  optional mypy==2.3.1: not imported anywhere in this repo
+  optional mypy-extensions==1.1.0: not imported anywhere in this repo
+  optional openai-whisper==20231117: not imported anywhere in this repo
+  optional opensmile==2.5.0: not imported anywhere in this repo
+  optional pathspec==1.1.1: not imported anywhere in this repo
+  optional patsy==1.0.2: not imported anywhere in this repo
+  optional pip-audit==2.8.0: not imported anywhere in this repo
+  optional pyannote-audio==3.1.1: not imported anywhere in this repo
+  optional statsmodels==0.14.6: not imported anywhere in this repo
+  optional typing-extensions==4.16.0: not imported anywhere in this repo
+OK: every third-party import is pinned
+exit 0

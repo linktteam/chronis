@@ -97,11 +97,12 @@ def _neg_duration_loglik(params, w: np.ndarray, d_vals: np.ndarray) -> float:
 
 
 class GaussianHSMM:
-    # WP7-R item 2 (P1-01): how n_params() counts the transition matrix in AIC / BIC. "legacy" (the default, unchanged since WP1) counts K*(K-1)
-    # entries; "free" counts the K*(K-2) that are free, because the M-step forces a zero diagonal (dwell time lives in the duration law) so each
-    # row has K-1 non-zero entries that sum to 1. The legacy count over-counts by K parameters. Changing the default moves model selection, so it
-    # needs the owner's approval; the switch is a class attribute (or set it on an instance).
-    n_params_convention: str = "legacy"
+    # How n_params() counts the transition matrix in AIC / BIC (WP7-R item 2, P1-01; default switched in WP8 item 0b, owner decision B1).
+    # "free" (the default since WP8) counts the K*(K-2) entries that are free, because the M-step forces a zero diagonal (dwell time lives in the
+    # duration law) so each row has K-1 non-zero entries that sum to 1. "legacy" (the default from WP1 to WP7-R) counts K*(K-1) and over-counts by K
+    # parameters; it stays selectable (set the class attribute or the instance attribute). On the 48 WP7-R K-selection datasets the two conventions
+    # select the same K in every case (tests/WP8_ITEM0_RESULTS.md).
+    n_params_convention: str = "free"
 
     def __init__(
         self,
@@ -614,8 +615,9 @@ class GaussianHSMM:
 
     @property
     def duration_model_identity(self) -> str:
-        """Identity of the duration distribution used by the model."""
-        return "explicit_truncated_gaussian"
+        """Identity of the duration distribution used by the model: a discrete log-normal truncated to 1..Dmax and renormalised (`_duration_nll`, the M-step).
+        Until WP8 this said "explicit_truncated_gaussian", which was never true."""
+        return "explicit_truncated_lognormal"
 
     @property
     def duration_unit_source(self) -> str:

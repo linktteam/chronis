@@ -1,0 +1,2 @@
+OK: SBOM and requirements files agree
+exit 0

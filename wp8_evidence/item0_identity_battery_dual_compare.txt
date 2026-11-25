@@ -1,0 +1,24 @@
+seed  fit_state            ref_status  new_status  R1(collapsed) R2(degenerate)  numeric outputs bit-identical
+5301  MAX_ITER_REACHED     withheld    withheld    False         False          True
+5302  MAX_ITER_REACHED     withheld    withheld    False         False          True
+5303  MAX_ITER_REACHED     withheld    withheld    False         False          True
+5304  MAX_ITER_REACHED     withheld    withheld    False         False          True
+5305  MAX_ITER_REACHED     withheld    withheld    False         False          True
+5306  MAX_ITER_REACHED     withheld    withheld    False         True           True
+5307  MAX_ITER_REACHED     withheld    withheld    False         True           True
+5308  MAX_ITER_REACHED     withheld    withheld    False         False          True
+5309  MAX_ITER_REACHED     withheld    withheld    False         False          True
+5310  MAX_ITER_REACHED     withheld    withheld    False         True           True
+5311  CONVERGED            pub         pub         False         False          True
+5312  MAX_ITER_REACHED     withheld    withheld    False         True           True
+
+bit-identical numeric outputs (m_t, m_t_std, p_t, p_t_post, duration parameters, BIC, fit_state, Dmax): 12 of 12
+previously healthy, unchanged: 1 [5311]
+previously publishable, newly withheld by R1: 0 []
+previously publishable, newly withheld by R2: 0 []
+previously publishable, newly withheld by R1 and R2: 0 []
+already withheld (unchanged status): 11 [5301, 5302, 5303, 5304, 5305, 5306, 5307, 5308, 5309, 5310, 5312]
+NOT EXPLAINED: 0 []
+share of fits flagged by R1 or R2: 4 of 12
+PASS (5.2a)
+DONE

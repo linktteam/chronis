@@ -1,0 +1,16 @@
+E01 capability is the constant True again: KILLED
+E02 capability is the constant False: KILLED
+E03 unfitted model counts as certified: KILLED
+E04 fit state ignored: KILLED
+E05 degraded fit ignored: KILLED
+E06 duration at a wall ignored: KILLED
+E07 only some regimes checked for the wall (all instead of any): KILLED
+E08 MAX_ITER_REACHED accepted as converged: KILLED
+E09 dual optimizer_success is the constant True again: KILLED
+E10 dual optimizer_success inverted: KILLED
+E11 dual identity says gaussian again: KILLED
+E12 baseline identity says gaussian again: KILLED
+E13 schema doc row names the gaussian again: KILLED
+E14 dual pmf not renormalised: KILLED
+E15 baseline pmf is a gaussian shape: KILLED
+15/15 killed

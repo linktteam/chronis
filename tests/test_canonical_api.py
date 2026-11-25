@@ -76,7 +76,7 @@ def test_hssm_result_contains_all_directive_fields():
     
     # 4. Duration
     assert isinstance(result.duration_parameters, dict)
-    assert result.duration_model_identity == "explicit_truncated_gaussian"
+    assert result.duration_model_identity == "explicit_truncated_lognormal"
     assert result.Dmax > 0
     assert result.duration_unit_source == "calendar_days"
     

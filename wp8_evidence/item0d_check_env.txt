@@ -1,0 +1,23 @@
+Python 3.13.18 (/usr/local/bin/python3)
+WARNING: target Python is 3.12 (.python-version), this is 3.13; not an error by itself
+  colorama         pinned 0.4.6          installed 0.4.6          OK
+  exceptiongroup   pinned 1.3.1          installed -              MISSING
+  iniconfig        pinned 2.3.0          installed 2.3.0          OK
+  joblib           pinned 1.6.0          installed 1.6.0          OK
+  narwhals         pinned 2.26.0         installed 2.27.1         MISMATCH
+  numpy            pinned 2.2.6          installed 2.5.3          MISMATCH
+  packaging        pinned 26.3           installed 26.3           OK
+  pandas           pinned 2.3.3          installed 3.0.5          MISMATCH
+  pluggy           pinned 1.6.0          installed 1.6.0          OK
+  Pygments         pinned 2.20.0         installed 2.21.0         MISMATCH
+  pytest           pinned 9.1.1          installed 9.1.1          OK
+  python-dateutil  pinned 2.9.0.post0    installed 2.9.0.post0    OK
+  pytz             pinned 2026.3.post1   installed -              MISSING
+  scikit-learn     pinned 1.9.1          installed 1.9.1          OK
+  scipy            pinned 1.15.3         installed 1.18.1         MISMATCH
+  six              pinned 1.17.0         installed 1.17.0         OK
+  threadpoolctl    pinned 3.7.0          installed 3.7.0          OK
+  tomli            pinned 2.4.1          installed -              MISSING
+  tzdata           pinned 2026.3         installed -              MISSING
+FAIL: 9 of 19 pinned libraries differ: exceptiongroup (missing), narwhals (mismatch), numpy (mismatch), pandas (mismatch), Pygments (mismatch), pytz (missing), scipy (mismatch), tomli (missing), tzdata (missing)
+exit 1

@@ -1,0 +1,6 @@
+collected at 27c591c (before): 555
+collected now (after): 576
+ids present before and missing now: 1
+ids new (by file):
+      1 tests/test_wp7r_item2_bic_count.py
+     21 tests/test_wp8_item0_metadata.py

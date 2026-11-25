@@ -4,7 +4,7 @@ Verifies directive Section C & Section Q:
   - Model identity: ExplicitDurationSwitchingBaselineV1
   - Model family: GaussianHSMM
   - Capability flags: is_baseline_model=True, fast_state_supported=False
-  - Duration identity: explicit_truncated_gaussian
+  - Duration identity: explicit_truncated_lognormal
   - Duration unit source tracking
   - FitState enum and AIC support
 """
@@ -24,7 +24,7 @@ def test_baseline_model_identity_properties():
     assert model.model_family == "GaussianHSMM"
     assert model.is_baseline_model is True
     assert model.fast_state_supported is False
-    assert model.duration_model_identity == "explicit_truncated_gaussian"
+    assert model.duration_model_identity == "explicit_truncated_lognormal"
     assert model.duration_unit_source == "session_index"
     
     # Capability dict
@@ -97,7 +97,7 @@ def test_hssm_result_baseline_identity_fields():
     assert result.fast_state_supported is False
     assert result.m_t_posterior_mean is None
     assert result.m_t_uncertainty is None
-    assert result.duration_model_identity == "explicit_truncated_gaussian"
+    assert result.duration_model_identity == "explicit_truncated_lognormal"
     assert result.neural_residual_enabled is False
     assert result.residual_mode == "DISABLED"
     assert result.fit_state in (FitState.CONVERGED, FitState.MAX_ITER_REACHED, FitState.MODEL_SELECTION_CONTESTED)

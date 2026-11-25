@@ -32,7 +32,7 @@ def test_dual_model_identity_and_capabilities():
     assert caps["supports_slow_state_p_t"] is True
     assert caps["supports_explicit_duration"] is True
     assert caps["supports_neural_residual"] is False
-    assert caps["is_production_grade_full_hssm"] is True
+    assert caps["is_production_grade_full_hssm"] is False        # WP8 item 0e: an unfitted model is not production grade (was the constant True)
     assert caps["is_baseline_model"] is False
     assert caps["latent_dimension"] == 2
 
