@@ -6,7 +6,7 @@ Labels: RUN (executed here, output in `wp8_evidence/`), READ (read in code or do
 
 ## 1. Backup and restore
 - Repo `linktteam/chronis` (public, owner-approved A8), remote `backup`, branch **`ledger/wp8`** (from `27c591c`). Last pushed hash: TBD-FINAL-HASH (`git ls-remote backup refs/heads/ledger/wp8`). Engine and test code last changed at `52bd05e` (Item 7); everything after is harness, evidence and documents (`git diff 52bd05e HEAD -- backbone data` is empty, RUN). Only `ledger/wp8` was pushed.
-- Exports (each: patch from `27c591c`, tree tarball, bundle, evidence zip, `SHA256SUMS.txt`; the restore test = SHA256 check, bundle verify, patch applies to a clean `git archive 27c591c`, base + patch equals the tarball tree, contract smoke script exits 0). **All passed when exported:** item0 `ce0b0f4`, item1 `e4bb830`, item2 `d888ced`, item3 `f1738b2`, item4 `fb5cfa3`, item5 `44f1bfb`, item6 `52d69cf`, item7 `52bd05e`, item8 TBD-ITEM8, item9 TBD-ITEM9, final TBD-FINAL (restore results are in the chat message of each export and in `integration_report/RESUME.md`).
+- Exports (each: patch from `27c591c`, tree tarball, bundle, evidence zip, `SHA256SUMS.txt`; the restore test = SHA256 check, bundle verify, patch applies to a clean `git archive 27c591c`, base + patch equals the tarball tree, contract smoke script exits 0). **All passed when exported:** item0 `ce0b0f4`, item1 `e4bb830`, item2 `d888ced`, item3 `f1738b2`, item4 `fb5cfa3`, item5 `44f1bfb`, item6 `52d69cf`, item7 `52bd05e`, item8 `e60a6ca`, item9 TBD-ITEM9, item10 (final, with this report) TBD-FINAL (restore results are in the chat message of each export and in `integration_report/RESUME.md`).
 - Per item the commit trailers are `Co-Authored-By` and `Claude-Session` (the owner approved keeping them on this public branch).
 
 ## 2. Diagnosis in ten lines (mine against the reviewer's; `tests/WP8_IDENTITY_DIAGNOSIS.md`, 12 users 8101..8112, 384 fits, RUN)
@@ -78,4 +78,4 @@ Labels: RUN (executed here, output in `wp8_evidence/`), READ (read in code or do
   6. Latent-basis alignment (WP8b): see `integration_report/wp8/WP8B_DESIGN_NOTE.md` (design only; needs the attractor specification first).
 
 ## 9. Artifacts and SHA256
-Under `/mnt/user-data/outputs/`: `wp8_item0` .. `wp8_item9` and `wp8_final`, each with `wpN_itemN.patch`, `wp8_tree.tar.gz`, `wp8.bundle`, `wp8_evidence_itemN.zip` and `SHA256SUMS.txt`. TBD-SHA256
+Under `/mnt/user-data/outputs/`: `wp8_item0` .. `wp8_item10` (item 10 = the final export with this report), each with `wpN_itemN.patch`, `wp8_tree.tar.gz`, `wp8.bundle`, `wp8_evidence_itemN.zip` and `SHA256SUMS.txt`. TBD-SHA256
