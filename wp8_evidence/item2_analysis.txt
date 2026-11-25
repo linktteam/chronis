@@ -1,0 +1,141 @@
+fits read: 384 ok, 0 failed ([])
+group A: 132 fits, accepted 132, CONVERGED 132, mean seconds 9.2
+group B: 24 fits, accepted 24, CONVERGED 24, mean seconds 7.6
+group D: 24 fits, accepted 0, CONVERGED 0, mean seconds 36.8
+group F: 36 fits, accepted 36, CONVERGED 36, mean seconds 9.2
+group C: 168 fits, accepted 168, CONVERGED 168, mean seconds 5.4
+
+== baseline: window growth (fit on days 0..w versus the first fit on days 0..90, compared on days 0..89), raw ids and after the best relabelling
+  w=97: users 12  raw agreement mean 0.821 (min 0.389); users with >5% of days relabelled 7/12 = 58.3%; after best relabelling mean 0.911
+  w=104: users 12  raw agreement mean 0.740 (min 0.256); users with >5% of days relabelled 8/12 = 66.7%; after best relabelling mean 0.912
+  w=111: users 12  raw agreement mean 0.770 (min 0.289); users with >5% of days relabelled 7/12 = 58.3%; after best relabelling mean 0.901
+  w=118: users 12  raw agreement mean 0.746 (min 0.289); users with >5% of days relabelled 8/12 = 66.7%; after best relabelling mean 0.885
+  w=120: users 12  raw agreement mean 0.700 (min 0.244); users with >5% of days relabelled 8/12 = 66.7%; after best relabelling mean 0.888
+  w=125: users 12  raw agreement mean 0.768 (min 0.300); users with >5% of days relabelled 8/12 = 66.7%; after best relabelling mean 0.894
+  w=132: users 12  raw agreement mean 0.764 (min 0.300); users with >5% of days relabelled 8/12 = 66.7%; after best relabelling mean 0.886
+  w=139: users 12  raw agreement mean 0.765 (min 0.300); users with >5% of days relabelled 9/12 = 75.0%; after best relabelling mean 0.885
+  w=146: users 12  raw agreement mean 0.686 (min 0.211); users with >5% of days relabelled 9/12 = 75.0%; after best relabelling mean 0.892
+  w=150: users 12  raw agreement mean 0.684 (min 0.122); users with >5% of days relabelled 9/12 = 75.0%; after best relabelling mean 0.888
+== baseline: same data, different fit seed
+  w=90: pairs 12  raw agreement mean 0.951 (min 0.722), identical raw labels in 6/12 = 50.0%; after best relabelling mean 0.951
+  w=150: pairs 12  raw agreement mean 0.981 (min 0.793), identical raw labels in 10/12 = 83.3%; after best relabelling mean 0.981
+
+== dual: window growth (fit on days 0..w versus the first fit on days 0..90, compared on days 0..89), raw ids and after the best relabelling
+  w=120: users 6  raw agreement mean 0.713 (min 0.211); users with >5% of days relabelled 6/6 = 100.0%; after best relabelling mean 0.776
+  w=150: users 6  raw agreement mean 0.739 (min 0.144); users with >5% of days relabelled 5/6 = 83.3%; after best relabelling mean 0.819
+== dual: same data, different fit seed
+  w=90: pairs 6  raw agreement mean 0.228 (min 0.033), identical raw labels in 0/6 = 0.0%; after best relabelling mean 0.680
+== baseline: raw regime order equals the planted activity order (chance 1/6 = 16.7%): all fits 12/156 = 7.7%; fits whose regimes are one-to-one recoverable 12/149 = 8.1% (recoverable fits: 149/156 = 95.5%)
+   (the baseline raw order IS the L2 order: canonicalize_labels runs inside select_k_by_bic)
+== dual: raw regime order equals the planted activity order (chance 1/6 = 16.7%): all fits 2/24 = 8.3%; fits whose regimes are one-to-one recoverable 2/15 = 13.3% (recoverable fits: 15/24 = 62.5%)
+== baseline output/parameter consistency: the data mean of the days decoded as regime k is closest to model.mu[k] for every k in 60/60 = 100.0% of the first 60 group-A fits
+
+== alignments: 384 per distance, each stored with every margin in wp8_evidence/item2_alignments.jsonl
+  protocol G consecutive             z        n=120 correct 113/120 = 94.2%; wrong-and-recoverable 0, not recoverable 7
+      margin_diff       correct: min 1.16 median 1.91 | wrong: max 2.09 | share above the largest wrong value 42%
+      margin_ratio      correct: max 0.281 median 0.00627 | wrong: min 0.0172 | share below the smallest wrong value 69%
+      max_matched       correct: max 0.997 median 0.0191 | wrong: min 0.0578 | share below the smallest wrong value 68%
+      max_regime_ratio  correct: max 1.02 median 0.00526 | wrong: min 0.0115 | share below the smallest wrong value 65%
+  protocol G consecutive             raw      n=120 correct 113/120 = 94.2%; wrong-and-recoverable 0, not recoverable 7
+      margin_diff       correct: min 1.14 median 1.92 | wrong: max 2.05 | share above the largest wrong value 44%
+      margin_ratio      correct: max 0.248 median 0.0063 | wrong: min 0.0222 | share below the smallest wrong value 72%
+      max_matched       correct: max 0.896 median 0.0309 | wrong: min 0.0665 | share below the smallest wrong value 68%
+      max_regime_ratio  correct: max 0.611 median 0.008 | wrong: min 0.0206 | share below the smallest wrong value 68%
+  protocol G consecutive             raw_dur  n=120 correct 113/120 = 94.2%; wrong-and-recoverable 0, not recoverable 7
+      margin_diff       correct: min 1.14 median 2.17 | wrong: max 2.21 | share above the largest wrong value 41%
+      margin_ratio      correct: max 0.293 median 0.0095 | wrong: min 0.02 | share below the smallest wrong value 62%
+      max_matched       correct: max 1.26 median 0.0497 | wrong: min 0.0665 | share below the smallest wrong value 55%
+      max_regime_ratio  correct: max 0.644 median 0.0117 | wrong: min 0.0187 | share below the smallest wrong value 55%
+  protocol G first_to_w              z        n=120 correct 98/120 = 81.7%; wrong-and-recoverable 0, not recoverable 22
+      margin_diff       correct: min 0.602 median 1.85 | wrong: max 1.9 | share above the largest wrong value 36%
+      margin_ratio      correct: max 0.602 median 0.0667 | wrong: min 0.0199 | share below the smallest wrong value 12%
+      max_matched       correct: max 2.31 median 0.25 | wrong: min 0.0537 | share below the smallest wrong value 8%
+      max_regime_ratio  correct: max 1.02 median 0.0732 | wrong: min 0.0225 | share below the smallest wrong value 13%
+  protocol G first_to_w              raw      n=120 correct 98/120 = 81.7%; wrong-and-recoverable 0, not recoverable 22
+      margin_diff       correct: min 0.609 median 1.89 | wrong: max 1.95 | share above the largest wrong value 32%
+      margin_ratio      correct: max 0.612 median 0.0658 | wrong: min 0.0236 | share below the smallest wrong value 15%
+      max_matched       correct: max 2.43 median 0.338 | wrong: min 0.0763 | share below the smallest wrong value 8%
+      max_regime_ratio  correct: max 1.16 median 0.0887 | wrong: min 0.0328 | share below the smallest wrong value 15%
+  protocol G first_to_w              raw_dur  n=120 correct 98/120 = 81.7%; wrong-and-recoverable 0, not recoverable 22
+      margin_diff       correct: min 0.802 median 1.93 | wrong: max 2.06 | share above the largest wrong value 32%
+      margin_ratio      correct: max 0.578 median 0.121 | wrong: min 0.0464 | share below the smallest wrong value 14%
+      max_matched       correct: max 2.6 median 0.518 | wrong: min 0.126 | share below the smallest wrong value 5%
+      max_regime_ratio  correct: max 0.847 median 0.166 | wrong: min 0.0527 | share below the smallest wrong value 13%
+  protocol R drift 1.0 sd            z        n= 72 correct 41/72 = 56.9%; wrong-and-recoverable 0, not recoverable 31
+      margin_diff       correct: min 0.993 median 2.55 | wrong: max 2.58 | share above the largest wrong value 28%
+      margin_ratio      correct: max 0.431 median 0.13 | wrong: min 0.0652 | share below the smallest wrong value 12%
+      max_matched       correct: max 2.56 median 0.516 | wrong: min 0.259 | share below the smallest wrong value 12%
+      max_regime_ratio  correct: max 2.07 median 0.166 | wrong: min 0.0892 | share below the smallest wrong value 18%
+  protocol R drift 1.0 sd            raw      n= 72 correct 41/72 = 56.9%; wrong-and-recoverable 0, not recoverable 31
+      margin_diff       correct: min 1.01 median 2.77 | wrong: max 2.6 | share above the largest wrong value 31%
+      margin_ratio      correct: max 0.437 median 0.094 | wrong: min 0.177 | share below the smallest wrong value 42%
+      max_matched       correct: max 4.12 median 0.491 | wrong: min 0.452 | share below the smallest wrong value 26%
+      max_regime_ratio  correct: max 2.72 median 0.11 | wrong: min 0.264 | share below the smallest wrong value 44%
+  protocol R drift 1.0 sd            raw_dur  n= 72 correct 41/72 = 56.9%; wrong-and-recoverable 0, not recoverable 31
+      margin_diff       correct: min 1.01 median 2.72 | wrong: max 2.68 | share above the largest wrong value 29%
+      margin_ratio      correct: max 0.551 median 0.162 | wrong: min 0.205 | share below the smallest wrong value 36%
+      max_matched       correct: max 6.05 median 0.746 | wrong: min 0.671 | share below the smallest wrong value 25%
+      max_regime_ratio  correct: max 2.78 median 0.153 | wrong: min 0.285 | share below the smallest wrong value 42%
+  protocol R drift 2.5 sd            z        n= 72 correct 46/72 = 63.9%; wrong-and-recoverable 0, not recoverable 26
+      margin_diff       correct: min 1.38 median 2.8 | wrong: max 1.82 | share above the largest wrong value 60%
+      margin_ratio      correct: max 0.428 median 0.108 | wrong: min 0.0952 | share below the smallest wrong value 31%
+      max_matched       correct: max 3.45 median 0.514 | wrong: min 0.223 | share below the smallest wrong value 10%
+      max_regime_ratio  correct: max 1.96 median 0.122 | wrong: min 0.132 | share below the smallest wrong value 33%
+  protocol R drift 2.5 sd            raw      n= 72 correct 46/72 = 63.9%; wrong-and-recoverable 0, not recoverable 26
+      margin_diff       correct: min 1.43 median 2.9 | wrong: max 1.62 | share above the largest wrong value 61%
+      margin_ratio      correct: max 0.434 median 0.0889 | wrong: min 0.151 | share below the smallest wrong value 46%
+      max_matched       correct: max 5.71 median 0.577 | wrong: min 0.424 | share below the smallest wrong value 18%
+      max_regime_ratio  correct: max 1.89 median 0.117 | wrong: min 0.254 | share below the smallest wrong value 47%
+  protocol R drift 2.5 sd            raw_dur  n= 72 correct 46/72 = 63.9%; wrong-and-recoverable 0, not recoverable 26
+      margin_diff       correct: min 1.42 median 2.97 | wrong: max 1.65 | share above the largest wrong value 60%
+      margin_ratio      correct: max 0.564 median 0.143 | wrong: min 0.184 | share below the smallest wrong value 42%
+      max_matched       correct: max 8.11 median 0.915 | wrong: min 0.588 | share below the smallest wrong value 17%
+      max_regime_ratio  correct: max 2.09 median 0.162 | wrong: min 0.235 | share below the smallest wrong value 43%
+  ALL                                z        n=384 correct 298/384 = 77.6%; wrong-and-recoverable 0, not recoverable 86
+      margin_diff       correct: min 0.602 median 2.11 | wrong: max 2.58 | share above the largest wrong value 29%
+      margin_ratio      correct: max 0.602 median 0.0522 | wrong: min 0.0172 | share below the smallest wrong value 25%
+      max_matched       correct: max 3.45 median 0.213 | wrong: min 0.0537 | share below the smallest wrong value 24%
+      max_regime_ratio  correct: max 2.07 median 0.0539 | wrong: min 0.0115 | share below the smallest wrong value 23%
+  ALL                                raw      n=384 correct 298/384 = 77.6%; wrong-and-recoverable 0, not recoverable 86
+      margin_diff       correct: min 0.609 median 2.1 | wrong: max 2.6 | share above the largest wrong value 28%
+      margin_ratio      correct: max 0.612 median 0.0549 | wrong: min 0.0222 | share below the smallest wrong value 27%
+      max_matched       correct: max 5.71 median 0.281 | wrong: min 0.0665 | share below the smallest wrong value 23%
+      max_regime_ratio  correct: max 2.72 median 0.0684 | wrong: min 0.0206 | share below the smallest wrong value 23%
+  ALL                                raw_dur  n=384 correct 298/384 = 77.6%; wrong-and-recoverable 0, not recoverable 86
+      margin_diff       correct: min 0.802 median 2.2 | wrong: max 2.68 | share above the largest wrong value 27%
+      margin_ratio      correct: max 0.578 median 0.0863 | wrong: min 0.02 | share below the smallest wrong value 23%
+      max_matched       correct: max 8.11 median 0.431 | wrong: min 0.0665 | share below the smallest wrong value 18%
+      max_regime_ratio  correct: max 2.78 median 0.106 | wrong: min 0.0187 | share below the smallest wrong value 18%
+  (wrong = not correct, or a fit that is not one-to-one recoverable; 'above the largest wrong margin' = the share that a threshold just above every wrong alignment would still serve)
+
+== cross-engine alignment (baseline fit versus dual fit on the same window, users 8101..8106)
+  raw: pairs 18; both fits recoverable 11/18 = 61.1%; correct among recoverable 11/11 = 100.0%; dual fit accepted 0/18 = 0.0%
+     margins (diff / ratio, correct?, recoverable): 8101/90: 0.10/0.97 WRONG (unrecoverable); 8101/120: 1.96/0.29 ok; 8101/150: 1.63/0.28 ok; 8102/90: 2.00/0.23 ok; 8102/120: 0.11/0.97 WRONG (unrecoverable); 8102/150: 0.47/0.81 WRONG (unrecoverable); 8103/90: 1.39/0.45 WRONG (unrecoverable); 8103/120: 2.35/0.11 ok; 8103/150: 2.08/0.04 ok; 8104/90: 2.13/0.03 ok; 8104/120: 0.73/0.31 ok; 8104/150: 1.63/0.04 ok; 8105/90: 1.08/0.51 ok; 8105/120: 2.84/0.05 ok; 8105/150: 2.67/0.16 ok; 8106/90: 0.80/0.50 WRONG (unrecoverable); 8106/120: 0.87/0.43 WRONG (unrecoverable); 8106/150: 0.40/0.88 WRONG (unrecoverable)
+  raw_dur: pairs 18; both fits recoverable 11/18 = 61.1%; correct among recoverable 11/11 = 100.0%; dual fit accepted 0/18 = 0.0%
+     margins (diff / ratio, correct?, recoverable): 8101/90: 0.14/0.96 WRONG (unrecoverable); 8101/120: 1.90/0.32 ok; 8101/150: 1.53/0.34 ok; 8102/90: 2.01/0.25 ok; 8102/120: 0.09/0.97 WRONG (unrecoverable); 8102/150: 0.63/0.79 WRONG (unrecoverable); 8103/90: 1.21/0.56 WRONG (unrecoverable); 8103/120: 2.26/0.22 ok; 8103/150: 2.34/0.05 ok; 8104/90: 2.38/0.07 ok; 8104/120: 0.92/0.29 ok; 8104/150: 1.95/0.03 ok; 8105/90: 1.47/0.48 ok; 8105/120: 3.02/0.05 ok; 8105/150: 2.88/0.16 ok; 8106/90: 1.00/0.46 WRONG (unrecoverable); 8106/120: 0.90/0.50 WRONG (unrecoverable); 8106/150: 0.67/0.83 WRONG (unrecoverable)
+  dual fits: recoverable (one-to-one with planted regimes) 15/24 = 62.5%; mean best-relabel agreement with planted labels 0.788
+  baseline fits (group A): recoverable 126/132 = 95.5%; mean best-relabel agreement with planted labels 0.935
+
+== K change (baseline). Fit A: days 0..90 with K = 3. Fit B: days 30..150.
+  split: users 6; the matching of the K-changed fit names exactly the true parent regime in 5/6 = 83.3%; fit A recoverable in 5/6 = 83.3%
+     per user (candidate vs truth): 8101: [1] vs 1 ok; 8102: [1] vs 1 ok; 8103: [0] vs 0 ok; 8104: [2] vs 2 ok; 8105: [0] vs 0 ok; 8106: [1] vs -1
+     if K had NOT been changed (K = 3 forced on days 30..150), a plain alignment to fit A (WP5 rule: ratio <= 0.5) would be served in 6 of 6 cases and is correct in 5/6 = 83.3% (margin ratio median 0.21): the matching cannot tell that the world changed
+  merge: users 6; the matching of the K-changed fit names exactly the true merged pair in 1/6 = 16.7%; fit A recoverable in 5/6 = 83.3%
+     per user (candidate vs truth): 8107: [(0, 1)] vs (1, 2); 8108: [(0, 2)] vs (1, 2); 8109: [(0, 2)] vs (1, 2); 8110: [(0, 1)] vs (0, 1) ok; 8111: [(0, 1)] vs (1, 2); 8112: [(0, 2)] vs (1, 2)
+     if K had NOT been changed (K = 3 forced on days 30..150), a plain alignment to fit A (WP5 rule: ratio <= 0.5) would be served in 5 of 6 cases and is correct in 3/6 = 50.0% (margin ratio median 0.26): the matching cannot tell that the world changed
+
+== per-feature activity signal (12 users; fits on days 0..90; ordering the fit's regimes by ONE feature, signed by the registry direction, equals the planted order?)
+  feature      direction  ordering correct (recoverable fits)   planted SNR (between/within) median [min..max]   coverage median [min..max]   day-to-day noise / total sd median [min..max]
+  steps        +1         10/12 = 83.3%                        3.75 [1.30..44.55]                0.97 [0.93..1.00]            0.47 [0.15..0.66]
+  time_moving  +1          7/12 = 58.3%                        2.98 [0.84..12.35]                1.00 [0.90..1.00]            0.51 [0.27..0.74]
+  mean_hr      +1          9/12 = 75.0%                        0.61 [0.07..1.98]                0.92 [0.81..0.97]            0.79 [0.58..0.97]
+  hrv          -1          7/12 = 58.3%                        0.50 [0.05..3.39]                0.84 [0.78..0.87]            0.82 [0.48..0.98]
+  talking      +1          3/12 = 25.0%                        0.14 [0.02..0.51]                0.75 [0.57..0.85]            0.94 [0.81..0.99]
+  pitch        +0        (no activity direction)
+  sleep        -1           1/12 = 8.3%                        0.13 [0.01..0.39]                0.90 [0.81..0.99]            0.94 [0.85..1.00]
+
+== fit-level signal: can a fit tell, without planted truth, that its regimes do not correspond one-to-one to planted regimes? (baseline fits of groups A and C)
+  A (growing window, drift 0): min pairwise regime separation (within-regime sd units): recoverable fits median 3.01 [1.99..6.52] (n=126), unrecoverable median 2.31 [1.62..2.76] (n=6), AUC (recoverable higher) 0.90
+  A (growing window, drift 0): fewest decoded days in a regime: recoverable fits median 27.00 [10.00..43.00] (n=126), unrecoverable median 17.00 [6.00..21.00] (n=6), AUC (recoverable higher) 0.90
+  C (rolling 60-day, drift 1 and 2.5): min pairwise regime separation (within-regime sd units): recoverable fits median 3.79 [1.95..7.02] (n=126), unrecoverable median 2.67 [1.06..3.53] (n=42), AUC (recoverable higher) 0.86
+  C (rolling 60-day, drift 1 and 2.5): fewest decoded days in a regime: recoverable fits median 13.00 [6.00..19.00] (n=126), unrecoverable median 11.00 [4.00..20.00] (n=42), AUC (recoverable higher) 0.64

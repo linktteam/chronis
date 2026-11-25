@@ -1,0 +1,22 @@
+P01 pi not permuted: KILLED
+P02 A_slow permuted on rows only: KILLED
+P-dur_mu not permuted: KILLED
+P-dur_sigma not permuted: KILLED
+P-A_fast not permuted: KILLED
+P-b_fast not permuted: KILLED
+P-Q_fast not permuted: KILLED
+P-m0 not permuted: KILLED
+P-P0 not permuted: KILLED
+P-C_obs not permuted: KILLED
+P-d_obs not permuted: KILLED
+P-R_obs not permuted: KILLED
+P13 inverse permutation applied: KILLED
+P14 a regime-indexed name missing from PARAM_NAMES: KILLED
+B01 baseline pi not permuted: KILLED
+B02 baseline A permuted on rows only: KILLED
+B03 baseline mu not permuted: KILLED
+B04 baseline var not permuted: KILLED
+B05 baseline dur_mu not permuted: KILLED
+B06 baseline dur_sigma not permuted: KILLED
+B07 baseline sorted descending: KILLED
+21/21 killed

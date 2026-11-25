@@ -1,0 +1,27 @@
+G01 activity order reversed: KILLED
+G02 registry direction ignored: KILLED
+G03 regime offsets dropped: KILLED
+G04 noise persistence 0.9: KILLED
+G05 noise not rescaled to the marginal sd: KILLED
+G06 coverage ignored: KILLED
+G07 whole missing days dropped: KILLED
+G08 missing features not filled with 0: KILLED
+G09 sample sd instead of population sd: KILLED
+G10 drift twice as large: KILLED
+G11 drift starts at day 0: KILLED
+G12 split offset 1 sd: KILLED
+G13 split before the change day: KILLED
+G14 merge before the change day: KILLED
+G15 merge into the wrong regime: KILLED
+G16 dwell minimum 1: KILLED
+G17 regime may repeat: KILLED
+G18 pitch gets a direction: KILLED
+G19 a feature without unit: KILLED
+R01 source not validated: KILLED
+R02 role not validated: KILLED
+R03 direction not validated: KILLED
+R04 duplicate names accepted: KILLED
+R05 width not checked: KILLED
+R06 empty name accepted: KILLED
+G20 split takes days of every regime: KILLED
+26/26 killed
