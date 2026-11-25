@@ -1,0 +1,22 @@
+R01 default interval 8: KILLED
+R02 lower bound 0: KILLED
+R03 upper bound 29: KILLED
+R04 upper bound 27: KILLED
+R05 bounds not checked: KILLED
+R06 a refit is due only after more than the interval: KILLED
+R07 a refit is due one day early: KILLED
+R08 no earlier refit means not due: KILLED
+R09 time going backwards accepted: KILLED
+R10 the seconds-as-days guard removed: KILLED
+R11 the seconds-as-days guard is off by one: KILLED
+R12 booleans accepted as days: KILLED
+R13 fractional days accepted: KILLED
+R14 unknown config keys accepted: KILLED
+R15 config ignored: KILLED
+R16 schedule starts one day late: KILLED
+R17 the last day is excluded from the schedule: KILLED
+R18 next_refit_day off by one: KILLED
+R19 a clock enters should_refit: KILLED
+R20 the policy is mutable: KILLED
+R21 contract loses the bounds: KILLED
+21/21 killed
