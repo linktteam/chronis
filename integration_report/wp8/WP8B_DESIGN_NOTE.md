@@ -1,0 +1,47 @@
+# WP8b design note: latent-basis alignment for the dual engine (Item 9; design only, nothing here is implemented)
+
+Status: proposal for the owner. Labels: READ = read in code in this repository; PROPOSED = a design choice not yet tested; UNKNOWN = not established.
+Written 2026-11-25 on `ledger/wp8`. No code or test in the repository depends on this note.
+
+## 1. The problem (READ)
+The dual engine's fast latent state `m_t` (dimension L) has no fixed coordinates. For every refit the observation model `y = d_k + C_k m + noise`, the dynamics `m' = A_k m + b_k + noise(Q_k)`, the start `m0, P0` and the likelihood are unchanged when the latent coordinates are replaced by `m = M m'` with any invertible `M` in GL(L), the same `M` for all regimes k:
+`C' = C M, A' = M^-1 A M, b' = M^-1 b, Q' = M^-1 Q M^-T, m0' = M^-1 m0, P0' = M^-1 P0 M^-T` (this is what `shrinkage.apply_frame` writes). Two refits of the same user therefore return coordinates that differ by an unknown `M`, so anything stated *in latent coordinates* (an attractor's position, an eigen-direction of `A_k`, a trajectory) cannot be compared across refits until the frames are matched.
+
+What exists today (READ, `backbone/hssm/shrinkage.py`): `frame_map(user_p, ref_p)` solves the least-squares problem `min_M sum_k ||C_k^user M - C_k^ref||_F` over **all** of GL(L) (a general linear map), and accepts it if `cond(M) <= 10` and the relative residual is `<= 0.5` (`COND_LIMIT`, `RESIDUAL_LIMIT`). It is used to pool users in the shared prior, not to follow one user across refits. Two properties make it unsuitable as the identity tool for attractors: (a) a general `M` can scale and shear, so it can absorb a real change of the loadings into the map and still report a small residual, and (b) the two thresholds are single numbers with no margin analysis, no reliability test and no "cannot confirm" state.
+
+WP8 matched **regimes** across refits without any latent alignment: the regime means in observation space (`d_k + C_k mu_k`, `shrinkage.regime_observation_means`) are frame-free, which is why `lineage.py` works for both engines. WP8b is about what remains when something must be said in latent coordinates.
+
+## 2. Which statements need a frame at all (PROPOSED check before building anything)
+UNKNOWN: no attractor specification was supplied to WP8, so this section lists what would make alignment unnecessary and what would make it mandatory.
+- Frame-free (no alignment needed): observation images of fixed points `y*_k = d_k + C_k x*_k` with `x*_k = (I - A_k)^-1 b_k`; the eigenvalues of `A_k` (similarity invariants); eigen-directions pushed into feature space, `C_k v`. If attractor identity can be defined from these, the latent alignment becomes a diagnostic only.
+- Frame-needed: latent coordinates that are shown or stored (a trajectory, a basin map), comparisons of `A_k` across *regimes with different loadings* in one common basis, pooling across users or refits (as `shrinkage` already does), and any attractor descriptor that uses `C_k` of different regimes in one latent basis.
+Recommendation: WP8b first writes the attractor descriptors it needs and marks each as frame-free or frame-needed; only the frame-needed ones justify the machinery below.
+
+## 3. Proposed design: gauge fixing, then orthogonal Procrustes (PROPOSED)
+The goal is to reduce GL(L) to nothing in two steps and to say when the reduction is not trustworthy.
+
+**Step A, orthonormal loadings (GL(L) to O(L)).** Stack the loadings, `C = [C_1; ...; C_K]` (K F by L, full column rank required). Take its thin SVD `C = U S V^T` and use `M = V S^-1`, so the stacked loadings become `U` (orthonormal columns) and the latent scale moves into `A, b, Q, m0, P0`. This removes shear and scale. **It does not fix the frame:** the orthonormal basis of the column space is only fixed up to a rotation or reflection `O` in O(L) (a different starting frame gives a different `U`), so "orthonormal loadings" alone is not a canonical form. This is the main trap of the naive reading of the brief.
+
+**Step B, remove the remaining O(L), two routes.**
+1. *Anchor-relative orthogonal Procrustes* (the one to build first, it mirrors the WP8 lineage anchor): `O* = argmin_{O in O(L)} ||U_new O - U_anchor||_F`, solved by the SVD `W S Z^T = U_new^T U_anchor`, `O* = W Z^T`. Both reflections and rotations are allowed (an axis flip is part of the gauge). The relative Procrustes residual `r = ||U_new O* - U_anchor||_F / ||U_anchor||_F` is the quality measure, and the **principal angles** between the two column spaces (singular values `S` above: cosines) say whether the same subspace is being compared at all: a small smallest-cosine means the loadings really changed, and the right output is `CONTINUITY_UNVERIFIED` (same wording as WP8: "cannot confirm this is the same as before"), not a forced rotation.
+2. *Anchor-free canonical frame* (needed for the first fit and when the anchor is replaced, `NEW_LINEAGE`): after Step A rotate to the principal axes of the pooled stationary latent covariance (weights = the stationary regime probabilities `pi`), axes ordered by decreasing variance. This fixes everything except the signs when the variances are distinct. It needs the same kind of reliability test as the WP8 ordering ladder (modal frequency of the axis order over a block bootstrap, minimum variance gap `g_min`); when two variances are close the frame inside that pair is undefined and the fit must be flagged, not guessed.
+
+**Step C, sign anchoring.** Route 1 inherits the anchor's signs. Route 2 needs a rule: make the largest-magnitude loading in each axis positive; if the two largest magnitudes are within a declared tolerance, fall back to the sign of the axis's projection on a feature direction taken from the feature registry (`direction` field). The second rule is a domain choice and must carry the `EXPERT_REVIEW(identity-distance)` tag (Item 7 pattern; the register test would catch an untagged use).
+
+**What the output is.** A frame map `O*`, its residual, the principal-angle cosines, a state (`FRAME_ALIGNED`, `FRAME_UNVERIFIED`, `SUBSPACE_CHANGED`) and the reason, in additive fields only; the raw parameters stay untouched (owner decision A4), the aligned copy is a new column.
+
+## 4. How it should be tested (PROPOSED; same discipline as WP8)
+- Equivariance property tests: apply a random GL(L) transform (and a random O(L)) to a fitted parameter set; the canonical form (Route 2) and the Procrustes result against the original must agree to numerical tolerance, for distinct variances; with a planted near-tie the result must be flagged.
+- Recovery on planted streams: planted rotation plus loading noise and loading drift, scored against the known `O` (the study generator `data/synthetic_identity.py` would need a latent-rotation option; none exists today).
+- Negative controls that must fail the criteria: no sign anchoring; the existing general-linear `frame_map` on data where the loadings are sheared (small residual, wrong frame); a random orthogonal map; a frame computed in the wrong order (before the regime permutation).
+- At least 25 mutants over the new logic, as in each WP8 item; a declared coverage floor and a wrong-and-unflagged ceiling written before the evaluation seeds are touched; new seed ranges not in the reserved list (all of the ranges in `integration_report/RESUME.md` and 8101..8794).
+- The order of operations is fixed: first the regime permutation (WP8 lineage), then the latent frame, because the frame map uses `C_k` of matched regimes.
+
+## 5. Interaction with what WP8 found about the dual engine (READ from WP8 evidence)
+Only a regime that can be recognised can have its latent frame aligned. In the development study of Item 4 (960 fits, seeds 8201..8212) the identifiability gate passed 4 of 216 dual-to-dual alignments and 16 of 480 cross-engine alignments, so the dual thresholds could not be calibrated (fewer than the declared 20) and dual lineage is never `ALIGNED` in the frozen design; the Item 8 numbers are in `tests/WP8_ITEM8_RESULTS.md`. A latent-frame step placed on top of those fits would inherit the same limitation. Improving the identifiability of the fits themselves (restart policy, a warm start from the previous refit, the shared prior of WP7-R) is a separate decision: any warm start changes raw fitted outputs, so under the owner's "previously healthy fits stay bit-identical" rule it must be an opt-in, versioned path with its own identity test, not a change of the default.
+
+## 6. Open decisions for the owner or an expert (not decided here)
+1. The attractor specification: which descriptors are frame-free (Section 2). This decides whether WP8b needs alignment at all.
+2. Whether reflections are allowed (proposed: yes, they are gauge) and the sign rule (Section 3, Step C).
+3. The thresholds (residual, smallest principal-angle cosine, variance gap `g_min`): UNKNOWN until a development set exists; they need an expert, like every WP8 threshold.
+4. Whether the latent frame of the **first** fit is canonical (Route 2) or arbitrary and only relative afterwards (Route 1 only).
