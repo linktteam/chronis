@@ -1,0 +1,27 @@
+WP8 Item 6 cadence study, development seeds 8201..8204, baseline, drift 0, windows [0, t), K = 3. Production lineage with the defaults at the time of this run.
+config: AlignmentConfig(min_separation=4.0, duration_weight=0.0, same_engine=PairThreshold(rule='ratio', tau=0.0, rho=0.5, calibrated=True), cross_engine=PairThreshold(rule='ratio', tau=0.0, rho=0.5, calibrated=False), ladder=LadderConfig(n_bootstrap=200, block_days=7, min_modal_freq=0.9, min_gap=0.7, seed=0), dual_engine=PairThreshold(rule='ratio', tau=0.0, rho=0.5, calibrated=False), channels=ChannelConfig(w1=1.0, w2=0.0, context_threshold=PairThreshold(rule='ratio', tau=0.0, rho=0.5, calibrated=True)))
+schedules (window ends): {1: (61, [90, 91, 92, 93, '...', 148, 149, 150]), 7: (10, [90, 97, 104, 111, '...', 139, 146, 150]), 14: (6, [90, 104, 118, 132, '...', 132, 146, 150])}
+  user 8201 interval  1: fed 61 accepted fits, states NCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC last window [0, 150] last state CONTINUITY_UNVERIFIED
+  user 8201 interval  7: fed 10 accepted fits, states NCCCCCCCCC last window [0, 150] last state CONTINUITY_UNVERIFIED
+  user 8201 interval 14: fed 6 accepted fits, states NCCCCC last window [0, 150] last state CONTINUITY_UNVERIFIED
+  user 8201 day-150 stable-id agreement: daily-weekly 1.000, daily-14d 1.000, weekly-14d 1.000
+  user 8202 interval  1: fed 61 accepted fits, states NAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA last window [0, 150] last state ALIGNED
+  user 8202 interval  7: fed 10 accepted fits, states NAAAAAAAAA last window [0, 150] last state ALIGNED
+  user 8202 interval 14: fed 6 accepted fits, states NAAAAA last window [0, 150] last state ALIGNED
+  user 8202 day-150 stable-id agreement: daily-weekly 1.000, daily-14d 1.000, weekly-14d 1.000
+  user 8203 interval  1: fed 61 accepted fits, states NCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC last window [0, 150] last state CONTINUITY_UNVERIFIED
+  user 8203 interval  7: fed 10 accepted fits, states NCCCCCCCCC last window [0, 150] last state CONTINUITY_UNVERIFIED
+  user 8203 interval 14: fed 6 accepted fits, states NCCCCC last window [0, 150] last state CONTINUITY_UNVERIFIED
+  user 8203 day-150 stable-id agreement: daily-weekly 1.000, daily-14d 1.000, weekly-14d 1.000
+  user 8204 interval  1: fed 61 accepted fits, states NAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA last window [0, 150] last state ALIGNED
+  user 8204 interval  7: fed 10 accepted fits, states NAAAAAAAAA last window [0, 150] last state ALIGNED
+  user 8204 interval 14: fed 6 accepted fits, states NAAAAA last window [0, 150] last state ALIGNED
+  user 8204 day-150 stable-id agreement: daily-weekly 1.000, daily-14d 1.000, weekly-14d 1.000
+
+daily          fits fed 244, alignments 240, served (ALIGNED) 120/240 = 50.0% (95% CI 43.7-56.3%), served and correct 120/120 = 100.0% (95% CI 96.9-100.0%), wrong-and-unflagged 0/240 = 0.0% (95% CI 0.0-1.6%), flagged 120 (would have been wrong 0, right 120)
+weekly         fits fed 40, alignments 36, served (ALIGNED) 18/36 = 50.0% (95% CI 34.5-65.5%), served and correct 18/18 = 100.0% (95% CI 82.4-100.0%), wrong-and-unflagged 0/36 = 0.0% (95% CI 0.0-9.6%), flagged 18 (would have been wrong 0, right 18)
+every 14 days  fits fed 24, alignments 20, served (ALIGNED) 10/20 = 50.0% (95% CI 29.9-70.1%), served and correct 10/10 = 100.0% (95% CI 72.2-100.0%), wrong-and-unflagged 0/20 = 0.0% (95% CI 0.0-16.1%), flagged 10 (would have been wrong 0, right 10)
+day-150 agreement daily-weekly: min 1.000 mean 1.000; users at or above 0.95: 4/4
+day-150 agreement daily-14d: min 1.000 mean 1.000; users at or above 0.95: 4/4
+day-150 agreement weekly-14d: min 1.000 mean 1.000; users at or above 0.95: 4/4
+Counts are of fits and alignments of 4 users; the windows of one user are not independent. Development data: no claim beyond these 4 streams.

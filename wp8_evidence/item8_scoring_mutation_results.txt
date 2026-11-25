@@ -1,0 +1,44 @@
+W01 wilson centre without the z^2/2n term: KILLED
+W02 wilson half width without the correction: KILLED
+W03 wilson with n = 0 returns zeros: KILLED
+W04 wilson z of one: KILLED
+W05b wilson lower bound not clamped at zero: KILLED
+W05c wilson upper bound not clamped at one: KILLED
+W05 rate prints no interval: KILLED
+W06 day agreement counts disagreements: KILLED
+W07 day agreement accepts different lengths: KILLED
+W08 correctness ignores recoverability: KILLED
+W09 correctness uses the anchor's raw order, not its stable ids: KILLED
+W10 correctness compares raw index with planted regime: KILLED
+W11 a changed K is scored: KILLED
+W12 K_CHANGED steps are scored: KILLED
+W31 the anchor K is the new fit's K: KILLED
+W13 served is any state but NEW_LINEAGE: KILLED
+W14 scoring uses the first fit as the anchor: KILLED
+W15 scoring uses the new names for the anchor: KILLED
+W16 replay ignores the publish rule: KILLED
+W17 replay feeds failed fits: KILLED
+W18 usable ignores the fit state: KILLED
+W19 usable ignores ok: KILLED
+W20 replay does not apply the patch: KILLED
+W21 tally counts wrong among all alignments: KILLED
+W22 tally swaps would-be-wrong and would-be-right: KILLED
+W23 conditional set ignores both-recoverable: KILLED
+W24 the summary uses z means as raw means: KILLED
+W25 the summary uses the true labels: KILLED
+W26 stable ids taken from the end of the window: KILLED
+W27 the schedule does not add the last window: KILLED
+W28 the schedule ignores the production policy: KILLED
+W29 a missing fit is skipped silently: KILLED
+W30 fits are returned in file order: KILLED
+W32 a candidate uses the stable id as the planted regime: KILLED
+W33 merge candidates are not sorted: KILLED
+W34 candidates attached to aligned rows too: KILLED
+W35 an unknown stable id is mapped to regime 0: KILLED
+W36 verdict: below the threshold is met: KILLED
+W37 verdict: an interval crossing the threshold is a plain MET: KILLED
+W38 verdict: the upper interval is not used: KILLED
+W39 verdict: n = 0 counts as met: KILLED
+W40 verdict: an unknown comparison is accepted: KILLED
+W41 verdict: the at-most rule uses the lower bound: KILLED
+43/43 killed
