@@ -1,0 +1,79 @@
+WP8 Item 8 analysis (REHEARSAL on development fits; no evaluation seed read)
+production defaults: AlignmentConfig(min_separation=4.0, duration_weight=0.0, same_engine=PairThreshold(rule='ratio', tau=0.0, rho=0.5, calibrated=True), cross_engine=PairThreshold(rule='ratio', tau=0.0, rho=0.5, calibrated=False), ladder=LadderConfig(n_bootstrap=200, block_days=7, min_modal_freq=0.9, min_gap=0.7, seed=0), dual_engine=PairThreshold(rule='ratio', tau=0.0, rho=0.5, calibrated=False), channels=ChannelConfig(w1=1.0, w2=0.0, context_threshold=PairThreshold(rule='ratio', tau=0.0, rho=0.5, calibrated=True)))
+expert review status of the matching distance: PENDING
+groups present: {'B-G': 360, 'B-K': 40, 'B-R1': 120, 'B-R25': 120, 'B-cad': 244, 'D-G': 120, 'D-R1': 40, 'D-R25': 40, 'X-B': 244, 'X-D': 40}
+
+== Criteria 1 and 2, L, 3, 4 (protocol G, drift 0)
+-- baseline B-G: 360 fits, 360 did not fail numerically, 360 accepted (publish rule)
+   accepted alignments 348 (348 accepted refits); served 162/348 = 46.6% (95% CI 41.4-51.8%)
+   criterion 1a correct among served (>= 95%): 162/162 = 100.0% (95% CI 97.7-100.0%) -> MET
+   criterion 1b wrong-and-unflagged among all alignments (<= 1%): 0/348 = 0.0% (95% CI 0.0-1.1%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)
+   criterion 2 coverage, accepted refits ending ALIGNED (>= 80%): 162/348 = 46.6% (95% CI 41.4-51.8%) -> NOT MET
+   conditional on both fits recovering the planted regimes: 333/333 = 100.0% (95% CI 98.9-100.0%) correct; flagged steps that would have been wrong 15, right 171
+-- criterion L (baseline): first fits 12; ordering verified 11/12 = 91.7% (95% CI 64.6-98.5%); unverified 1; rung counts {0: 1, 1: 10, 3: 1}
+   verified orderings that match the planted order (>= 90%): 11/11 = 100.0% (95% CI 74.1-100.0%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches below the threshold)
+-- criterion 4 (baseline): ALIGNED later fits 162; stable ids agree on >= 95% of the first 90 days in 162/162 = 100.0% (95% CI 97.7-100.0%) (>= 90%) -> MET; mean stable agreement 0.999; raw-id agreement of the same stream's later fits (not relabelled): mean 0.821, share >= 95% 247/348 = 71.0% (95% CI 66.0-75.5%)
+-- dual D-G: 120 fits, 120 did not fail numerically, 18 accepted (publish rule)
+   accepted alignments 9 (6 accepted refits); served 0/9 = 0.0% (95% CI 0.0-29.9%)
+   NOTE (dual D-G): nothing was served as ALIGNED (coverage 0%); a wrong-and-unflagged rate of 0 is true by construction and is NOT evidence that the matching is right.
+   criteria 1 and 2 for the dual engine: UNKNOWN (only 9 accepted alignments; the declared minimum is 20)
+   conditional on both fits recovering the planted regimes: 2/2 = 100.0% (95% CI 34.2-100.0%) correct; flagged steps that would have been wrong 7, right 2
+   SECONDARY (every fit that did not fail numerically, including fits the publish rule withholds; not the criterion): alignments 108, served 0/108 = 0.0% (95% CI 0.0-3.4%), served and correct 0/0, wrong-and-unflagged 0/108 = 0.0% (95% CI 0.0-3.4%)
+-- criterion L (dual): first fits 5; ordering verified 1/5 = 20.0% (95% CI 3.6-62.4%); unverified 4; rung counts {0: 4, 2: 1}
+   verified orderings that match the planted order (>= 90%): 0/1 = 0.0% (95% CI 0.0-79.3%) -> UNKNOWN (dual rule: fewer than 20 accepted alignments; the counts above are reported, not scored)
+-- criterion 4 (dual): ALIGNED later fits 0; stable ids agree on >= 95% of the first 90 days in 0/0 (>= 90%) -> UNKNOWN (dual rule: fewer than 20 accepted alignments); mean stable agreement nan; raw-id agreement of the same stream's later fits (not relabelled): mean 0.885, share >= 95% 2/6 = 33.3% (95% CI 9.7-70.0%)
+
+== Criterion 5 (drift, protocol R)
+-- criterion 5 (1 sd, baseline): 120 fits, 120 accepted; accepted alignments 108
+   correct among served (>= 95%): 33/33 = 100.0% (95% CI 89.6-100.0%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches below the threshold)
+   coverage (served among accepted refits; floor 80% reported for 1 sd): 33/108 = 30.6% (95% CI 22.7-39.8%) -> NOT MET
+-- criterion 5 (1 sd, dual): 40 fits, 3 accepted; accepted alignments 1
+   UNKNOWN (1 accepted alignments, minimum 20)
+   SECONDARY (all fits that did not fail numerically): alignments 36, served 0/36 = 0.0% (95% CI 0.0-9.6%), correct among served 0/0
+-- criterion 5 (2.5 sd, baseline): 120 fits, 120 accepted; accepted alignments 108
+   correct among served (>= 90%): 24/24 = 100.0% (95% CI 86.2-100.0%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches below the threshold)
+   coverage (served among accepted refits; floor 0% reported for 1 sd): 24/108 = 22.2% (95% CI 15.4-30.9%) (reported, no floor)
+-- criterion 5 (2.5 sd, dual): 40 fits, 5 accepted; accepted alignments 2
+   UNKNOWN (2 accepted alignments, minimum 20)
+   SECONDARY (all fits that did not fail numerically): alignments 36, served 0/36 = 0.0% (95% CI 0.0-9.6%), correct among served 0/0
+
+== Criterion 6 (K change)
+-- criterion 6 (K change, baseline, candidate K (2, 3, 4), streams 4): refits whose fitted K differs from the anchor's 0; K_CHANGED and no 'same as before' 0/0 (must be 100%) -> UNKNOWN (nothing to count)
+   REPORTED, not pass/fail: split/merge candidate precision 0/0 (expected >= 80%); K selection sees the change: final fit has the changed K in 0/4 = 0.0% (95% CI 0.0-49.0%) of the streams; post-change fits (end >= 118): K after the change 0, still 3 24, other 0
+
+== Criterion 7 (engine switch)
+   NOTE (criterion 7, accepted cross-engine alignments): nothing was served as ALIGNED (coverage 0%); a wrong-and-unflagged rate of 0 is true by construction and is NOT evidence that the matching is right.
+-- criterion 7 (engine switch): UNKNOWN (only 10 accepted cross-engine alignments, minimum 20)
+   SECONDARY (all fits that did not fail numerically): alignments 80, served 0/80 = 0.0% (95% CI 0.0-4.6%), correct among served 0/0, wrong-and-unflagged 0/80 = 0.0% (95% CI 0.0-4.6%); flagged would have been wrong 40, right 40
+
+== Criterion 8 (cadence)
+-- criterion 8 (daily, 4 users): alignments 240; correct among served (>= 95%) 120/120 = 100.0% (95% CI 96.9-100.0%) -> MET; wrong-and-unflagged (<= 1%) 0/240 = 0.0% (95% CI 0.0-1.6%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold); served 120/240 = 50.0% (95% CI 43.7-56.3%)
+-- criterion 8 (weekly, 12 users): alignments 108; correct among served (>= 95%) 45/45 = 100.0% (95% CI 92.1-100.0%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches below the threshold); wrong-and-unflagged (<= 1%) 0/108 = 0.0% (95% CI 0.0-3.4%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold); served 45/108 = 41.7% (95% CI 32.8-51.1%)
+-- criterion 8 (every 14 days, 12 users): alignments 60; correct among served (>= 95%) 25/25 = 100.0% (95% CI 86.7-100.0%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches below the threshold); wrong-and-unflagged (<= 1%) 0/60 = 0.0% (95% CI 0.0-6.0%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold); served 25/60 = 41.7% (95% CI 30.1-54.3%)
+   day-150 stable-id agreement daily vs weekly: pooled 1.000, worst user 1.000, users at or above 0.95: 4/4 (criterion >= 95% of days)
+   day-150 stable-id agreement daily vs every 14 days: pooled 1.000, worst user 1.000, users at or above 0.95: 4/4 (criterion >= 95% of days)
+   day-150 stable-id agreement weekly vs every 14 days: pooled 1.000, worst user 1.000, users at or above 0.95: 12/12 (criterion >= 95% of days)
+   criterion 8, day-150 agreement of the three schedules (pooled days, worst pair 1.000): MET
+
+== Criterion 9 (negative controls; each must fail)
+   on protocol G (baseline, drift 0):
+   (a) z-space, no stored scaler: served 162/348 = 46.6% (95% CI 41.4-51.8%); correct among served 162/162 = 100.0% (95% CI 97.7-100.0%) -> MET; wrong-and-unflagged 0/348 = 0.0% (95% CI 0.0-1.1%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold); coverage 162/348 = 46.6% (95% CI 41.4-51.8%) -> NOT MET; control misses only the coverage criterion, which the frozen design also misses: NOT DISCRIMINATING, reported as inert
+   (b) random permutation: served 162/348 = 46.6% (95% CI 41.4-51.8%); correct among served 44/162 = 27.2% (95% CI 20.9-34.5%) -> NOT MET; wrong-and-unflagged 118/348 = 33.9% (95% CI 29.1-39.0%) -> NOT MET; coverage 162/348 = 46.6% (95% CI 41.4-51.8%) -> NOT MET; control FAILS as required (correctness)
+   (c) ordering re-sorted at every refit: later fits 348; stable ids agree on >= 95% of the first 90 days in 308/348 = 88.5% (95% CI 84.7-91.4%) (>= 90%) -> NOT MET; control FAILS as required
+   on protocol R (R1):
+   (a) z-space, no stored scaler: served 33/108 = 30.6% (95% CI 22.7-39.8%); correct among served 33/33 = 100.0% (95% CI 89.6-100.0%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches below the threshold); wrong-and-unflagged 0/108 = 0.0% (95% CI 0.0-3.4%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold); coverage 33/108 = 30.6% (95% CI 22.7-39.8%) -> NOT MET; control misses only the coverage criterion, which the frozen design also misses: NOT DISCRIMINATING, reported as inert
+   (b) random permutation: served 33/108 = 30.6% (95% CI 22.7-39.8%); correct among served 6/33 = 18.2% (95% CI 8.6-34.4%) -> NOT MET; wrong-and-unflagged 27/108 = 25.0% (95% CI 17.8-33.9%) -> NOT MET; coverage 33/108 = 30.6% (95% CI 22.7-39.8%) -> NOT MET; control FAILS as required (correctness)
+   on protocol R (R25):
+   (a) z-space, no stored scaler: served 30/108 = 27.8% (95% CI 20.2-36.9%); correct among served 30/30 = 100.0% (95% CI 88.6-100.0%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches below the threshold); wrong-and-unflagged 0/108 = 0.0% (95% CI 0.0-3.4%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold); coverage 30/108 = 27.8% (95% CI 20.2-36.9%) -> NOT MET; control misses only the coverage criterion, which the frozen design also misses: NOT DISCRIMINATING, reported as inert
+   (b) random permutation: served 24/108 = 22.2% (95% CI 15.4-30.9%); correct among served 5/24 = 20.8% (95% CI 9.2-40.5%) -> NOT MET; wrong-and-unflagged 19/108 = 17.6% (95% CI 11.6-25.8%) -> NOT MET; coverage 24/108 = 22.2% (95% CI 15.4-30.9%) -> NOT MET; control FAILS as required (correctness)
+   (d) physical channel decisive   | physical only (w2 = 0)      : served 100/100, wrong-and-unflagged 0/100, correct among served 100/100 -> criterion 1a MET, 1b MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold), coverage MET
+   (d) physical channel decisive   | context only (w1 = 0)       : served 0/100, wrong-and-unflagged 0/100, correct among served 0/0 -> criterion 1a UNKNOWN (nothing to count), 1b MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold), coverage NOT MET
+   (d) physical channel decisive   | both channels (w1 = w2 = 1) : served 100/100, wrong-and-unflagged 0/100, correct among served 100/100 -> criterion 1a MET, 1b MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold), coverage MET
+   (d) physical channel decisive   | physical only (w2 = 0)      : versus both channels (served 100, wrong 0): not clearly worse; control DID NOT FAIL (inert in this direction)
+   (d) physical channel decisive   | context only (w1 = 0)       : versus both channels (served 100, wrong 0): clearly worse; control FAILS as required
+   (d) context channel decisive    | physical only (w2 = 0)      : served 7/100, wrong-and-unflagged 0/100, correct among served 7/7 -> criterion 1a MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches below the threshold), 1b MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold), coverage NOT MET
+   (d) context channel decisive    | context only (w1 = 0)       : served 100/100, wrong-and-unflagged 0/100, correct among served 100/100 -> criterion 1a MET, 1b MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold), coverage MET
+   (d) context channel decisive    | both channels (w1 = w2 = 1) : served 74/100, wrong-and-unflagged 0/100, correct among served 74/74 -> criterion 1a MET, 1b MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold), coverage NOT MET
+   (d) context channel decisive    | physical only (w2 = 0)      : versus both channels (served 74, wrong 0): clearly worse; control FAILS as required
+   (d) context channel decisive    | context only (w1 = 0)       : versus both channels (served 74, wrong 0): not clearly worse; control DID NOT FAIL (inert in this direction)
+   (d) required: the physical-only distance fails where the context decides, and the context-only distance fails where the physical decides: both occurred, control FAILS as required

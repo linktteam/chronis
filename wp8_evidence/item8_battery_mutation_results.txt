@@ -1,0 +1,20 @@
+B01 the BIC shift tolerance is loose: KILLED
+B02 the expected BIC shift is K, not K ln T: KILLED
+B03 the expected BIC shift uses log2: KILLED
+B04 regime means are not compared: KILLED
+B05 the posterior arrays are compared with allclose: KILLED
+B06 duration parameters are not compared: KILLED
+B07 the fit state is not compared: KILLED
+B08 Dmax is not compared: KILLED
+B09 a wrong BIC shift is accepted: KILLED
+B10 changed fitted outputs are accepted: KILLED
+B11 unexplained status changes are accepted: KILLED
+B13 newly withheld by R1 is called unexplained: KILLED
+B14 newly withheld by R2 is called R1: KILLED
+B15 withheld by both is called R1 only: KILLED
+B16 a previously withheld fit that is now published is explained: KILLED
+B17 a flagged but still published fit is explained: KILLED
+B18 the strict count ignores the BIC: KILLED
+B19 the flag share ignores R2: KILLED
+B20 different seeds are accepted: KILLED
+19/19 killed
