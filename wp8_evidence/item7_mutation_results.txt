@@ -1,0 +1,26 @@
+E01 tag removed from step: KILLED
+E02 tag removed from the margin_ok docstring: KILLED
+E03 status marked as reviewed: KILLED
+E04 a threshold default changes without the register: KILLED
+E05 register status line changed: KILLED
+E06 register claims one more site: KILLED
+E07 tag text edited, register not regenerated: KILLED
+E08 contract does not name the register: KILLED
+E09 a docstring that only mentions the tag counts: KILLED
+E10 a comment attaches to the definition above it: KILLED
+E11 comment tags ignored: KILLED
+E12 record default status empty: KILLED
+E13 the scan ignores attribute uses: KILLED
+E14 the scan ignores name uses: KILLED
+E15 --check always passes: KILLED
+E16 annotate_result drops the status: KILLED
+E17 the register prints no values: KILLED
+E18 qualified names flattened: KILLED
+E19 a watched name is renamed: KILLED
+E20 a hard ceiling value changes without the register: KILLED
+E21 tag removed from the refit module docstring: KILLED
+E22 a dangling tag comment is skipped: KILLED
+E23 tag removed from the ladder weights: KILLED
+E25 the dual class threshold is not watched: KILLED
+E24 the register status text is dropped: KILLED
+25/25 killed

@@ -90,6 +90,7 @@ class AlignmentConfig:
     dual_engine: PairThreshold = PairThreshold("ratio", 0.0, AMBIGUITY_RATIO, calibrated=False)    # dual to dual: UNKNOWN
     channels: ChannelConfig = ChannelConfig()
 
+    # EXPERT_REVIEW(identity-distance): validates the identifiability gate and the duration weight.
     def __post_init__(self) -> None:
         if self.min_separation < 0 or self.duration_weight < 0:
             raise ValueError("min_separation and duration_weight must not be negative")
@@ -151,6 +152,7 @@ class LineageState:
     epoch_history: tuple = ()
 
 
+# EXPERT_REVIEW(identity-distance): every record carries `expert_review_status` (PENDING until an expert signs off) next to the distance, margin and threshold that produced its state.
 @dataclass(frozen=True)
 class LineageRecord:
     fit_index: int
@@ -273,6 +275,7 @@ def regime_table(summary: "FitSummary", registry) -> list[dict]:
     return [{f.name: dict(value=float(summary.raw_means[k, i]), unit=f.unit, source=f.source) for i, f in enumerate(reg)} for k in range(summary.K)]
 
 
+# EXPERT_REVIEW(identity-distance): computes the identifiability signal (`separation_min`) that the gate `min_separation` is applied to.
 def make_summary(engine: str, raw_means, scaler_mean, scaler_std, labels, raw_window, exp_durations=None, context_profiles=None) -> FitSummary:
     raw_means = np.array(raw_means, dtype=float); raw_window = np.array(raw_window, dtype=float); labels = np.array(labels, dtype=int)
     scaler_mean = np.array(scaler_mean, dtype=float); scaler_std = np.array(scaler_std, dtype=float)
@@ -315,6 +318,7 @@ def annotate_result(result, record: LineageRecord):
 
 
 # ----------------------------------------------------------------------------------------------------------------- naming (first fit of a lineage or of an epoch)
+# EXPERT_REVIEW(identity-distance): applies the ordering ladder (weights, reliability thresholds) to give a fit its stable names.
 def name_fit(summary: FitSummary, registry, ladder: LadderConfig) -> tuple[tuple, int, bool, OrderingResult | None]:
     """Stable ids for a fit that has no anchor: the ladder's order when it is verified, else first-fit order. Returns (raw_to_stable, activity_rung, verified, ordering)."""
     K = summary.K
@@ -339,6 +343,7 @@ def _vectors(summary: FitSummary, scale: np.ndarray, duration_weight: float) -> 
     return v
 
 
+# EXPERT_REVIEW(identity-distance): the per-feature scale of the matching distance (the anchor's stored scaler).
 def _scale(anchor: Anchor) -> np.ndarray:
     s = np.array(anchor.summary.scaler_std, dtype=float)
     return np.where(s > 0, s, 1.0)
@@ -350,6 +355,7 @@ def alignment(anchor_vec: np.ndarray, new_vec: np.ndarray) -> dict:
     return alignment_from_cost(((anchor_vec[:, None, :] - new_vec[None, :, :]) ** 2).sum(axis=2))
 
 
+# EXPERT_REVIEW(identity-distance): the best and the second best assignment and the two margins (`margin_diff`, `margin_ratio`) that the thresholds are applied to.
 def alignment_from_cost(cost: np.ndarray) -> dict:
     """Same as `alignment` for a given (K, K) cost matrix (rows: the anchor's regimes in stable-id order, columns: the new fit's raw regimes)."""
     K = cost.shape[0]
@@ -380,6 +386,7 @@ def margin_ok(th: PairThreshold, al: dict) -> bool:
     return {"diff": ok_diff, "ratio": ok_ratio, "both": ok_diff and ok_ratio}[th.rule]
 
 
+# EXPERT_REVIEW(identity-distance): uses the matching distance to name the split or merge candidates when K changed.
 def split_merge_candidates(anchor_vec: np.ndarray, new_vec: np.ndarray) -> tuple:
     """When the fitted K differs from the anchor's: each regime goes to the nearest regime of the other fit. A split candidate is an old (stable) id that is nearest to two or more new
     regimes; a merge candidate is a group of old ids that share the same nearest new regime. Exploratory; precision is reported in the Item 8 study."""
@@ -401,6 +408,7 @@ def split_merge_candidates(anchor_vec: np.ndarray, new_vec: np.ndarray) -> tuple
     return tuple(out)
 
 
+# EXPERT_REVIEW(identity-distance): uses the matching distance to record the old-to-new correspondence kept when the user takes new names.
 def _correspondence(anchor_vec: np.ndarray, new_vec: np.ndarray, proposed_raw_to_stable: tuple) -> tuple:
     """Old stable id -> new stable id (under the PROPOSED names) of the new regime the assignment pairs it with; None when the old regime has no counterpart (K changed)."""
     D = ((anchor_vec[:, None, :] - new_vec[None, :, :]) ** 2).sum(axis=2)
@@ -410,6 +418,7 @@ def _correspondence(anchor_vec: np.ndarray, new_vec: np.ndarray, proposed_raw_to
                  for i in range(anchor_vec.shape[0]))
 
 
+# EXPERT_REVIEW(identity-distance): writes the identifiability signal of the fit into the record next to the margins and the state.
 def _record(fit_index, summary, anchor, epoch, lineage_id, state_name, message, raw_to_stable, rung, verified, al, th, reasons, proposed, candidates, user_choice=None,
             channels_used=("physical",), channel_detail=None):
     stable = np.asarray(raw_to_stable, dtype=int)[summary.labels]
@@ -425,6 +434,7 @@ def _record(fit_index, summary, anchor, epoch, lineage_id, state_name, message, 
         threshold=None if th is None else dict(rule=th.rule, tau=th.tau, rho=th.rho, calibrated=th.calibrated), channels_used=tuple(channels_used), channel_detail=channel_detail)
 
 
+# EXPERT_REVIEW(identity-distance): the scale of a channel's distance (mean pairwise inter-regime distance of the anchor) used in the combined cost.
 def _mean_pair(M: np.ndarray) -> float:
     K = M.shape[0]
     if K < 2:
@@ -458,6 +468,7 @@ def _combined_alignment(anchor: Anchor, summary: FitSummary, a_vec: np.ndarray, 
     return al, ("physical", "context"), detail
 
 
+# EXPERT_REVIEW(identity-distance): the gate, the distance, the thresholds and the continuity state are applied together here.
 def step(state: LineageState | None, summary: FitSummary, config: AlignmentConfig = AlignmentConfig(), registry=None, lineage_id: str | None = None) -> tuple[LineageRecord, LineageState]:
     """Feed the next accepted fit. Returns (record, new state); the old state is not modified. `lineage_id` is required for the first fit (no hidden randomness) and ignored after."""
     if state is None:
@@ -477,6 +488,7 @@ def step(state: LineageState | None, summary: FitSummary, config: AlignmentConfi
     n_vec = _vectors(summary, scale, config.duration_weight)
     cross = summary.engine != anchor.summary.engine
     th = config.cross_engine if cross else (config.dual_engine if summary.engine == "dual" else config.same_engine)
+    # EXPERT_REVIEW(identity-distance): the proposal for a new fit: the ladder names it and the matching distance gives the old-to-new correspondence.
     def proposal():
         """The names this fit would get on its own (what NEW_NAMES would adopt), computed only when continuity is not confirmed."""
         prop_r2s, prop_rung, prop_verified, _ = name_fit(summary, registry, config.ladder)

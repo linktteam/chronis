@@ -36,6 +36,7 @@ class LadderConfig:
     min_gap: float = 0.7            # fixed by the declared rule on development seeds 8201..8212; see the 'Design freeze (Item 3)' section of tests/PREDECLARED_CRITERIA_WP8.md
     seed: int = 0
 
+    # EXPERT_REVIEW(identity-distance): validates the ladder's reliability thresholds.
     def __post_init__(self) -> None:
         if self.n_bootstrap < 10 or self.block_days < 1:
             raise ValueError("n_bootstrap must be at least 10 and block_days at least 1")
@@ -58,6 +59,7 @@ class RungResult:
     reliable: bool = False
 
 
+    # EXPERT_REVIEW(identity-distance): reports the ladder's reliability thresholds with the rung result.
     def as_dict(self) -> dict:
         return dict(rung=self.rung, available=self.available, order=list(self.order) if self.order else None, weights=dict(self.weights),
                     scores=list(self.scores) if self.scores else None, min_gap=self.min_gap, modal_freq=self.modal_freq,
@@ -76,6 +78,7 @@ class OrderingResult:
         return dict(order=list(self.order), activity_rung=self.activity_rung, verified=self.verified, reason=self.reason, rungs={str(r): v.as_dict() for r, v in self.rungs.items()})
 
 
+# EXPERT_REVIEW(identity-distance): the per-feature coverage and signal-to-noise inputs of the ladder weights.
 def _stats(raw: np.ndarray, labels: np.ndarray, K: int):
     """Per regime and feature: mean over observed days and the number of observed days; pooled within-regime variance per feature; the window mean and sd per feature."""
     T, F = raw.shape
@@ -124,6 +127,7 @@ def _order(score):
     return tuple(int(i) for i in np.argsort(score, kind="stable"))
 
 
+# EXPERT_REVIEW(identity-distance): the block-bootstrap reliability test (modal order frequency and minimum adjacent gap) of the ladder.
 def _bootstrap_modal(raw, labels, K, registry, rung, cfg: LadderConfig, rng):
     T = raw.shape[0]
     n_blocks = int(np.ceil(T / cfg.block_days))
