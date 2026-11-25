@@ -13,6 +13,11 @@ every accepted fit a SECOND set of names, the stable ids, and says how far that 
     choice (`apply_user_choice`); nothing here decides for the user.
   * Fail closed: `may_claim_same_as_before(record)` is True only for ALIGNED. The anchor moves only on ALIGNED and NEW_LINEAGE. A class of pair whose threshold could not be
     calibrated on the development data (dual to dual, baseline to dual and back: `PairThreshold.calibrated = False`) is never ALIGNED (reason `threshold_not_calibrated`).
+  * Two channels (A6): channel 1 is the physical one above (regime means in real units, interpretable through the feature registry). Channel 2 is OPTIONAL and contextual: a per-regime
+    profile (non-negative, sums to 1) that the CALLER supplies, for example topic or scene proportions aggregated per day. Nothing here extracts topics or scenes. The combined cost is
+    `w1 * d1 / s1 + w2 * d2 / s2` (d2 = squared Hellinger distance; s = the anchor's own mean distance between its regimes in that channel); the default `w2 = 0` is channel 1 alone,
+    bit for bit. If each channel alone gives a confident alignment (its own margin passes its own threshold) and the two assignments differ, the state is CONTINUITY_UNVERIFIED.
+    Contextual descriptors are sensitive personal data: they must come from a consented, aggregated, non-identifying pipeline (docs/INTEGRATION_CONTRACT_HSSM.md, 9.10).
   * Engines: the baseline's regime means are `mu`; the dual model's are `regime_observation_means(params)` (the stationary mean d_k + C_k m_k). Both are put into raw units with the
     scaler of the window the fit was made on, so a switch of engine is aligned exactly like a refit, with its own thresholds.
 EXPERT_REVIEW(identity-distance): the matching distance, the identifiability gate and every threshold below are defined here and are awaiting expert sign-off (A7); every record says so.
@@ -56,6 +61,18 @@ class PairThreshold:
             raise ValueError(f"tau must not be negative and rho must lie in [0, {AMBIGUITY_RATIO}] (never more lenient than the WP5 rule)")
 
 
+# EXPERT_REVIEW(identity-distance): the channel weights (`w2 = 0` means the contextual channel is off) and the acceptance threshold of the contextual channel on its own.
+@dataclass(frozen=True)
+class ChannelConfig:
+    w1: float = 1.0
+    w2: float = 0.0
+    context_threshold: PairThreshold = PairThreshold()
+
+    def __post_init__(self) -> None:
+        if self.w1 < 0 or self.w2 < 0 or (self.w1 == 0 and self.w2 == 0):
+            raise ValueError("channel weights must not be negative and not both zero")
+
+
 # EXPERT_REVIEW(identity-distance): the identifiability gate `min_separation`, the optional duration coordinate of the matching distance and the thresholds per pair class.
 # FROZEN 2026-11-25 (Item 4 design freeze, 960 development fits, seeds 8201..8212; evidence wp8_evidence/item4_analysis.txt):
 #   h = 4.0: the smallest grid value at which no alignment between two fits that both pass it was strict-wrong on development (coverage at h = 4.0: 37.3% of all baseline alignments,
@@ -71,6 +88,7 @@ class AlignmentConfig:
     cross_engine: PairThreshold = PairThreshold("ratio", 0.0, AMBIGUITY_RATIO, calibrated=False)   # baseline to dual and dual to baseline: UNKNOWN
     ladder: LadderConfig = LadderConfig()
     dual_engine: PairThreshold = PairThreshold("ratio", 0.0, AMBIGUITY_RATIO, calibrated=False)    # dual to dual: UNKNOWN
+    channels: ChannelConfig = ChannelConfig()
 
     def __post_init__(self) -> None:
         if self.min_separation < 0 or self.duration_weight < 0:
@@ -89,6 +107,7 @@ class FitSummary:
     separation_min: float
     raw_window: np.ndarray | None = None
     exp_durations: np.ndarray | None = None
+    context_profiles: np.ndarray | None = None      # channel 2 (optional): (K, C), one non-negative row per regime that sums to 1, supplied by the caller
 
     @property
     def K(self) -> int:
@@ -164,6 +183,8 @@ class LineageRecord:
     reasons: tuple
     threshold: dict | None
     expert_review_status: str = EXPERT_REVIEW_STATUS
+    channels_used: tuple = ("physical",)           # ("physical",) or ("physical", "context")
+    channel_detail: dict | None = None             # per channel: assignment, margins and whether it was confident on its own; None when only channel 1 was used
 
     def as_dict(self) -> dict:
         def clean(x):
@@ -212,7 +233,47 @@ def separation_min(raw_means: np.ndarray, raw_window: np.ndarray, labels: np.nda
     return float(min(np.linalg.norm((means[i] - means[j]) / sd) for i in range(K) for j in range(i + 1, K)))
 
 
-def make_summary(engine: str, raw_means, scaler_mean, scaler_std, labels, raw_window, exp_durations=None) -> FitSummary:
+def validate_context_profiles(profiles, K: int) -> np.ndarray:
+    """A (K, C) array of non-negative finite rows that sum to 1 (a histogram or a vector of proportions per regime). Anything else is refused."""
+    P = np.array(profiles, dtype=float)
+    if P.ndim != 2 or P.shape[0] != K or P.shape[1] < 1:
+        raise ValueError(f"context profiles must be (K={K}, C) with C >= 1")
+    if not np.isfinite(P).all() or (P < 0).any():
+        raise ValueError("context profiles must be finite and non-negative")
+    if not np.allclose(P.sum(axis=1), 1.0, atol=1e-6):
+        raise ValueError("every context profile must sum to 1")
+    return P
+
+
+def context_profiles_from_days(daily_profiles, labels, K: int) -> np.ndarray:
+    """Aggregates per-day descriptor proportions (T, C) into one profile per regime: the mean over the days decoded into the regime, renormalised. Days without a descriptor (a NaN row) are
+    skipped. A regime without any usable day is refused. The descriptors themselves come from the caller's consented, aggregated pipeline; nothing is extracted here."""
+    D = np.array(daily_profiles, dtype=float); lab = np.asarray(labels, dtype=int)
+    if D.ndim != 2 or lab.shape != (D.shape[0],) or lab.min() < 0 or lab.max() >= K:
+        raise ValueError("daily profiles must be (T, C) and labels (T,) in 0..K-1")
+    out = np.zeros((K, D.shape[1]))
+    for k in range(K):
+        rows = D[(lab == k) & ~np.isnan(D).any(axis=1)]
+        if len(rows) == 0:
+            raise ValueError(f"regime {k} has no day with a descriptor")
+        m = rows.mean(axis=0)
+        out[k] = m / m.sum()
+    return validate_context_profiles(out, K)
+
+
+def hellinger2_matrix(P: np.ndarray, Q: np.ndarray) -> np.ndarray:
+    """EXPERT_REVIEW(identity-distance): squared Hellinger distance between every row of P and every row of Q: 0.5 * sum((sqrt p - sqrt q)^2), in [0, 1]."""
+    return 0.5 * ((np.sqrt(P)[:, None, :] - np.sqrt(Q)[None, :, :]) ** 2).sum(axis=2)
+
+
+def regime_table(summary: "FitSummary", registry) -> list[dict]:
+    """Channel 1 made readable (A6): per regime, the mean of every feature in its physical unit, from the registry (name, unit, source)."""
+    from .feature_registry import validate_registry
+    reg = validate_registry(registry, summary.raw_means.shape[1])
+    return [{f.name: dict(value=float(summary.raw_means[k, i]), unit=f.unit, source=f.source) for i, f in enumerate(reg)} for k in range(summary.K)]
+
+
+def make_summary(engine: str, raw_means, scaler_mean, scaler_std, labels, raw_window, exp_durations=None, context_profiles=None) -> FitSummary:
     raw_means = np.array(raw_means, dtype=float); raw_window = np.array(raw_window, dtype=float); labels = np.array(labels, dtype=int)
     scaler_mean = np.array(scaler_mean, dtype=float); scaler_std = np.array(scaler_std, dtype=float)
     if engine not in ("baseline", "dual"):
@@ -225,7 +286,8 @@ def make_summary(engine: str, raw_means, scaler_mean, scaler_std, labels, raw_wi
     if not (scaler_std > 0).all():
         raise ValueError("scaler_std must be positive")
     dur = None if exp_durations is None else np.array(exp_durations, dtype=float)
-    return FitSummary(engine, raw_means, scaler_mean, scaler_std, labels, separation_min(raw_means, raw_window, labels), raw_window, dur)
+    ctx = None if context_profiles is None else validate_context_profiles(context_profiles, K)
+    return FitSummary(engine, raw_means, scaler_mean, scaler_std, labels, separation_min(raw_means, raw_window, labels), raw_window, dur, ctx)
 
 
 def summarize_fit(result, raw_window, scaler_mean, scaler_std) -> FitSummary:
@@ -285,8 +347,12 @@ def _scale(anchor: Anchor) -> np.ndarray:
 def alignment(anchor_vec: np.ndarray, new_vec: np.ndarray) -> dict:
     """EXPERT_REVIEW(identity-distance): Hungarian assignment of the anchor's regimes (rows, in stable-id order) to the new fit's regimes on squared distance, with the best total cost
     C1, the best total cost C2 of any other one-to-one assignment (exhaustive, K <= 6), the margins and, per regime, the matched distance and the distance to the nearest other regime."""
-    K = anchor_vec.shape[0]
-    cost = ((anchor_vec[:, None, :] - new_vec[None, :, :]) ** 2).sum(axis=2)
+    return alignment_from_cost(((anchor_vec[:, None, :] - new_vec[None, :, :]) ** 2).sum(axis=2))
+
+
+def alignment_from_cost(cost: np.ndarray) -> dict:
+    """Same as `alignment` for a given (K, K) cost matrix (rows: the anchor's regimes in stable-id order, columns: the new fit's raw regimes)."""
+    K = cost.shape[0]
     rows, cols = linear_sum_assignment(cost)
     perm = tuple(int(c) for c in cols[np.argsort(rows)])
     C1 = float(sum(cost[i, perm[i]] for i in range(K)))
@@ -344,7 +410,8 @@ def _correspondence(anchor_vec: np.ndarray, new_vec: np.ndarray, proposed_raw_to
                  for i in range(anchor_vec.shape[0]))
 
 
-def _record(fit_index, summary, anchor, epoch, lineage_id, state_name, message, raw_to_stable, rung, verified, al, th, reasons, proposed, candidates, user_choice=None):
+def _record(fit_index, summary, anchor, epoch, lineage_id, state_name, message, raw_to_stable, rung, verified, al, th, reasons, proposed, candidates, user_choice=None,
+            channels_used=("physical",), channel_detail=None):
     stable = np.asarray(raw_to_stable, dtype=int)[summary.labels]
     return LineageRecord(
         fit_index=fit_index, engine=summary.engine, anchor_engine=None if anchor is None else anchor.summary.engine, K=summary.K, K_anchor=None if anchor is None else anchor.summary.K,
@@ -355,7 +422,40 @@ def _record(fit_index, summary, anchor, epoch, lineage_id, state_name, message, 
         nearest_other_distances=None if al is None else al["nearest_other"], separation_min=summary.separation_min,
         anchor_separation_min=None if anchor is None else anchor.summary.separation_min, scaler_mean=summary.scaler_mean, scaler_std=summary.scaler_std,
         proposed_new_names=proposed, split_merge_candidates=tuple(candidates), reasons=tuple(reasons),
-        threshold=None if th is None else dict(rule=th.rule, tau=th.tau, rho=th.rho, calibrated=th.calibrated))
+        threshold=None if th is None else dict(rule=th.rule, tau=th.tau, rho=th.rho, calibrated=th.calibrated), channels_used=tuple(channels_used), channel_detail=channel_detail)
+
+
+def _mean_pair(M: np.ndarray) -> float:
+    K = M.shape[0]
+    if K < 2:
+        return 1.0
+    v = float((M.sum() - np.trace(M)) / (K * (K - 1)))
+    return v if v > 0 else 1.0
+
+
+def _combined_alignment(anchor: Anchor, summary: FitSummary, a_vec: np.ndarray, n_vec: np.ndarray, th: PairThreshold, config: AlignmentConfig):
+    """Channel 1 alone (the default, identical to `alignment`), or channel 1 and the optional contextual channel combined as `w1 * d1 / s1 + w2 * d2 / s2` with the disagreement check.
+    EXPERT_REVIEW(identity-distance): the combined cost, the scales s1 and s2 and the disagreement rule are defined here. Returns (alignment, channels_used, channel_detail)."""
+    ch = config.channels
+    D1 = ((a_vec[:, None, :] - n_vec[None, :, :]) ** 2).sum(axis=2)
+    a_ctx, n_ctx = anchor.summary.context_profiles, summary.context_profiles
+    if ch.w2 == 0:
+        return alignment_from_cost(D1), ("physical",), None
+    if a_ctx is None or n_ctx is None:
+        return alignment_from_cost(D1), ("physical",), dict(context="missing: channel 1 alone was used", weights=(ch.w1, ch.w2))
+    if a_ctx.shape[1] != n_ctx.shape[1]:
+        raise ValueError("the context profiles of the two fits must have the same categories (same C)")
+    a_ctx_s = a_ctx[list(anchor.stable_to_raw)]
+    D2 = hellinger2_matrix(a_ctx_s, n_ctx)
+    s1 = _mean_pair(((a_vec[:, None, :] - a_vec[None, :, :]) ** 2).sum(axis=2)); s2 = _mean_pair(hellinger2_matrix(a_ctx_s, a_ctx_s))
+    al = alignment_from_cost(ch.w1 * D1 / s1 + ch.w2 * D2 / s2)
+    al1, al2 = alignment_from_cost(D1), alignment_from_cost(D2)
+    conf1, conf2 = margin_ok(th, al1), margin_ok(ch.context_threshold, al2)
+    detail = dict(weights=(ch.w1, ch.w2), scales=(s1, s2),
+                  physical=dict(perm=al1["perm"], margin_diff=al1["margin_diff"], margin_ratio=al1["margin_ratio"], confident=bool(conf1)),
+                  context=dict(perm=al2["perm"], margin_diff=al2["margin_diff"], margin_ratio=al2["margin_ratio"], confident=bool(conf2)),
+                  disagree=bool(conf1 and conf2 and al1["perm"] != al2["perm"]))
+    return al, ("physical", "context"), detail
 
 
 def step(state: LineageState | None, summary: FitSummary, config: AlignmentConfig = AlignmentConfig(), registry=None, lineage_id: str | None = None) -> tuple[LineageRecord, LineageState]:
@@ -400,9 +500,9 @@ def step(state: LineageState | None, summary: FitSummary, config: AlignmentConfi
                       ("k_changed",), proposed, cands)
         return rec, replace(state, n_fits=state.n_fits + 1, pending=pending)
     if summary.K > MAX_MATCH_K:
-        reasons = ["k_above_matching_ceiling"]; al = None
+        reasons = ["k_above_matching_ceiling"]; al = None; channels_used, detail = ("physical",), None
     else:
-        al = alignment(a_vec, n_vec)
+        al, channels_used, detail = _combined_alignment(anchor, summary, a_vec, n_vec, th, config)
         reasons = []
         if anchor.summary.separation_min < config.min_separation:
             reasons.append("anchor_not_identifiable")
@@ -412,12 +512,14 @@ def step(state: LineageState | None, summary: FitSummary, config: AlignmentConfi
             reasons.append("threshold_not_calibrated")
         elif not margin_ok(th, al):
             reasons.append("margin_below_threshold")
+        if detail is not None and detail.get("disagree"):
+            reasons.append("channels_disagree")
     if not reasons:
         r2s = [0] * summary.K
         for i, raw in enumerate(al["perm"]):
             r2s[raw] = i                                                  # the new regime matched to old stable id i takes that name
         rec = _record(fit_index, summary, anchor, state.epoch, state.lineage_id, ALIGNED, "regimes matched to the previous accepted fit", r2s, anchor.activity_rung,
-                      anchor.ordering_verified, al, th, (), None, ())
+                      anchor.ordering_verified, al, th, (), None, (), channels_used=channels_used, channel_detail=detail)
         new_anchor = Anchor(summary, tuple(r2s), fit_index, anchor.activity_rung, anchor.ordering_verified)
         return rec, replace(state, anchor=new_anchor, n_fits=state.n_fits + 1, pending=None)
     # ambiguous: the best guess keeps the old names but the claim is withheld
@@ -429,7 +531,7 @@ def step(state: LineageState | None, summary: FitSummary, config: AlignmentConfi
             r2s[raw] = i
     proposed, pending = proposal()
     rec = _record(fit_index, summary, anchor, state.epoch, state.lineage_id, CONTINUITY_UNVERIFIED, MESSAGE_UNCONFIRMED + "; the old names are kept, new names can be chosen",
-                  r2s, anchor.activity_rung, anchor.ordering_verified, al, th, reasons, proposed, ())
+                  r2s, anchor.activity_rung, anchor.ordering_verified, al, th, reasons, proposed, (), channels_used=channels_used, channel_detail=detail)
     return rec, replace(state, n_fits=state.n_fits + 1, pending=pending)
 
 
@@ -456,5 +558,6 @@ def apply_user_choice(state: LineageState, record: LineageRecord, choice) -> tup
     new_rec = _record(record.fit_index, pend.summary, state.anchor, new_epoch, state.lineage_id, NEW_LINEAGE, "new names chosen by the user; the earlier names and the mapping stay in the epoch history",
                       pend.proposed_raw_to_stable, pend.proposed_rung, pend.proposed_verified, None, None, ("user_chose_new_names",), None, (), user_choice="NEW_NAMES")
     new_rec = replace(new_rec, margin_diff=record.margin_diff, margin_ratio=record.margin_ratio, alignment_margin=record.alignment_margin, cost_best=record.cost_best,
-                      cost_second=record.cost_second, matched_distances=record.matched_distances, nearest_other_distances=record.nearest_other_distances, threshold=record.threshold)
+                      cost_second=record.cost_second, matched_distances=record.matched_distances, nearest_other_distances=record.nearest_other_distances, threshold=record.threshold,
+                      channels_used=record.channels_used, channel_detail=record.channel_detail)
     return new_rec, replace(state, epoch=new_epoch, anchor=anchor, pending=None, epoch_history=state.epoch_history + (entry,))
