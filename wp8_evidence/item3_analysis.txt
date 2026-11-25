@@ -1,0 +1,33 @@
+development fits: 60 baseline fits of 12 users (seeds 8201..8212); accepted 60
+fits whose regimes are one-to-one recoverable: 52/60 = 86.7%
+
+== each rung alone: point-estimate ordering equals the planted order (all fits, recoverable required)
+  rung 1 (roles None): available 60/60; ordering correct 51/60 = 85.0%
+  rung 2 (roles ('movement', 'time_moving')): available 60/60; ordering correct 52/60 = 86.7%
+  rung 3 (roles ('movement',)): available 60/60; ordering correct 50/60 = 83.3%
+
+== g_min rule: pooled rung results with modal frequency >= 0.90: 137; correct 128/137 = 93.4%
+  largest min-gap among wrong pooled results 0.624; rule gives g_min = 0.7; used 0.7
+  (reported, not used for the rule) among recoverable fits: pooled 128, all correct
+  distribution of min_gap among correct pooled results: median 0.87, min 0.28
+
+== ladder with modal frequency >= 0.90 and g_min = 0.7 (development, 60 fits)
+  full ladder with agreement check: verified 45/60 = 75.0%; correct among verified 45/45 = 100.0%; per rung {1: 35, 2: 7, 3: 3}; conflicts 0
+  no agreement check: verified 45/60 = 75.0%; correct among verified 45/45 = 100.0%; per rung {1: 35, 2: 7, 3: 3}; conflicts 0
+  rung 3 only (movement): verified 34/60 = 56.7%; correct among verified 34/34 = 100.0%; per rung {3: 34}; conflicts 0
+  rungs 1 and 3 only: verified 44/60 = 73.3%; correct among verified 44/44 = 100.0%; per rung {1: 35, 3: 9}; conflicts 0
+  sensitivity to the modal-frequency threshold:
+    modal frequency >= 0.80: verified 48/60 = 80.0%; correct among verified 48/48 = 100.0%
+    modal frequency >= 0.90: verified 45/60 = 75.0%; correct among verified 45/45 = 100.0%
+    modal frequency >= 0.95: verified 39/60 = 65.0%; correct among verified 39/39 = 100.0%
+  sensitivity to g_min:
+    g_min 0.00: verified 52/60 = 86.7%; correct among verified 48/52 = 92.3%
+    g_min 0.25: verified 51/60 = 85.0%; correct among verified 48/51 = 94.1%
+    g_min 0.50: verified 48/60 = 80.0%; correct among verified 46/48 = 95.8%
+    g_min 0.75: verified 42/60 = 70.0%; correct among verified 42/42 = 100.0%
+    g_min 1.00: verified 20/60 = 33.3%; correct among verified 20/20 = 100.0%
+
+== by planted separation of the user (sep): verified share and accuracy
+  sep in [0.0, 0.8): fits 20; verified 9/20 = 45.0%; correct among verified 9/9 = 100.0%
+  sep in [0.8, 1.3): fits 30; verified 28/30 = 93.3%; correct among verified 28/28 = 100.0%
+  sep in [1.3, 9.0): fits 10; verified 8/10 = 80.0%; correct among verified 8/8 = 100.0%

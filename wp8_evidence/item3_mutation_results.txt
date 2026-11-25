@@ -1,0 +1,30 @@
+O01 coverage not in the weight: KILLED
+O02 SNR not in the weight: KILLED
+O03 SNR weight not saturating: KILLED
+O04 registry direction ignored: KILLED
+O05 order descending: KILLED
+O06 rung 2 uses every feature: KILLED
+O07 rung 3 also uses time moving: KILLED
+O08 gap condition removed: KILLED
+O09 frequency condition removed: KILLED
+O10 modal order need not equal the point order: KILLED
+O11 agreement check removed: KILLED
+O12 lowest reliable rung preferred: KILLED
+O13 unverified order not first-fit: KILLED
+O14 bootstrap always the same block: KILLED
+O15 bootstrap labels not resampled with the days: KILLED
+O16 scores in raw units, not z-scores: KILLED
+O17 weights not normalised: KILLED
+O18 a regime without observations still usable: KILLED
+O19 modal frequency reported as 1: KILLED
+O20 only the first gap checked: KILLED
+O21 bootstrap not seeded: KILLED
+O22 min_modal_freq validation removed: KILLED
+O23 label range not validated: KILLED
+O24 within variance divided by T: KILLED
+O25 grand mean unweighted: KILLED
+O26 between variance unweighted: KILLED
+O28 frozen min_gap default changed: KILLED
+O29 frozen block length changed: KILLED
+O27 blocks overlap (stride 1): KILLED
+29/29 killed
