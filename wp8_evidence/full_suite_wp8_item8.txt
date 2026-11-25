@@ -1,0 +1,4 @@
+Full suite, final code (RUN 2026-11-25): PYTHONPATH=. python3 -m pytest -q tests -p no:cacheprovider
+Tree: 75bddb6 (backbone/ and data/ identical to the final head; the files added afterwards are documents, evidence and study scripts, git diff 75bddb6 HEAD -- backbone data is empty).
+Result: 927 passed, 5 xfailed, 171 warnings in 1398.17s (0:23:18)
+Collected 932 = 555 at 27c591c + 377 new WP8 tests (Item 0 added 21, one older id renamed). The 555 older tests are among the 927 passed (5 xfailed are the same 5 as at 27c591c).

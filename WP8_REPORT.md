@@ -57,7 +57,7 @@ Labels: RUN (executed here, output in `wp8_evidence/`), READ (read in code or do
 ## 6. Bit-identity and tests (criterion 10; RUN)
 - **Baseline battery** (seeds 5301..5312, reference `git archive 27c591c`): fitted outputs bit-identical **12 of 12**; BIC differs by exactly K·ln(T) in **12 of 12** (the owner-decided B1 change); strict count including the BIC value **0 of 12 (by design)**; newly withheld 0; not explained 0.
 - **Dual battery** (WP7-R `item5_identity_battery.py`, same seeds): numeric outputs (including BIC) bit-identical **12 of 12**; previously publishable and unchanged **1** (11 of 12 were already withheld); newly withheld 0; not explained 0. **Limit:** "previously healthy dual fits are unchanged" rests on one fit.
-- **Tests:** TBD-SUITE-COUNTS. The 555 tests of `27c591c` are among them (Item 0: 571 passed, 5 xfailed of 576 collected at that point; Item 4: 738 passed, 5 xfailed of 743).
+- **Tests (full suite on the final code, RUN, `wp8_evidence/full_suite_wp8_item8.txt`):** **927 passed, 5 xfailed** of 932 collected (1398 s); 932 = the 555 tests of `27c591c` + 377 new WP8 tests. The 555 older tests keep passing; the 5 xfailed are the same 5 as at the base. The 555 tests of `27c591c` are among them (Item 0: 571 passed, 5 xfailed of 576 collected at that point; Item 4: 738 passed, 5 xfailed of 743).
 
 ## 7. Items 0b to 0e (RUN; `tests/WP8_ITEM0_RESULTS.md`)
 - **0b B1:** BIC parameter count default is now "free" (`legacy` selectable, bit for bit). On the 48 WP7-R K-selection datasets: selected K identical **48/48**, log-likelihoods identical 48/48, legacy minus free BIC = K·ln(n) in 48/48 (max deviation 1.3e-13); 13/13 mutants killed. It can change a choice in principle (UNKNOWN on real data).
