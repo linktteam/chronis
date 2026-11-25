@@ -1,0 +1,25 @@
+user   first-fit rung  verified  order equals planted order   (rung 0 = could not be ordered reliably; first-fit order kept, no activity claim)
+8301   3               True      yes
+8302   1               True      yes
+8303   1               True      yes
+8304   0               False     (not claimed)
+8305   2               True      yes
+8306   1               True      yes
+8307   0               False     (not claimed)
+8308   1               True      yes
+8309   0               False     (not claimed)
+8310   0               False     (not claimed)
+8311   3               True      yes
+8312   1               True      yes
+8313   0               False     (not claimed)
+8314   2               True      yes
+8315   1               True      yes
+8316   1               True      yes
+8317   2               True      yes
+8318   0               False     (not claimed)
+8319   1               True      yes
+8320   0               False     (not claimed)
+8321   1               True      yes
+8322   3               True      yes
+8323   1               True      yes
+8324   1               True      yes

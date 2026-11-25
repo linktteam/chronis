@@ -1,0 +1,77 @@
+POST-HOC MEASUREMENT (written 2026-11-25 after the Item 8 results were seen). The Item 4 scripts were run on the EVALUATION baseline fits B-G (seeds 8301..8324) to check the
+margin and gate findings on held-out data. Nothing here changes the frozen design (gate h = 4.0, rho = 0.5); the 'development' wording below is the script's own. The gate value
+'chosen' by the declared rule on these data (h = 2.5) is NOT adopted: choosing h on the evaluation data would be selecting on the test set.
+Commands: item4_analyze.py <B-G fits> ... ; item4_margin_report.py <alignments> <out> 4.0   (inputs and outputs in this directory, prefix item8_posthoc_)
+
+WP8 Item 4 margin analysis on development alignments (raw distance), gate h = 4.0
+
+== class baseline, all alignments: 216 alignments
+  margin_ratio bucket     n    strict-correct    both-recoverable  permutation-wrong
+  [0.00, 0.01)     137     137/137 = 100.0%      137             0
+  [0.01, 0.03)      37       37/37 = 100.0%       37             0
+  [0.03, 0.10)      22        21/22 = 95.5%       21             0
+  [0.10, 0.20)       3         3/3 = 100.0%        3             0
+  [0.20, 0.35)       7         7/7 = 100.0%        7             0
+  [0.35, 0.50)       3          2/3 = 66.7%        2             0
+  [0.50, 1.01)       7           0/7 = 0.0%        0             0
+  strict-wrong: 9; smallest margin_ratio among them 0.0499; largest margin_diff among them 0.4973
+  that is: every alignment with margin_ratio below the first number and margin_diff above the second was strict-correct; strict-wrong alignments exist at and above those values
+  permutation-wrong: none
+
+== class baseline, alignments passing the gate (both fits' separation >= 4.0): 72 alignments
+  margin_ratio bucket     n    strict-correct    both-recoverable  permutation-wrong
+  [0.00, 0.01)      63       63/63 = 100.0%       63             0
+  [0.01, 0.03)       9         9/9 = 100.0%        9             0
+  [0.03, 0.10)       0                  0/0        0             0
+  [0.10, 0.20)       0                  0/0        0             0
+  [0.20, 0.35)       0                  0/0        0             0
+  [0.35, 0.50)       0                  0/0        0             0
+  [0.50, 1.01)       0                  0/0        0             0
+  permutation-wrong: none
+
+== class dual, all alignments: 0 alignments
+  margin_ratio bucket     n    strict-correct    both-recoverable  permutation-wrong
+  [0.00, 0.01)       0                  0/0        0             0
+  [0.01, 0.03)       0                  0/0        0             0
+  [0.03, 0.10)       0                  0/0        0             0
+  [0.10, 0.20)       0                  0/0        0             0
+  [0.20, 0.35)       0                  0/0        0             0
+  [0.35, 0.50)       0                  0/0        0             0
+  [0.50, 1.01)       0                  0/0        0             0
+  permutation-wrong: none
+
+== class dual, alignments passing the gate (both fits' separation >= 4.0): 0 alignments
+  margin_ratio bucket     n    strict-correct    both-recoverable  permutation-wrong
+  [0.00, 0.01)       0                  0/0        0             0
+  [0.01, 0.03)       0                  0/0        0             0
+  [0.03, 0.10)       0                  0/0        0             0
+  [0.10, 0.20)       0                  0/0        0             0
+  [0.20, 0.35)       0                  0/0        0             0
+  [0.35, 0.50)       0                  0/0        0             0
+  [0.50, 1.01)       0                  0/0        0             0
+  permutation-wrong: none
+
+== class cross, all alignments: 0 alignments
+  margin_ratio bucket     n    strict-correct    both-recoverable  permutation-wrong
+  [0.00, 0.01)       0                  0/0        0             0
+  [0.01, 0.03)       0                  0/0        0             0
+  [0.03, 0.10)       0                  0/0        0             0
+  [0.10, 0.20)       0                  0/0        0             0
+  [0.20, 0.35)       0                  0/0        0             0
+  [0.35, 0.50)       0                  0/0        0             0
+  [0.50, 1.01)       0                  0/0        0             0
+  permutation-wrong: none
+
+== class cross, alignments passing the gate (both fits' separation >= 4.0): 0 alignments
+  margin_ratio bucket     n    strict-correct    both-recoverable  permutation-wrong
+  [0.00, 0.01)       0                  0/0        0             0
+  [0.01, 0.03)       0                  0/0        0             0
+  [0.03, 0.10)       0                  0/0        0             0
+  [0.10, 0.20)       0                  0/0        0             0
+  [0.20, 0.35)       0                  0/0        0             0
+  [0.35, 0.50)       0                  0/0        0             0
+  [0.50, 1.01)       0                  0/0        0             0
+  permutation-wrong: none
+
+== baseline by drift, alignments passing the gate: strict-wrong and margins
+  drift 0.0: 72 passing; strict-wrong 0; margin_ratio median 0.0037, max 0.0235

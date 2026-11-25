@@ -1,0 +1,60 @@
+POST-HOC MEASUREMENT (written 2026-11-25 after the Item 8 results were seen). The Item 4 scripts were run on the EVALUATION baseline fits B-G (seeds 8301..8324) to check the
+margin and gate findings on held-out data. Nothing here changes the frozen design (gate h = 4.0, rho = 0.5); the 'development' wording below is the script's own. The gate value
+'chosen' by the declared rule on these data (h = 2.5) is NOT adopted: choosing h on the evaluation data would be selecting on the test set.
+Commands: item4_analyze.py <B-G fits> ... ; item4_margin_report.py <alignments> <out> 4.0   (inputs and outputs in this directory, prefix item8_posthoc_)
+
+development fits read: 240 (baseline 240, dual 0); accepted dual 0
+class baseline: 216 alignments; both fits recoverable 207/216 = 95.8%; permutation errors among those (raw distance): 0; strict-correct overall 207/216 = 95.8%
+class dual: 0 alignments; both fits recoverable 0/0; permutation errors among those (raw distance): 0; strict-correct overall 0/0
+class cross: 0 alignments; both fits recoverable 0/0; permutation errors among those (raw distance): 0; strict-correct overall 0/0
+
+== identifiability gate h (rule: smallest grid value with no strict-wrong alignment among those whose two fits are both >= h; baseline class, raw distance)
+  h     pass share (all alignments)   strict-wrong among passing   recoverable-pair permutation errors among passing
+  0.0         216/216 = 100.0%          9          0
+  0.5         216/216 = 100.0%          9          0
+  1.0          210/216 = 97.2%          5          0
+  1.5          201/216 = 93.1%          1          0
+  2.0          199/216 = 92.1%          1          0
+  2.5          178/216 = 82.4%          0          0
+  3.0          118/216 = 54.6%          0          0
+  3.5           86/216 = 39.8%          0          0
+  4.0           72/216 = 33.3%          0          0
+  4.5           66/216 = 30.6%          0          0
+  5.0           52/216 = 24.1%          0          0
+  h = 2.5 (the smallest grid value with 0 strict-wrong passing alignments)
+
+== margin thresholds, class baseline: 216 alignments, 178 pass the gate (h = 2.5)
+  distance z      rule (a) vacuous (excluded) tau=0.0 rho=-: coverage 82.4% (178/216), wrong served 0
+  distance z      rule (b)                    tau=- rho=0.5: coverage 82.4% (178/216), wrong served 0
+  distance z      rule (c) vacuous (excluded) tau=0.0 rho=0.5: coverage 82.4% (178/216), wrong served 0
+  distance raw    rule (a) vacuous (excluded) tau=0.0 rho=-: coverage 82.4% (178/216), wrong served 0
+  distance raw    rule (b)                    tau=- rho=0.5: coverage 82.4% (178/216), wrong served 0
+  distance raw    rule (c) vacuous (excluded) tau=0.0 rho=0.5: coverage 82.4% (178/216), wrong served 0
+  distance dur0.5 rule (a) vacuous (excluded) tau=0.0 rho=-: coverage 82.4% (178/216), wrong served 0
+  distance dur0.5 rule (b)                    tau=- rho=0.5: coverage 82.4% (178/216), wrong served 0
+  distance dur0.5 rule (c) vacuous (excluded) tau=0.0 rho=0.5: coverage 82.4% (178/216), wrong served 0
+  distance dur1   rule (a) vacuous (excluded) tau=0.0 rho=-: coverage 82.4% (178/216), wrong served 0
+  distance dur1   rule (b)                    tau=- rho=0.5: coverage 82.4% (178/216), wrong served 0
+  distance dur1   rule (c) vacuous (excluded) tau=0.0 rho=0.5: coverage 82.4% (178/216), wrong served 0
+  CHOSEN: distance raw, rule (b), tau=-, rho=0.5: coverage 82.4% (178/216), 0 wrong served on development
+  context: both-fits-recoverable pairs 207; among them permutation errors 0; ALIGNED among all alignments 178/216 = 82.4%
+
+== margin thresholds, class dual: 0 alignments, 0 pass the gate (h = 2.5)
+  fewer than 20 alignments pass the gate: thresholds for this class are UNKNOWN (reported, not chosen)
+
+== margin thresholds, class cross: 0 alignments, 0 pass the gate (h = 2.5)
+  fewer than 20 alignments pass the gate: thresholds for this class are UNKNOWN (reported, not chosen)
+
+== reported: coverage and wrong-served of the chosen baseline rule for other gate values
+  h=0.0: coverage 209/216 = 96.8%; strict-wrong served 2; permutation errors served 0
+  h=1.5: coverage 200/216 = 92.6%; strict-wrong served 0; permutation errors served 0
+  h=2.0: coverage 198/216 = 91.7%; strict-wrong served 0; permutation errors served 0
+  h=2.5: coverage 178/216 = 82.4%; strict-wrong served 0; permutation errors served 0
+  h=3.0: coverage 118/216 = 54.6%; strict-wrong served 0; permutation errors served 0
+  h=3.5: coverage 86/216 = 39.8%; strict-wrong served 0; permutation errors served 0
+  h=4.0: coverage 72/216 = 33.3%; strict-wrong served 0; permutation errors served 0
+
+== by drift (baseline class, chosen rule): ALIGNED share and strict-wrong served
+  drift 0.0: 216 alignments, ALIGNED 178/216 = 82.4%, strict-wrong served 0
+  drift 1.0: 0 alignments, ALIGNED 0/0, strict-wrong served 0
+  drift 2.5: 0 alignments, ALIGNED 0/0, strict-wrong served 0

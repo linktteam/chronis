@@ -1,0 +1,25 @@
+seed  fit_state            ref_status  new_status  R1(collapsed) R2(degenerate)  fitted outputs bit-identical  BIC shift = K ln T (B1)
+5301  CONVERGED            pub         pub         False         False          True                          True
+5302  CONVERGED            pub         pub         False         False          True                          True
+5303  CONVERGED            pub         pub         False         False          True                          True
+5304  CONVERGED            pub         pub         False         False          True                          True
+5305  CONVERGED            pub         pub         False         False          True                          True
+5306  CONVERGED            pub         pub         False         False          True                          True
+5307  CONVERGED            pub         pub         False         False          True                          True
+5308  CONVERGED            pub         pub         False         False          True                          True
+5309  CONVERGED            pub         pub         False         False          True                          True
+5310  CONVERGED            pub         pub         False         False          True                          True
+5311  CONVERGED            pub         pub         False         False          True                          True
+5312  CONVERGED            pub         pub         False         False          True                          True
+
+fitted outputs bit-identical (m_t, m_t_std, p_t, p_t_post, regime means, duration parameters, fit_state, Dmax): 12 of 12
+BIC differs by exactly K ln(T), the owner-decided B1 change of the parameter count (or is equal): 12 of 12
+strictly identical including the BIC value: 0 of 12 (the BIC value changes by design, see B1)
+previously healthy, unchanged: 12 [5301, 5302, 5303, 5304, 5305, 5306, 5307, 5308, 5309, 5310, 5311, 5312]
+previously publishable, newly withheld by R1: 0 []
+previously publishable, newly withheld by R2: 0 []
+previously publishable, newly withheld by R1 and R2: 0 []
+already withheld (unchanged status): 0 []
+NOT EXPLAINED: 0 []
+share of fits flagged by R1 or R2: 0 of 12
+PASS (5.2a)

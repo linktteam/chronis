@@ -1,0 +1,350 @@
+{
+ "baseline B-G": {
+  "counts": {
+   "alignments": 216,
+   "served": 72,
+   "served_correct": 72,
+   "wrong_unflagged": 0,
+   "flagged": 144,
+   "flagged_would_be_wrong": 6,
+   "flagged_would_be_right": 138,
+   "cond_alignments": 210,
+   "cond_correct": 210,
+   "steps": 240,
+   "k_changed": 0
+  },
+  "refits": 216,
+  "accepted": 240,
+  "fits": 240,
+  "evaluated": true,
+  "c1a": "MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches below the threshold)",
+  "c1b": "MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)",
+  "c2": "NOT MET",
+  "nothing_served": false
+ },
+ "L:baseline": {
+  "n": 24,
+  "verified": 17,
+  "correct": 17,
+  "rungs": {
+   "3": 3,
+   "1": 11,
+   "0": 7,
+   "2": 3
+  },
+  "verdict": "MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches below the threshold)"
+ },
+ "4:baseline": {
+  "n": 72,
+  "good": 72,
+  "verdict": "MET",
+  "raw_mean": 0.7910493827160494
+ },
+ "3:baseline, seed vs seed + 1000": {
+  "cases": 240,
+  "identical": 166,
+  "users": 24,
+  "users_identical": 9,
+  "verdict": "NOT MET"
+ },
+ "dual D-G": {
+  "counts": {
+   "alignments": 5,
+   "served": 0,
+   "served_correct": 0,
+   "wrong_unflagged": 0,
+   "flagged": 5,
+   "flagged_would_be_wrong": 3,
+   "flagged_would_be_right": 2,
+   "cond_alignments": 2,
+   "cond_correct": 2,
+   "steps": 13,
+   "k_changed": 0
+  },
+  "refits": 1,
+  "accepted": 13,
+  "fits": 120,
+  "evaluated": false,
+  "c1a": "UNKNOWN",
+  "c1b": "UNKNOWN",
+  "c2": "UNKNOWN",
+  "secondary": {
+   "alignments": 108,
+   "served": 0,
+   "served_correct": 0,
+   "wrong_unflagged": 0,
+   "flagged": 108,
+   "flagged_would_be_wrong": 70,
+   "flagged_would_be_right": 38,
+   "cond_alignments": 60,
+   "cond_correct": 38,
+   "steps": 120,
+   "k_changed": 0
+  }
+ },
+ "L:dual": {
+  "n": 2,
+  "verified": 1,
+  "correct": 1,
+  "rungs": {
+   "2": 1,
+   "0": 1
+  },
+  "verdict": "UNKNOWN (dual rule: fewer than 20 accepted alignments; the counts above are reported, not scored)"
+ },
+ "4:dual": {
+  "n": 0,
+  "good": 0,
+  "verdict": "UNKNOWN (dual rule: fewer than 20 accepted alignments)",
+  "raw_mean": 0.9388888888888889
+ },
+ "5:1 sd:baseline": {
+  "status": "MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches below the threshold)",
+  "counts": {
+   "alignments": 312,
+   "served": 71,
+   "served_correct": 71,
+   "wrong_unflagged": 0,
+   "flagged": 241,
+   "flagged_would_be_wrong": 188,
+   "flagged_would_be_right": 53,
+   "cond_alignments": 133,
+   "cond_correct": 124,
+   "steps": 336,
+   "k_changed": 0
+  },
+  "refits": 312
+ },
+ "5:1 sd:dual": {
+  "status": "UNKNOWN",
+  "alignments": 0,
+  "secondary": {
+   "alignments": 48,
+   "served": 0,
+   "served_correct": 0,
+   "wrong_unflagged": 0,
+   "flagged": 48,
+   "flagged_would_be_wrong": 44,
+   "flagged_would_be_right": 4,
+   "cond_alignments": 7,
+   "cond_correct": 4,
+   "steps": 60,
+   "k_changed": 0
+  }
+ },
+ "5:2.5 sd:baseline": {
+  "status": "MET",
+  "counts": {
+   "alignments": 312,
+   "served": 62,
+   "served_correct": 62,
+   "wrong_unflagged": 0,
+   "flagged": 250,
+   "flagged_would_be_wrong": 160,
+   "flagged_would_be_right": 90,
+   "cond_alignments": 154,
+   "cond_correct": 152,
+   "steps": 336,
+   "k_changed": 0
+  },
+  "refits": 312
+ },
+ "5:2.5 sd:dual": {
+  "status": "UNKNOWN",
+  "alignments": 1,
+  "secondary": {
+   "alignments": 48,
+   "served": 0,
+   "served_correct": 0,
+   "wrong_unflagged": 0,
+   "flagged": 48,
+   "flagged_would_be_wrong": 43,
+   "flagged_would_be_right": 5,
+   "cond_alignments": 8,
+   "cond_correct": 5,
+   "steps": 60,
+   "k_changed": 0
+  }
+ },
+ "6": {
+  "changed": 38,
+  "ok": 38,
+  "verdict": "MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches below the threshold)",
+  "cand_total": 38,
+  "cand_correct": 3,
+  "sees_final": 3,
+  "streams": 24,
+  "post": [
+   19,
+   100,
+   25
+  ]
+ },
+ "7": {
+  "criterion": {
+   "alignments": 14,
+   "served": 0,
+   "served_correct": 0,
+   "wrong_unflagged": 0,
+   "flagged": 14,
+   "flagged_would_be_wrong": 10,
+   "flagged_would_be_right": 4,
+   "cond_alignments": 4,
+   "cond_correct": 4,
+   "steps": 86,
+   "k_changed": 0
+  },
+  "SECONDARY (all fits that did not fail numerically)": {
+   "alignments": 72,
+   "served": 0,
+   "served_correct": 0,
+   "wrong_unflagged": 0,
+   "flagged": 72,
+   "flagged_would_be_wrong": 52,
+   "flagged_would_be_right": 20,
+   "cond_alignments": 22,
+   "cond_correct": 20,
+   "steps": 144,
+   "k_changed": 0
+  }
+ },
+ "8": {
+  "schedules": {
+   "daily": {
+    "alignments": 720,
+    "served": 240,
+    "served_correct": 240,
+    "wrong_unflagged": 0,
+    "flagged": 480,
+    "flagged_would_be_wrong": 28,
+    "flagged_would_be_right": 452,
+    "cond_alignments": 696,
+    "cond_correct": 692,
+    "steps": 732,
+    "k_changed": 0
+   },
+   "weekly": {
+    "alignments": 216,
+    "served": 72,
+    "served_correct": 72,
+    "wrong_unflagged": 0,
+    "flagged": 144,
+    "flagged_would_be_wrong": 6,
+    "flagged_would_be_right": 138,
+    "cond_alignments": 210,
+    "cond_correct": 210,
+    "steps": 240,
+    "k_changed": 0
+   },
+   "every 14 days": {
+    "alignments": 120,
+    "served": 40,
+    "served_correct": 40,
+    "wrong_unflagged": 0,
+    "flagged": 80,
+    "flagged_would_be_wrong": 4,
+    "flagged_would_be_right": 76,
+    "cond_alignments": 116,
+    "cond_correct": 116,
+    "steps": 144,
+    "k_changed": 0
+   }
+  },
+  "pooled": {
+   "daily|weekly": [
+    1.0,
+    1.0,
+    12,
+    12
+   ],
+   "daily|every 14 days": [
+    1.0,
+    1.0,
+    12,
+    12
+   ],
+   "weekly|every 14 days": [
+    1.0,
+    1.0,
+    24,
+    24
+   ]
+  },
+  "verdict_agreement": "MET",
+  "users": {
+   "daily": 12,
+   "weekly": 24,
+   "every 14 days": 24
+  }
+ },
+ "controls": {
+  "a_G": false,
+  "b_G": true,
+  "c": true,
+  "a_R1": false,
+  "b_R1": true,
+  "a_R25": false,
+  "b_R25": true,
+  "d": {
+   "physical channel decisive|physical only (w2 = 0)": {
+    "served": 100,
+    "correct": 100,
+    "wrong": 0,
+    "v1a": "MET",
+    "v1b": "MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)",
+    "v2": "MET",
+    "fails": false,
+    "worse_than_both": false
+   },
+   "physical channel decisive|context only (w1 = 0)": {
+    "served": 0,
+    "correct": 0,
+    "wrong": 0,
+    "v1a": "UNKNOWN (nothing to count)",
+    "v1b": "MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)",
+    "v2": "NOT MET",
+    "fails": true,
+    "worse_than_both": true
+   },
+   "physical channel decisive|both channels (w1 = w2 = 1)": {
+    "served": 100,
+    "correct": 100,
+    "wrong": 0,
+    "v1a": "MET",
+    "v1b": "MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)",
+    "v2": "MET",
+    "fails": false
+   },
+   "context channel decisive|physical only (w2 = 0)": {
+    "served": 7,
+    "correct": 7,
+    "wrong": 0,
+    "v1a": "MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches below the threshold)",
+    "v1b": "MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)",
+    "v2": "NOT MET",
+    "fails": true,
+    "worse_than_both": true
+   },
+   "context channel decisive|context only (w1 = 0)": {
+    "served": 100,
+    "correct": 100,
+    "wrong": 0,
+    "v1a": "MET",
+    "v1b": "MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)",
+    "v2": "MET",
+    "fails": false,
+    "worse_than_both": false
+   },
+   "context channel decisive|both channels (w1 = w2 = 1)": {
+    "served": 74,
+    "correct": 74,
+    "wrong": 0,
+    "v1a": "MET",
+    "v1b": "MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)",
+    "v2": "NOT MET",
+    "fails": true
+   }
+  },
+  "d_required_both_failed": true
+ }
+}

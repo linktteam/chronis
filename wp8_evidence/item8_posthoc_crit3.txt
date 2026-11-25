@@ -1,0 +1,5 @@
+POST-HOC breakdown of criterion 3 (seed vs seed + 1000), written after the criterion 3 result was seen; changes no verdict.
+cases: 240
+identical: 166
+same state CONTINUITY_UNVERIFIED, stable ids differ (agreement < 0.99): 65
+same state NEW_LINEAGE, stable ids differ (agreement < 0.99): 9
