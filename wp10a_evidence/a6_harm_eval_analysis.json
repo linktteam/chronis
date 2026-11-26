@@ -1,0 +1,17 @@
+{
+ "H": 72,
+ "usable": 72,
+ "worse": 51,
+ "eligible_and_worse": 14,
+ "certified": 0,
+ "upper": 0.19263617565013527,
+ "valid": true,
+ "E1": "MET",
+ "T": 72,
+ "T_certified": 13,
+ "E0": true,
+ "E3_published_and_worse": 0,
+ "converged": 0,
+ "other": 54,
+ "mean_gap": -10.142529396743257
+}

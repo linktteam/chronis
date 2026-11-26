@@ -1,0 +1,7 @@
+A6 HARMFUL-PRIOR CONTROL, EVALUATION (once; seeds 10771..10794, 3 lengths; WP9 B1 settings; fresh seeds)
+arm H (the frozen harmful prior): 72 fits (72 with a usable Gaussian); worse than the single Gaussian on the held-out days: 51; of those eligible for the certificate: 14 (required: at least 12) -> control VALID
+   EM states of arm H: converged 0, eligible (REJECTED_UPDATE / MAX_ITER_REACHED, nothing else withholding) 18, refused by another rule or failed 54
+E1 certified among the 14 eligible harmful fits that are worse than the Gaussian: 0 (exact one-sided 95% upper bound on the certification rate 19%) -> MET
+E0 arm T (the true prior): 72 fits, eligible 25, certified 13 -> informative (the certificate does certify some fits)
+E3 (reported, no level): arm-H fits published (certified or accepted by the EM rule) although they score below the single Gaussian: 0 of 51
+   mean(arm-H fit - single Gaussian) over the finite fits: -10.143 nats/step
