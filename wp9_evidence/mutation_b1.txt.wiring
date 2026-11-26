@@ -1,0 +1,10 @@
+W01 the certificate ignores the prior: KILLED
+W02 the certificate counts in any EM state: KILLED
+W03 a certified fit stays withheld: KILLED
+W04 the eligibility asks with the non-convergence reason: KILLED
+W05 the certification is not attached: KILLED
+W06 certification without a prior is accepted: KILLED
+W07 the refit seed differs: KILLED
+W08 the certificate state string is wrong: KILLED
+W09 an error in the certification certifies: KILLED
+9/9 killed
