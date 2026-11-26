@@ -16,6 +16,7 @@ from data.synthetic_identity import REGISTRY, SCALE, IdentitySpec, draw_user
 
 ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE = ROOT / "wp8_evidence" / "item4_thresholds.json"
+WP9_FREEZE = ROOT / "tests" / "DESIGN_FREEZE_WP9_A12.txt"
 LADDER = LadderConfig(n_bootstrap=40, min_gap=0.5)                  # test speed only: the freeze concerns the alignment defaults, not the ladder
 DEFAULTS = AlignmentConfig()
 CAL = PairThreshold("ratio", rho=0.5)                                # a threshold calibrated BY THE TEST, to show that the reason a pair is not served is the missing calibration
@@ -49,7 +50,7 @@ def _first(engine="baseline", seed=4, cfg=None):
 # ------------------------------------------------------------------------------------------------------------------- the frozen numbers are the ones of the evidence file
 def test_the_frozen_defaults_are_pinned():
     c = AlignmentConfig()
-    assert c.min_separation == 4.0 and c.duration_weight == 0.0
+    assert c.min_separation == 2.5 and c.duration_weight == 0.0                      # WP9 A2 (2026-11-26, tests/DESIGN_FREEZE_WP9_A12.txt); WP8 froze 4.0
     assert c.same_engine == PairThreshold("ratio", 0.0, 0.5) and c.same_engine.calibrated is True
     assert c.dual_engine.calibrated is False and c.cross_engine.calibrated is False
     assert (c.dual_engine.rule, c.dual_engine.rho) == ("ratio", 0.5) and (c.cross_engine.rule, c.cross_engine.rho) == ("ratio", 0.5)
@@ -58,7 +59,7 @@ def test_the_frozen_defaults_are_pinned():
 def test_the_code_defaults_equal_the_development_evidence():
     ev = json.loads(EVIDENCE.read_text())
     c = AlignmentConfig()
-    assert c.min_separation == ev["h"]
+    assert ev["h"] == 4.0 and c.min_separation == json.loads(WP9_FREEZE.read_text().splitlines()[0])["h"] == 2.5          # WP8 evidence (history) and the WP9 A2 freeze that replaced it
     base = ev["classes"]["baseline"]
     assert not base["unknown"] and c.same_engine.calibrated and c.same_engine.rule == {"a": "diff", "b": "ratio", "c": "both"}[base["rule"]]
     assert c.same_engine.rho == base["rho"] and base["tau"] is None and c.same_engine.tau == 0.0
@@ -117,8 +118,8 @@ def test_the_old_names_are_kept_and_the_best_guess_is_recorded_on_an_uncalibrate
 
 
 # ------------------------------------------------------------------------------------------------------------------- the gate h and the class of pair
-@pytest.mark.parametrize("sep, flagged", [(3.99, True), (4.0, False), (4.01, False), (0.0, True)])
-def test_the_identifiability_gate_is_at_h_equal_4(sep, flagged):
+@pytest.mark.parametrize("sep, flagged", [(2.49, True), (2.5, False), (2.51, False), (4.0, False), (0.0, True)])           # WP9 A2: h = 2.5 (WP8: 4.0)
+def test_the_identifiability_gate_is_at_h_equal_2_5(sep, flagged):
     a, st = _first()
     n = replace(_summary(_means(4), raw_perm=[1, 2, 0], seed=2, scaler=(a.scaler_mean, a.scaler_std)), separation_min=sep)
     rec, _ = step(st, n, _cfg(), REGISTRY)
@@ -126,7 +127,7 @@ def test_the_identifiability_gate_is_at_h_equal_4(sep, flagged):
 
 
 def test_the_anchor_is_gated_with_the_same_h():
-    a = replace(_summary(_means(4), seed=1), separation_min=3.5)
+    a = replace(_summary(_means(4), seed=1), separation_min=2.0)
     _, st = step(None, a, _cfg(), REGISTRY, lineage_id="u")
     n = _summary(_means(4), raw_perm=[1, 2, 0], seed=2, scaler=(a.scaler_mean, a.scaler_std))
     rec, _ = step(st, n, _cfg(), REGISTRY)

@@ -1,6 +1,6 @@
 # Expert review packet: how CHRONIS decides that a regime is "the same as before" (WP9 A5, owner decision A7)
 
-**Status: PENDING. No expert has reviewed anything in this packet.** Every lineage record carries `expert_review_status = "PENDING"` until the owner records a sign-off (`lineage.EXPERT_REVIEW_STATUS`, `docs/EXPERT_REVIEW_REGISTER.md`). Every place in `backbone/hssm/` that defines or uses the matching distance, a ladder weight or an alignment threshold is tagged `EXPERT_REVIEW(identity-distance)`; the register of those places (32 sites) is generated from the tags and a test (`tests/test_wp8_item7_expert_review.py`) fails when it is stale or when a function uses one of the watched names without the tag.
+**Status: PENDING. No expert has reviewed anything in this packet.** Every lineage record carries `expert_review_status = "PENDING"` until the owner records a sign-off (`lineage.EXPERT_REVIEW_STATUS`, `docs/EXPERT_REVIEW_REGISTER.md`). Every place in `backbone/hssm/` that defines or uses the matching distance, a ladder weight or an alignment threshold is tagged `EXPERT_REVIEW(identity-distance)`; the register of those places (33 sites) is generated from the tags and a test (`tests/test_wp8_item7_expert_review.py`) fails when it is stale or when a function uses one of the watched names without the tag.
 
 Labels used below: **RUN** = executed in this repository and the output is stored in `wp8_evidence/` or `wp9_evidence/`; **READ** = read in code; **REPORTED** = taken from a package document; **UNKNOWN** = not established.
 

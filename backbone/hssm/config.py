@@ -58,6 +58,10 @@ DUAL_DURATION_BOUND_TOL = 1e-3          # absolute tolerance (in mu and in sigma
 # best FIT_CONSENSUS_M healthy restarts (by log-likelihood) do not all agree at adjusted Rand index FIT_CONSENSUS_TAU (0.99 is the level this package calls "the same partition").
 FIT_CONSENSUS_M = 3
 FIT_CONSENSUS_TAU = 0.99
+# WP9 A2 (tests/PREDECLARED_CRITERIA_WP9.md section 8 and Part 8; frozen in tests/DESIGN_FREEZE_WP9_A12.txt): a baseline fit whose mean maximum posterior probability (over the rows of the window) is below this
+# is flagged FIT_UNSTABLE (reason `low_posterior_sharpness`) and never served as ALIGNED. 0.95 was chosen by the declared rule on the development seeds 9301..9360 as the largest value tied for the best
+# coverage: it flagged 3 of 960 development fits and changed no alignment count (`wp9_evidence/a2_dev_analysis.txt`). 0 switches it off.
+FIT_MIN_POSTERIOR_SHARPNESS = 0.95
 
 # WP9 B3 (tests/PREDECLARED_CRITERIA_WP9.md, B3 section): thresholds of the `k_adequacy` tag. Starting values (not yet calibrated: the declared development rule sets them before the evaluation):
 # regimes closer than 1 pooled within-regime sd per feature (root mean square over features) overlap strongly; a BIC gap under 6 points is "weak" evidence in the usual reading.

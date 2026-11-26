@@ -11,11 +11,12 @@ from __future__ import annotations
 
 from typing import Callable, Sequence
 
-from .config import FIT_CONSENSUS_M, FIT_CONSENSUS_TAU
+from .config import FIT_CONSENSUS_M, FIT_CONSENSUS_TAU, FIT_MIN_POSTERIOR_SHARPNESS
 
 REASON_TOO_FEW = "fewer_than_m_healthy_restarts"
 REASON_DISAGREE = "best_restarts_disagree"
 REASON_NOT_ASSESSED = "stability_not_assessed"
+REASON_NOT_SHARP = "low_posterior_sharpness"
 KEYS = ("consensus_m", "consensus_tau", "n_healthy_restarts", "consensus_min_ari", "fit_unstable", "fit_unstable_reason")
 
 
@@ -40,3 +41,24 @@ def assess_consensus(records: Sequence[dict], ari: Callable, m: int = FIT_CONSEN
 def not_assessed() -> dict:
     """Keys for a fit whose stability cannot be assessed (the selected restart is collapsed: such a fit is withheld anyway). Fail closed: the lineage treats it as FIT_UNSTABLE."""
     return dict(consensus_m=int(FIT_CONSENSUS_M), consensus_tau=float(FIT_CONSENSUS_TAU), n_healthy_restarts=0, consensus_min_ari=None, fit_unstable=None, fit_unstable_reason=REASON_NOT_ASSESSED)
+
+
+def posterior_sharpness(p_t_posterior) -> float | None:
+    """Mean over the rows of the largest regime posterior (1.0 = every day is assigned with certainty). None when the posterior is missing, empty or not finite (nothing known)."""
+    import numpy as np
+    if p_t_posterior is None:
+        return None
+    p = np.asarray(p_t_posterior, dtype=float)
+    if p.ndim != 2 or p.shape[0] == 0 or p.shape[1] == 0 or not np.isfinite(p).all():
+        return None
+    return float(p.max(axis=1).mean())
+
+
+# EXPERT_REVIEW(identity-distance): applies the posterior-sharpness floor (`FIT_MIN_POSTERIOR_SHARPNESS`), the second part of the identifiability gate of WP9 A2.
+def sharpness_unstable(p_t_posterior, floor: float = FIT_MIN_POSTERIOR_SHARPNESS) -> bool:
+    """WP9 A2: True iff the posterior is known and its mean maximum is strictly below `floor` (`floor <= 0` switches the check off). A posterior that is missing or not finite is NOT flagged here:
+    the consensus flag and the withhold rules of the fit are the ones that fail closed for a fit without a usable posterior."""
+    if floor <= 0.0:
+        return False
+    s = posterior_sharpness(p_t_posterior)
+    return s is not None and s < floor

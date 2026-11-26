@@ -14,49 +14,50 @@ Marking rule: the tag `EXPERT_REVIEW(identity-distance)` stands at the start of 
 |---|---|---|
 | Ladder configuration (`ordering.LadderConfig()`) | `LadderConfig(n_bootstrap=200, block_days=7, min_modal_freq=0.9, min_gap=0.7, seed=0)` | `backbone/hssm/ordering.py` |
 | Rung definitions (`ordering.RUNG_ROLES`) | `{1: None, 2: ('movement', 'time_moving'), 3: ('movement',)}` | `backbone/hssm/ordering.py` |
-| Alignment configuration (`lineage.AlignmentConfig()`) | `AlignmentConfig(min_separation=4.0, duration_weight=0.0, same_engine=PairThreshold(rule='ratio', tau=0.0, rho=0.5, calibrated=True), cross_engine=PairThreshold(rule='ratio', tau=0.0, rho=0.5, calibrated=False), ladder=LadderConfig(n_bootstrap=200, block_days=7, min_modal_freq=0.9, min_gap=0.7, seed=0), dual_engine=PairThreshold(rule='ratio', tau=0.0, rho=0.5, calibrated=False), channels=ChannelConfig(w1=1.0, w2=0.0, context_threshold=PairThreshold(rule='ratio', tau=0.0, rho=0.5, calibrated=True)))` | `backbone/hssm/lineage.py` |
+| Alignment configuration (`lineage.AlignmentConfig()`) | `AlignmentConfig(min_separation=2.5, duration_weight=0.0, same_engine=PairThreshold(rule='ratio', tau=0.0, rho=0.5, calibrated=True), cross_engine=PairThreshold(rule='ratio', tau=0.0, rho=0.5, calibrated=False), ladder=LadderConfig(n_bootstrap=200, block_days=7, min_modal_freq=0.9, min_gap=0.7, seed=0), dual_engine=PairThreshold(rule='ratio', tau=0.0, rho=0.5, calibrated=False), channels=ChannelConfig(w1=1.0, w2=0.0, context_threshold=PairThreshold(rule='ratio', tau=0.0, rho=0.5, calibrated=True)))` | `backbone/hssm/lineage.py` |
 | Channel configuration (`lineage.ChannelConfig()`) | `ChannelConfig(w1=1.0, w2=0.0, context_threshold=PairThreshold(rule='ratio', tau=0.0, rho=0.5, calibrated=True))` | `backbone/hssm/lineage.py` |
 | Hard ceiling of the ratio rule (`lineage.AMBIGUITY_RATIO`) | `0.5` | `backbone/hssm/lineage.py` |
 | Largest K compared by enumeration (`lineage.MAX_MATCH_K`) | `6` | `backbone/hssm/lineage.py` |
 | Refit cadence (`refit_policy.RefitPolicy()`), bounds | `RefitPolicy(refit_interval_days=7), bounds 1..28 days` | `backbone/hssm/refit_policy.py` |
 | Status written on every record (`lineage.EXPERT_REVIEW_STATUS`) | `'PENDING'` | `backbone/hssm/lineage.py` |
 
-## Tagged sites (32)
+## Tagged sites (33)
 
 | # | File | Definition | Tag in | What is under review |
 |---|---|---|---|---|
-| 1 | `backbone/hssm/lineage.py` | module | docstring | the matching distance, the identifiability gate and every threshold below are defined here and are awaiting expert sign-off (A7); every record says so. |
-| 2 | `backbone/hssm/lineage.py` | `AlignmentConfig` | comment | the identifiability gate `min_separation`, the optional duration coordinate of the matching distance and the thresholds per pair class. |
-| 3 | `backbone/hssm/lineage.py` | `AlignmentConfig.__post_init__` | comment | validates the identifiability gate and the duration weight. |
-| 4 | `backbone/hssm/lineage.py` | `ChannelConfig` | comment | the channel weights (`w2 = 0` means the contextual channel is off) and the acceptance threshold of the contextual channel on its own. |
-| 5 | `backbone/hssm/lineage.py` | `LineageRecord` | comment | every record carries `expert_review_status` (PENDING until an expert signs off) next to the distance, margin and threshold that produced its state. |
-| 6 | `backbone/hssm/lineage.py` | `PairThreshold` | comment | the alignment acceptance thresholds, frozen in the Item 4 design freeze (tests/PREDECLARED_CRITERIA_WP8.md, section 8). `calibrated=False` means the |
-| 7 | `backbone/hssm/lineage.py` | `_combined_alignment` | docstring | the combined cost, the scales s1 and s2 and the disagreement rule are defined here. Returns (alignment, channels_used, channel_detail). |
-| 8 | `backbone/hssm/lineage.py` | `_correspondence` | comment | uses the matching distance to record the old-to-new correspondence kept when the user takes new names. |
-| 9 | `backbone/hssm/lineage.py` | `_mean_pair` | comment | the scale of a channel's distance (mean pairwise inter-regime distance of the anchor) used in the combined cost. |
-| 10 | `backbone/hssm/lineage.py` | `_record` | comment | writes the identifiability signal of the fit into the record next to the margins and the state. |
-| 11 | `backbone/hssm/lineage.py` | `_scale` | comment | the per-feature scale of the matching distance (the anchor's stored scaler). |
-| 12 | `backbone/hssm/lineage.py` | `_vectors` | docstring | the matching distance works on these vectors: regime means in raw units divided by the anchor's per-feature scale, plus (weight > 0) the log expected duration as one more coordinate. |
-| 13 | `backbone/hssm/lineage.py` | `alignment` | docstring | Hungarian assignment of the anchor's regimes (rows, in stable-id order) to the new fit's regimes on squared distance, with the best total cost C1, the best total cost C2 of any other one-to-one assignment (exhaustive, K <= 6), the margins and, per regime, the matched distance and the distance to the nearest other regime. |
-| 14 | `backbone/hssm/lineage.py` | `alignment_from_cost` | comment | the best and the second best assignment and the two margins (`margin_diff`, `margin_ratio`) that the thresholds are applied to. |
-| 15 | `backbone/hssm/lineage.py` | `hellinger2_matrix` | docstring | squared Hellinger distance between every row of P and every row of Q: 0.5 * sum((sqrt p - sqrt q)^2), in [0, 1]. |
-| 16 | `backbone/hssm/lineage.py` | `make_summary` | comment | computes the identifiability signal (`separation_min`) that the gate `min_separation` is applied to. |
-| 17 | `backbone/hssm/lineage.py` | `margin_ok` | docstring | the acceptance rule. A tie between the best and the second best assignment is never accepted, and a threshold that is not calibrated (UNKNOWN for its class of pair) accepts nothing, whatever the margins are. |
-| 18 | `backbone/hssm/lineage.py` | `name_fit` | comment | applies the ordering ladder (weights, reliability thresholds) to give a fit its stable names. |
-| 19 | `backbone/hssm/lineage.py` | `separation_min` | docstring | the identifiability signal. Smallest over regime pairs of the Euclidean norm of the difference of the two regime means divided feature by feature by the pooled within-regime sd of the days decoded into the regimes (observed entries, residuals about the model's regime means; sd 0 or no data gives 1). inf for K < 2. |
-| 20 | `backbone/hssm/lineage.py` | `split_merge_candidates` | comment | uses the matching distance to name the split or merge candidates when K changed. |
-| 21 | `backbone/hssm/lineage.py` | `step` | comment | the gate, the distance, the thresholds and the continuity state are applied together here. |
-| 22 | `backbone/hssm/lineage.py` | `step.proposal` | comment | the proposal for a new fit: the ladder names it and the matching distance gives the old-to-new correspondence. |
-| 23 | `backbone/hssm/ordering.py` | module | docstring | the ladder weights, the rung definitions and the thresholds below are defined here and are awaiting expert sign-off (owner decision A7). The score is NOT used on refits: later fits inherit the names by alignment (lineage.py). Re-sorting on every refit caused flips in the reviewer's data. |
-| 24 | `backbone/hssm/ordering.py` | `LadderConfig` | comment | the reliability thresholds (modal frequency, minimum adjacent gap), the bootstrap size and the block length are defined here. |
-| 25 | `backbone/hssm/ordering.py` | `LadderConfig.__post_init__` | comment | validates the ladder's reliability thresholds. |
-| 26 | `backbone/hssm/ordering.py` | `RUNG_ROLES` | comment | the rung definitions (which registry roles each rung uses). |
-| 27 | `backbone/hssm/ordering.py` | `RungResult.as_dict` | comment | reports the ladder's reliability thresholds with the rung result. |
-| 28 | `backbone/hssm/ordering.py` | `_bootstrap_modal` | comment | the block-bootstrap reliability test (modal order frequency and minimum adjacent gap) of the ladder. |
-| 29 | `backbone/hssm/ordering.py` | `_rung_weights_scores` | docstring | the ladder weights are computed here, w_f proportional to coverage_f * SNR_f / (1 + SNR_f), from data quality only. |
-| 30 | `backbone/hssm/ordering.py` | `_stats` | comment | the per-feature coverage and signal-to-noise inputs of the ladder weights. |
-| 31 | `backbone/hssm/ordering.py` | `order_regimes` | docstring | applies the reliability thresholds of `config` (modal frequency and minimum gap) to choose the rung. |
-| 32 | `backbone/hssm/refit_policy.py` | module | docstring | the cadence changes how far apart two aligned fits are, and therefore how large the distances in the alignment are; an expert reviewing the matching distance should read this module's bounds together with the alignment thresholds. |
+| 1 | `backbone/hssm/fit_stability.py` | `sharpness_unstable` | comment | applies the posterior-sharpness floor (`FIT_MIN_POSTERIOR_SHARPNESS`), the second part of the identifiability gate of WP9 A2. |
+| 2 | `backbone/hssm/lineage.py` | module | docstring | the matching distance, the identifiability gate and every threshold below are defined here and are awaiting expert sign-off (A7); every record says so. |
+| 3 | `backbone/hssm/lineage.py` | `AlignmentConfig` | comment | the identifiability gate `min_separation`, the optional duration coordinate of the matching distance and the thresholds per pair class. |
+| 4 | `backbone/hssm/lineage.py` | `AlignmentConfig.__post_init__` | comment | validates the identifiability gate and the duration weight. |
+| 5 | `backbone/hssm/lineage.py` | `ChannelConfig` | comment | the channel weights (`w2 = 0` means the contextual channel is off) and the acceptance threshold of the contextual channel on its own. |
+| 6 | `backbone/hssm/lineage.py` | `LineageRecord` | comment | every record carries `expert_review_status` (PENDING until an expert signs off) next to the distance, margin and threshold that produced its state. |
+| 7 | `backbone/hssm/lineage.py` | `PairThreshold` | comment | the alignment acceptance thresholds, frozen in the Item 4 design freeze (tests/PREDECLARED_CRITERIA_WP8.md, section 8). `calibrated=False` means the |
+| 8 | `backbone/hssm/lineage.py` | `_combined_alignment` | docstring | the combined cost, the scales s1 and s2 and the disagreement rule are defined here. Returns (alignment, channels_used, channel_detail). |
+| 9 | `backbone/hssm/lineage.py` | `_correspondence` | comment | uses the matching distance to record the old-to-new correspondence kept when the user takes new names. |
+| 10 | `backbone/hssm/lineage.py` | `_mean_pair` | comment | the scale of a channel's distance (mean pairwise inter-regime distance of the anchor) used in the combined cost. |
+| 11 | `backbone/hssm/lineage.py` | `_record` | comment | writes the identifiability signal of the fit into the record next to the margins and the state. |
+| 12 | `backbone/hssm/lineage.py` | `_scale` | comment | the per-feature scale of the matching distance (the anchor's stored scaler). |
+| 13 | `backbone/hssm/lineage.py` | `_vectors` | docstring | the matching distance works on these vectors: regime means in raw units divided by the anchor's per-feature scale, plus (weight > 0) the log expected duration as one more coordinate. |
+| 14 | `backbone/hssm/lineage.py` | `alignment` | docstring | Hungarian assignment of the anchor's regimes (rows, in stable-id order) to the new fit's regimes on squared distance, with the best total cost C1, the best total cost C2 of any other one-to-one assignment (exhaustive, K <= 6), the margins and, per regime, the matched distance and the distance to the nearest other regime. |
+| 15 | `backbone/hssm/lineage.py` | `alignment_from_cost` | comment | the best and the second best assignment and the two margins (`margin_diff`, `margin_ratio`) that the thresholds are applied to. |
+| 16 | `backbone/hssm/lineage.py` | `hellinger2_matrix` | docstring | squared Hellinger distance between every row of P and every row of Q: 0.5 * sum((sqrt p - sqrt q)^2), in [0, 1]. |
+| 17 | `backbone/hssm/lineage.py` | `make_summary` | comment | computes the identifiability signal (`separation_min`) that the gate `min_separation` is applied to. |
+| 18 | `backbone/hssm/lineage.py` | `margin_ok` | docstring | the acceptance rule. A tie between the best and the second best assignment is never accepted, and a threshold that is not calibrated (UNKNOWN for its class of pair) accepts nothing, whatever the margins are. |
+| 19 | `backbone/hssm/lineage.py` | `name_fit` | comment | applies the ordering ladder (weights, reliability thresholds) to give a fit its stable names. |
+| 20 | `backbone/hssm/lineage.py` | `separation_min` | docstring | the identifiability signal. Smallest over regime pairs of the Euclidean norm of the difference of the two regime means divided feature by feature by the pooled within-regime sd of the days decoded into the regimes (observed entries, residuals about the model's regime means; sd 0 or no data gives 1). inf for K < 2. |
+| 21 | `backbone/hssm/lineage.py` | `split_merge_candidates` | comment | uses the matching distance to name the split or merge candidates when K changed. |
+| 22 | `backbone/hssm/lineage.py` | `step` | comment | the gate, the distance, the thresholds and the continuity state are applied together here. |
+| 23 | `backbone/hssm/lineage.py` | `step.proposal` | comment | the proposal for a new fit: the ladder names it and the matching distance gives the old-to-new correspondence. |
+| 24 | `backbone/hssm/ordering.py` | module | docstring | the ladder weights, the rung definitions and the thresholds below are defined here and are awaiting expert sign-off (owner decision A7). The score is NOT used on refits: later fits inherit the names by alignment (lineage.py). Re-sorting on every refit caused flips in the reviewer's data. |
+| 25 | `backbone/hssm/ordering.py` | `LadderConfig` | comment | the reliability thresholds (modal frequency, minimum adjacent gap), the bootstrap size and the block length are defined here. |
+| 26 | `backbone/hssm/ordering.py` | `LadderConfig.__post_init__` | comment | validates the ladder's reliability thresholds. |
+| 27 | `backbone/hssm/ordering.py` | `RUNG_ROLES` | comment | the rung definitions (which registry roles each rung uses). |
+| 28 | `backbone/hssm/ordering.py` | `RungResult.as_dict` | comment | reports the ladder's reliability thresholds with the rung result. |
+| 29 | `backbone/hssm/ordering.py` | `_bootstrap_modal` | comment | the block-bootstrap reliability test (modal order frequency and minimum adjacent gap) of the ladder. |
+| 30 | `backbone/hssm/ordering.py` | `_rung_weights_scores` | docstring | the ladder weights are computed here, w_f proportional to coverage_f * SNR_f / (1 + SNR_f), from data quality only. |
+| 31 | `backbone/hssm/ordering.py` | `_stats` | comment | the per-feature coverage and signal-to-noise inputs of the ladder weights. |
+| 32 | `backbone/hssm/ordering.py` | `order_regimes` | docstring | applies the reliability thresholds of `config` (modal frequency and minimum gap) to choose the rung. |
+| 33 | `backbone/hssm/refit_policy.py` | module | docstring | the cadence changes how far apart two aligned fits are, and therefore how large the distances in the alignment are; an expert reviewing the matching distance should read this module's bounds together with the alignment thresholds. |
 
 ## Sign-off
 

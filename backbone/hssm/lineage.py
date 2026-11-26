@@ -34,7 +34,7 @@ from dataclasses import dataclass, field, replace
 import numpy as np
 from scipy.optimize import linear_sum_assignment
 
-from .fit_stability import REASON_NOT_ASSESSED
+from .fit_stability import REASON_NOT_ASSESSED, REASON_NOT_SHARP, sharpness_unstable
 from .ordering import LadderConfig, OrderingResult, order_regimes
 
 ALIGNED = "ALIGNED"
@@ -85,9 +85,12 @@ class ChannelConfig:
 #   distance = raw units / anchor scaler, no duration coordinate (raw, dur0.5 and dur1 tied on coverage, ties go to the simpler one);
 #   baseline pairs: rule (b), rho = 0.5 (the declared floor: every passing development alignment was correct, so the smallest tau is 0 and is vacuous);
 #   dual pairs and cross-engine pairs: UNKNOWN (4 and 16 of 216 and 480 development alignments pass the gate, fewer than 20), so `calibrated=False`: never ALIGNED.
+# CHANGED 2026-11-26 (WP9 A2, tests/PREDECLARED_CRITERIA_WP9.md section 8 and Part 8, tests/DESIGN_FREEZE_WP9_A12.txt; 960 development fits, seeds 9301..9360, `wp9_evidence/a2_dev_analysis.txt`):
+#   h = 2.5 by the declared rule (highest calibration-half coverage among the candidates with zero wrong-and-unflagged there; with the A1 consensus flag every candidate with h >= 2.5 had 0 of 540 wrong,
+#   h <= 2.0 had 2 of 540); coverage 45.9% pooled (hard 5.6%, medium 47.2%, easy 85.0%): the 80% target is NOT reached and was not moved. The A2 evaluation (seeds 9401..9448) judges it once.
 @dataclass(frozen=True)
 class AlignmentConfig:
-    min_separation: float = 4.0                  # h: a fit whose regimes are closer than this (within-regime sd units) is not identifiable
+    min_separation: float = 2.5                  # h: a fit whose regimes are closer than this (within-regime sd units) is not identifiable
     duration_weight: float = 0.0                 # lambda: weight of log expected duration as one more coordinate of the matching distance (0 = off)
     same_engine: PairThreshold = PairThreshold("ratio", 0.0, AMBIGUITY_RATIO)                      # baseline to baseline
     cross_engine: PairThreshold = PairThreshold("ratio", 0.0, AMBIGUITY_RATIO, calibrated=False)   # baseline to dual and dual to baseline: UNKNOWN
@@ -307,7 +310,7 @@ def make_summary(engine: str, raw_means, scaler_mean, scaler_std, labels, raw_wi
 
 
 def fit_stability_flag(result) -> tuple[bool, str | None]:
-    """(fit_unstable, reason) of a result (WP9 A1). Baseline: the flag of `restart_summary`; a baseline result without an assessment (an older result, or a collapsed selected fit) counts as
+    """(fit_unstable, reason) of a result (WP9 A1, A2). Baseline: the flag of `restart_summary`, or `low_posterior_sharpness` when the mean maximum posterior is below `FIT_MIN_POSTERIOR_SHARPNESS`; a baseline result without an assessment (an older result, or a collapsed selected fit) counts as
     FIT_UNSTABLE with reason `stability_not_assessed` (fail closed). Dual: the engine has no multi-start consensus (one or two restarts) and its lineage is never ALIGNED (A6), so (False, None)."""
     if not getattr(result, "is_baseline_model", False):
         return False, None
@@ -315,6 +318,8 @@ def fit_stability_flag(result) -> tuple[bool, str | None]:
     flag = rs.get("fit_unstable")
     if flag is None:
         return True, rs.get("fit_unstable_reason") or REASON_NOT_ASSESSED
+    if not flag and sharpness_unstable(getattr(result, "p_t_posterior", None)):       # WP9 A2: the posterior floor is a second reason for FIT_UNSTABLE (the consensus reason, if any, comes first)
+        return True, REASON_NOT_SHARP
     return bool(flag), rs.get("fit_unstable_reason")
 
 
