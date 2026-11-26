@@ -1,0 +1,12 @@
+M01 the recent window is 13 days: KILLED
+M02 the z level is 3.0: KILLED
+M03 the size level is 0.5 sd: KILLED
+M04 the cooldown is 1 day: KILLED
+M05 the reference is 27 days: KILLED
+M06 a rise counts as a drop: KILLED
+M07 either condition is enough: KILLED
+M08 the z level is strict: SURVIVED
+M09 no autocorrelation inflation: KILLED
+M10 the inflation is inverted: KILLED
+M11 the reference mean has no error: KILLED
+M12 non-finite days are kept: KILLED
