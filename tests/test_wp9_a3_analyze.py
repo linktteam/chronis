@@ -233,3 +233,9 @@ def test_the_seed_ranges_are_the_declared_ones_and_do_not_overlap():
 def test_the_job_key_ignores_the_restart_budget_only():
     a = R.jobs_for([9221])[0]
     assert R.job_key(a) == R.job_key(dict(a, n_init=20, max_iter=5)) and R.job_key(a) != R.job_key(dict(a, user=9222))
+
+
+def test_the_frozen_thresholds_are_the_ones_in_the_freeze_file():
+    root = Path(__file__).resolve().parents[1]
+    frz = json.loads((root / "tests" / "DESIGN_FREEZE_WP9_A3.txt").read_text().splitlines()[0])
+    assert (C.K_CHANGE_DELTA_UP, C.K_CHANGE_DELTA_DOWN) == (frz["delta_up"], frz["delta_down"]) == (0.0, 40.0)

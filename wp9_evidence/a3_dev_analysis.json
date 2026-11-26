@@ -1,0 +1,111 @@
+{
+ "delta_up": 0,
+ "delta_down": 40,
+ "cap_met_up": true,
+ "cap_met_down": false,
+ "table": {
+  "0": {
+   "split": {
+    "n": 12,
+    "up": 1,
+    "down": 11
+   },
+   "merge": {
+    "n": 12,
+    "up": 0,
+    "down": 12
+   },
+   "none": {
+    "n": 12,
+    "up": 0,
+    "down": 11
+   }
+  },
+  "3": {
+   "split": {
+    "n": 12,
+    "up": 1,
+    "down": 11
+   },
+   "merge": {
+    "n": 12,
+    "up": 0,
+    "down": 12
+   },
+   "none": {
+    "n": 12,
+    "up": 0,
+    "down": 11
+   }
+  },
+  "6": {
+   "split": {
+    "n": 12,
+    "up": 0,
+    "down": 11
+   },
+   "merge": {
+    "n": 12,
+    "up": 0,
+    "down": 12
+   },
+   "none": {
+    "n": 12,
+    "up": 0,
+    "down": 11
+   }
+  },
+  "10": {
+   "split": {
+    "n": 12,
+    "up": 0,
+    "down": 11
+   },
+   "merge": {
+    "n": 12,
+    "up": 0,
+    "down": 12
+   },
+   "none": {
+    "n": 12,
+    "up": 0,
+    "down": 11
+   }
+  },
+  "20": {
+   "split": {
+    "n": 12,
+    "up": 0,
+    "down": 10
+   },
+   "merge": {
+    "n": 12,
+    "up": 0,
+    "down": 12
+   },
+   "none": {
+    "n": 12,
+    "up": 0,
+    "down": 9
+   }
+  },
+  "40": {
+   "split": {
+    "n": 12,
+    "up": 0,
+    "down": 1
+   },
+   "merge": {
+    "n": 12,
+    "up": 0,
+    "down": 4
+   },
+   "none": {
+    "n": 12,
+    "up": 0,
+    "down": 4
+   }
+  }
+ },
+ "unusable": []
+}

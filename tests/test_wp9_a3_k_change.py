@@ -228,7 +228,7 @@ def test_a_suspected_merge_carries_the_overlap_candidate():
     recent = np.vstack([rng.normal([0, 0], 0.3, (15, 2)), rng.normal([10, 0], 0.3, (15, 2)), rng.normal([0, 10], 0.3, (15, 2))])
     lab2 = np.array([0] * 30 + [1] * 15)                                         # old regimes 0 and 1 lumped into one new regime
     fit, _ = _fake_fit({2: 300.0, 3: 330.0, 4: 340.0}, labels_by_k={2: lab2})
-    r = KC.assess_k_change(means, var, recent, fit_fn=fit)
+    r = KC.assess_k_change(means, var, recent, fit_fn=fit, delta_up=10.0, delta_down=10.0)          # explicit: the test must not depend on the frozen defaults
     assert r["suspected"] and r["direction"] == "down"
     assert r["candidates"] == (dict(kind="merge", old_raw_regimes=[0, 1], new_raw_regime=0, method="overlap"),)
 

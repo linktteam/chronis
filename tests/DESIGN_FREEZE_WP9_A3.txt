@@ -1,0 +1,2 @@
+{"delta_up": 0.0, "delta_down": 40.0}
+Frozen 2026-11-26 from the A3 development run (wp9_evidence/a3_dev_analysis.txt, users 9221..9232, 384 fits) by the declared rule (tests/PREDECLARED_CRITERIA_WP9.md Part 7): up = 0 (false alarm 0/12 on the no-change streams; split detection on development only 1/12); down = 40 because no grid value met the 10% false-alarm cap (4/12 at 40; 11/12 at 0 to 10); shortfall reported. The evaluation (users 9241..9252) is run once at these values.

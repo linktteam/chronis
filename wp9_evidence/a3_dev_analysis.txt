@@ -1,0 +1,12 @@
+A3 development, users 9221..9232: 36 usable streams (unusable anchors: [])
+
+delta | up: split streams detected | no-change false alarm | merge streams (up, reported) || down: merge streams detected | no-change false alarm | split streams (down, reported)
+    0 | up  1/12  FA  0/12  merge-up  0/12 || down 12/12  FA 11/12  split-down 11/12
+    3 | up  1/12  FA  0/12  merge-up  0/12 || down 12/12  FA 11/12  split-down 11/12
+    6 | up  0/12  FA  0/12  merge-up  0/12 || down 12/12  FA 11/12  split-down 11/12
+   10 | up  0/12  FA  0/12  merge-up  0/12 || down 12/12  FA 11/12  split-down 11/12
+   20 | up  0/12  FA  0/12  merge-up  0/12 || down 12/12  FA  9/12  split-down 10/12
+   40 | up  0/12  FA  0/12  merge-up  0/12 || down  4/12  FA  4/12  split-down  1/12
+
+CHOSEN (declared rule): delta_up = 0 (10% false-alarm cap met: True), delta_down = 40 (cap met: False)
+  at the chosen deltas: split detection 1/12 = 8.3% (95% CI 1.5-35.4%); up false alarm 0/12 = 0.0% (95% CI 0.0-24.2%); merge detection 4/12 = 33.3% (95% CI 13.8-60.9%); down false alarm 4/12 = 33.3% (95% CI 13.8-60.9%)

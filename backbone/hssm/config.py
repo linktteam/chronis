@@ -76,7 +76,9 @@ COLD_START_CERT_TAU = 0.25                       # parameter stability: regime-m
 COLD_START_CERT_Z = 3.0                          # margin in HAC standard errors of the mean gain over the single Gaussian
 
 # WP9 A3 (tests/PREDECLARED_CRITERIA_WP9.md Part 7): K-change detection on the recent window of a refit (`k_change.assess_k_change`). The two deltas (BIC points that the fit at K_a + 1 / K_a - 1
-# must beat the fit at K_a on the recent window by) are PROVISIONAL; the declared development rule sets them before the evaluation. Never changes which K is fitted.
+# must beat the fit at K_a on the recent window by) were set by the declared development rule on seeds 9221..9232 (`wp9_evidence/a3_dev_analysis.txt`, frozen in tests/DESIGN_FREEZE_WP9_A3.txt):
+# up = 0 (smallest delta with no-change false alarm <= 10%: 0/12), down = 40 (NO grid value met the 10% cap: the largest is taken and the shortfall is reported; false alarm 4/12 even there).
+# Never changes which K is fitted.
 K_CHANGE_RECENT_DAYS = 45
-K_CHANGE_DELTA_UP = 10.0
-K_CHANGE_DELTA_DOWN = 10.0
+K_CHANGE_DELTA_UP = 0.0
+K_CHANGE_DELTA_DOWN = 40.0
