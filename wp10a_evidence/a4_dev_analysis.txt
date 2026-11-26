@@ -1,0 +1,30 @@
+A4 DEVELOPMENT: 368 A4 fits; h = 2.5, flag ON (consensus + sharpness 0.95); AlignmentConfig min_separation 2.5 is the production default
+
+design D: 128 fits (1 withheld by the publish/usability rule), 16 chains
+  R (stored scaler): alignments 111, served 10 (coverage 9%), correct among served 9/10 = 90.0%, wrong-and-unflagged 1/111 = 0.9%
+  Z (own z-space)  : alignments 111, served 37 (coverage 33%), correct among served 32/37 = 86.5%, wrong-and-unflagged 5/111 = 4.5%
+  paired on 111 common alignments: Z served wrong and R served right (zr) = 0, R served wrong and Z served right (rz) = 0; Z wrong 5, R wrong 1; serve decision differs on 27
+  R works (>= 40 alignments, >= 95% correct, <= 1% wrong-unflagged): False; control fails by the NEW criterion (zr >= 3 and zr > rz): False; old WP9 criterion: True; QUALIFIES: False
+
+design D_none (the same users without the planted change; reported only): 128 fits (0 withheld by the publish/usability rule), 16 chains
+  R (stored scaler): alignments 112, served 37 (coverage 33%), correct among served 37/37 = 100.0%, wrong-and-unflagged 0/112 = 0.0%
+  Z (own z-space)  : alignments 112, served 37 (coverage 33%), correct among served 37/37 = 100.0%, wrong-and-unflagged 0/112 = 0.0%
+  paired on 112 common alignments: Z served wrong and R served right (zr) = 0, R served wrong and Z served right (rz) = 0; Z wrong 0, R wrong 0; serve decision differs on 0
+  R works (>= 40 alignments, >= 95% correct, <= 1% wrong-unflagged): True; control fails by the NEW criterion (zr >= 3 and zr > rz): False; old WP9 criterion: False; QUALIFIES: False
+
+design E: 144 fits (5 withheld by the publish/usability rule), 128 chains
+  R (stored scaler): alignments 123, served 9 (coverage 7%), correct among served 9/9 = 100.0%, wrong-and-unflagged 0/123 = 0.0%
+  Z (own z-space)  : alignments 123, served 9 (coverage 7%), correct among served 8/9 = 88.9%, wrong-and-unflagged 1/123 = 0.8%
+  paired on 123 common alignments: Z served wrong and R served right (zr) = 0, R served wrong and Z served right (rz) = 0; Z wrong 1, R wrong 0; serve decision differs on 2
+  R works (>= 40 alignments, >= 95% correct, <= 1% wrong-unflagged): True; control fails by the NEW criterion (zr >= 3 and zr > rz): False; old WP9 criterion: True; QUALIFIES: False
+
+design F: 480 fits (0 withheld by the publish/usability rule), 48 chains
+  R (stored scaler): alignments 432, served 228 (coverage 53%), correct among served 228/228 = 100.0%, wrong-and-unflagged 0/432 = 0.0%
+  Z (own z-space)  : alignments 432, served 228 (coverage 53%), correct among served 228/228 = 100.0%, wrong-and-unflagged 0/432 = 0.0%
+  paired on 432 common alignments: Z served wrong and R served right (zr) = 0, R served wrong and Z served right (rz) = 0; Z wrong 0, R wrong 0; serve decision differs on 0
+  R works (>= 40 alignments, >= 95% correct, <= 1% wrong-unflagged): True; control fails by the NEW criterion (zr >= 3 and zr > rz): False; old WP9 criterion: False; QUALIFIES: False
+    stratum easy: R wrong-unflagged 0/144, Z wrong-unflagged 0/144, zr 0, rz 0
+    stratum hard: R wrong-unflagged 0/144, Z wrong-unflagged 0/144, zr 0, rz 0
+    stratum medium: R wrong-unflagged 0/144, Z wrong-unflagged 0/144, zr 0, rz 0
+
+declared rule: qualifying design with the largest zr (ties in the order D, E, F): NONE QUALIFIES -> A4 is closed as 'the protective effect of the stored scaler cannot be demonstrated'; no evaluation is run

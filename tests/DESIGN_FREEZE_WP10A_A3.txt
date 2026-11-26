@@ -1,0 +1,6 @@
+{"h": 2.5, "u": true, "s": 0.95}
+WP10A A3 design freeze, dated 2026-11-26, written after the development readout (768 fits, users 10001..10048, seeds A and B) and before any EVAL or SAFE-EXTRA fit exists.
+Chosen operating point (the declared rule of tests/PREDECLARED_CRITERIA_WP10A.md 3.2, run over the three flag-ON candidates): consensus flag ON with the sharpness floor s = 0.95, gate h = 2.5.
+Reason, from the development readout (wp10a_evidence/a3_dev_analysis.txt): the three flag-ON candidates give identical numbers (pooled coverage 228/432 = 52.8%, wrong-and-unflagged 0/432), so the rule's tie-break (larger h) chooses 2.5, which is also the current default.
+The six-candidate winner is the same point (flag ON, h = 2.5). The flag-OFF line (h = 2.0 gives 84.5% coverage but 14/432 = 3.2% wrong-and-unflagged on development; h = 2.5 gives 75.5% and 11/432) is replayed on the evaluation fits as a secondary line without a verdict.
+The first line is read by tests/../a3_analyze.py (keys h, u, s). Nothing else in this file is read by code.

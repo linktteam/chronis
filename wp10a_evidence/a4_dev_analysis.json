@@ -1,0 +1,225 @@
+{
+ "D": {
+  "R": {
+   "alignments": 111,
+   "served": 10,
+   "served_correct": 9,
+   "wrong_unflagged": 1,
+   "correct_rate": 0.9,
+   "wu_rate": 0.009009009009009009,
+   "coverage": 0.09009009009009009
+  },
+  "Z": {
+   "alignments": 111,
+   "served": 37,
+   "served_correct": 32,
+   "wrong_unflagged": 5,
+   "correct_rate": 0.8648648648648649,
+   "wu_rate": 0.04504504504504504,
+   "coverage": 0.3333333333333333
+  },
+  "paired": {
+   "common": 111,
+   "zr": 0,
+   "rz": 0,
+   "z_wrong": 5,
+   "r_wrong": 1,
+   "served_differs": 27
+  },
+  "r_works": false,
+  "control_fails": false,
+  "z_old_fails": true,
+  "qualifies": false,
+  "fits": 128,
+  "withheld": 1
+ },
+ "D_none": {
+  "R": {
+   "alignments": 112,
+   "served": 37,
+   "served_correct": 37,
+   "wrong_unflagged": 0,
+   "correct_rate": 1.0,
+   "wu_rate": 0.0,
+   "coverage": 0.33035714285714285
+  },
+  "Z": {
+   "alignments": 112,
+   "served": 37,
+   "served_correct": 37,
+   "wrong_unflagged": 0,
+   "correct_rate": 1.0,
+   "wu_rate": 0.0,
+   "coverage": 0.33035714285714285
+  },
+  "paired": {
+   "common": 112,
+   "zr": 0,
+   "rz": 0,
+   "z_wrong": 0,
+   "r_wrong": 0,
+   "served_differs": 0
+  },
+  "r_works": true,
+  "control_fails": false,
+  "z_old_fails": false,
+  "qualifies": false,
+  "fits": 128,
+  "withheld": 0
+ },
+ "E": {
+  "R": {
+   "alignments": 123,
+   "served": 9,
+   "served_correct": 9,
+   "wrong_unflagged": 0,
+   "correct_rate": 1.0,
+   "wu_rate": 0.0,
+   "coverage": 0.07317073170731707
+  },
+  "Z": {
+   "alignments": 123,
+   "served": 9,
+   "served_correct": 8,
+   "wrong_unflagged": 1,
+   "correct_rate": 0.8888888888888888,
+   "wu_rate": 0.008130081300813009,
+   "coverage": 0.07317073170731707
+  },
+  "paired": {
+   "common": 123,
+   "zr": 0,
+   "rz": 0,
+   "z_wrong": 1,
+   "r_wrong": 0,
+   "served_differs": 2
+  },
+  "r_works": true,
+  "control_fails": false,
+  "z_old_fails": true,
+  "qualifies": false,
+  "fits": 144,
+  "withheld": 5
+ },
+ "F": {
+  "R": {
+   "alignments": 432,
+   "served": 228,
+   "served_correct": 228,
+   "wrong_unflagged": 0,
+   "correct_rate": 1.0,
+   "wu_rate": 0.0,
+   "coverage": 0.5277777777777778
+  },
+  "Z": {
+   "alignments": 432,
+   "served": 228,
+   "served_correct": 228,
+   "wrong_unflagged": 0,
+   "correct_rate": 1.0,
+   "wu_rate": 0.0,
+   "coverage": 0.5277777777777778
+  },
+  "paired": {
+   "common": 432,
+   "zr": 0,
+   "rz": 0,
+   "z_wrong": 0,
+   "r_wrong": 0,
+   "served_differs": 0
+  },
+  "r_works": true,
+  "control_fails": false,
+  "z_old_fails": false,
+  "qualifies": false,
+  "fits": 480,
+  "withheld": 0,
+  "by_stratum": {
+   "easy": {
+    "R": {
+     "alignments": 144,
+     "served": 121,
+     "served_correct": 121,
+     "wrong_unflagged": 0,
+     "correct_rate": 1.0,
+     "wu_rate": 0.0,
+     "coverage": 0.8402777777777778
+    },
+    "Z": {
+     "alignments": 144,
+     "served": 121,
+     "served_correct": 121,
+     "wrong_unflagged": 0,
+     "correct_rate": 1.0,
+     "wu_rate": 0.0,
+     "coverage": 0.8402777777777778
+    },
+    "paired": {
+     "common": 144,
+     "zr": 0,
+     "rz": 0,
+     "z_wrong": 0,
+     "r_wrong": 0,
+     "served_differs": 0
+    }
+   },
+   "hard": {
+    "R": {
+     "alignments": 144,
+     "served": 31,
+     "served_correct": 31,
+     "wrong_unflagged": 0,
+     "correct_rate": 1.0,
+     "wu_rate": 0.0,
+     "coverage": 0.2152777777777778
+    },
+    "Z": {
+     "alignments": 144,
+     "served": 31,
+     "served_correct": 31,
+     "wrong_unflagged": 0,
+     "correct_rate": 1.0,
+     "wu_rate": 0.0,
+     "coverage": 0.2152777777777778
+    },
+    "paired": {
+     "common": 144,
+     "zr": 0,
+     "rz": 0,
+     "z_wrong": 0,
+     "r_wrong": 0,
+     "served_differs": 0
+    }
+   },
+   "medium": {
+    "R": {
+     "alignments": 144,
+     "served": 76,
+     "served_correct": 76,
+     "wrong_unflagged": 0,
+     "correct_rate": 1.0,
+     "wu_rate": 0.0,
+     "coverage": 0.5277777777777778
+    },
+    "Z": {
+     "alignments": 144,
+     "served": 76,
+     "served_correct": 76,
+     "wrong_unflagged": 0,
+     "correct_rate": 1.0,
+     "wu_rate": 0.0,
+     "coverage": 0.5277777777777778
+    },
+    "paired": {
+     "common": 144,
+     "zr": 0,
+     "rz": 0,
+     "z_wrong": 0,
+     "r_wrong": 0,
+     "served_differs": 0
+    }
+   }
+  }
+ },
+ "best": null
+}
