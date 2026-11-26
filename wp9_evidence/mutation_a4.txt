@@ -2,3 +2,18 @@ D01 the minimum number of alignments is 30: KILLED
 D02 the minimum number of alignments is exclusive: KILLED
 D03 the correct-among-served level of the raw method is exclusive: KILLED
 D04 the wrong-and-unflagged level of the raw method is exclusive: KILLED
+D05 the failure level of the control on correctness is inclusive: KILLED
+D06 the failure level of the control on wrong-and-unflagged is inclusive: KILLED
+D07 the control does not use the stored mean of the scaler: KILLED
+D08 the control keeps the stored scaler: KILLED
+D09 the shared windows are left out of a design's chain: KILLED
+D10 the paired counts are swapped: KILLED
+D11 a design qualifies when either condition holds: KILLED
+D12 the chosen design is the last qualifying one: KILLED
+D13 coverage is served over served: KILLED
+D14 the scale change starts one day late: KILLED
+D15 the scale change has no effect: KILLED
+D16 the option is ignored: KILLED
+D17 the scale change moves the regime means instead of the noise: KILLED
+D18 only the first listed feature is changed: KILLED
+18/18 killed

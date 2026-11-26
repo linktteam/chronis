@@ -30,7 +30,7 @@ Paired on the 112 common alignments: Z wrong and R right **0**, R wrong and Z ri
 - The A4 statement that the package can make is limited to: raw-unit matching on a stored scaler gave 0 wrong claims in 112 alignments (Wilson upper bound 3.3%) on streams with a planted scale change, and so did the control; the control cannot tell the two methods apart here.
 
 ## Mutation checks (RUN on the final head)
-`mutation_a4.py` -> `wp9_evidence/mutation_a4.txt`: MUTATION_A4_PLACEHOLDER
+`mutation_a4.py` -> `wp9_evidence/mutation_a4.txt`: **18 of 18 killed** (mutants of the analysis script's levels, chain selection, paired counts, design choice and of the generator option `feature_scale_change`). The first run killed 10 of 18: the tests did not pin the inclusive and exclusive boundaries of the declared levels, the shared-window selection or the design-selection rule (D02 to D06, D09, D11, D12); I added boundary and selection tests and the re-run killed all 18.
 
 ## Artifacts
 `wp9_evidence/a4_dev_fits.jsonl` (416), `a4_dev_analysis.txt/.json`, `a4_eval_fits.jsonl` (224), `a4_eval_analysis.txt`, `mutation_a4.txt`; scripts `integration_report/wp9/scripts/a4_run.py`, `a4_analyze.py`, `mutation_a4.py`; tests `tests/test_wp9_a4_generator.py`, `tests/test_wp9_a4_analyze.py`.
