@@ -37,6 +37,11 @@ MUTANTS = [
     ("A22 a summary without a flag counts as flagged", LIN, "    fit_unstable: bool = False                      # WP9 A1", "    fit_unstable: bool = True                       # WP9 A1"),
     ("A23 make_summary drops the flag", LIN, "ctx, bool(fit_unstable), fit_unstable_reason)", "ctx, False, None)"),
     ("A24 summarize_fit drops the flag", LIN, "fit_unstable=unstable, fit_unstable_reason=reason)", "fit_unstable=False, fit_unstable_reason=None)"),
+    ("A26 an unstable anchor is never replaced", LIN, "    if anchor.summary.fit_unstable and not summary.fit_unstable and al is not None:", "    if False:"),
+    ("A27 an unstable anchor is replaced by an unstable fit", LIN, "    if anchor.summary.fit_unstable and not summary.fit_unstable and al is not None:", "    if anchor.summary.fit_unstable and al is not None:"),
+    ("A28 every unverified step moves the anchor", LIN, "    if anchor.summary.fit_unstable and not summary.fit_unstable and al is not None:", "    if not summary.fit_unstable and al is not None:"),
+    ("A29 the replacing anchor carries the identity names instead of the best guess", LIN, "new_anchor = Anchor(summary, tuple(int(x) for x in r2s), fit_index, anchor.activity_rung, anchor.ordering_verified)\n        return rec, replace(state, anchor=new_anchor",
+     "new_anchor = Anchor(summary, tuple(range(summary.K)), fit_index, anchor.activity_rung, anchor.ordering_verified)\n        return rec, replace(state, anchor=new_anchor"),
     ("A25 the healthy count includes collapsed restarts", FS, "n_healthy_restarts=len(healthy),", "n_healthy_restarts=len(records),"),
 ]
 

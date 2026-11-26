@@ -177,13 +177,68 @@ def test_an_unstable_new_fit_is_never_aligned_and_the_anchor_stays():
     assert st1.anchor is st.anchor and st1.n_fits == 2 and r.message.startswith(L.MESSAGE_UNCONFIRMED) and r.proposed_new_names is not None
 
 
-def test_an_unstable_anchor_blocks_serving_later_fits():
+def test_an_unstable_anchor_blocks_the_next_alignment_and_is_replaced_by_the_first_stable_fit():
     m = _means(3)
     a, n = _summary(m, seed=1, fit_unstable=True), _summary(m, seed=2)
     rec0, st = step(None, a, CFG, REGISTRY, lineage_id="t")
     assert rec0.continuity_state == NEW_LINEAGE and rec0.fit_unstable                           # the first fit is named as before and carries the flag
-    r, _ = step(st, n, CFG, REGISTRY)
+    r, st1 = step(st, n, CFG, REGISTRY)
     assert r.continuity_state == CONTINUITY_UNVERIFIED and "anchor_fit_unstable" in r.reasons and "fit_unstable" not in r.reasons and r.anchor_fit_unstable and not r.fit_unstable
+    assert not may_claim_same_as_before(r) and st1.anchor.summary is n and st1.anchor.fit_index == 1 and st1.n_fits == 2          # the first stable fit is the anchor from now on
+    assert st1.anchor.raw_to_stable == tuple(r.raw_to_stable)                                  # with the best-guess names of this step
+    r2, st2 = step(st1, _summary(m, seed=3), CFG, REGISTRY)
+    assert r2.continuity_state == ALIGNED and r2.reasons == () and not r2.anchor_fit_unstable and st2.anchor.fit_index == 2
+
+
+def test_the_replacing_anchor_carries_the_best_guess_names_of_a_relabelled_fit():
+    m = _means(3)
+    perm = [2, 0, 1]                                                                            # the new fit names its regimes in another order
+    _, st = step(None, _summary(m, seed=1, fit_unstable=True), CFG, REGISTRY, lineage_id="t")
+    r, st1 = step(st, _summary(m[perm], seed=2), CFG, REGISTRY)
+    assert tuple(r.raw_to_stable) != (0, 1, 2) and st1.anchor.raw_to_stable == tuple(r.raw_to_stable)
+    assert [r.raw_to_stable[i] for i in range(3)] == [perm[i] for i in range(3)] or sorted(r.raw_to_stable) == [0, 1, 2]
+    r2, _ = step(st1, _summary(m[perm], seed=3), CFG, REGISTRY)
+    assert r2.continuity_state == ALIGNED and tuple(r2.raw_to_stable) == tuple(r.raw_to_stable)
+
+
+def test_an_unstable_anchor_is_kept_while_the_new_fits_are_unstable_too():
+    m = _means(3)
+    _, st = step(None, _summary(m, seed=1, fit_unstable=True), CFG, REGISTRY, lineage_id="t")
+    r, st1 = step(st, _summary(m, seed=2, fit_unstable=True), CFG, REGISTRY)
+    assert r.continuity_state == CONTINUITY_UNVERIFIED and set(r.reasons) >= {"fit_unstable", "anchor_fit_unstable"} and st1.anchor is st.anchor
+
+
+def test_a_stable_anchor_does_not_move_on_an_unverified_step():
+    m = _means(3)
+    _, st = step(None, _summary(m, seed=1), CFG, REGISTRY, lineage_id="t")
+    r, st1 = step(st, _summary(m, seed=2, fit_unstable=True), CFG, REGISTRY)
+    assert r.continuity_state == CONTINUITY_UNVERIFIED and st1.anchor is st.anchor
+    r2, st2 = step(st1, _summary(m, seed=3), CFG, REGISTRY)                                    # the stable anchor of fit 0 is still compared with
+    assert r2.continuity_state == ALIGNED and st2.anchor.fit_index == 2
+
+
+def test_the_replacement_of_an_unstable_anchor_needs_a_matching_of_same_K_fits():
+    a = _summary(_means(3, K=3), seed=1, fit_unstable=True)
+    n = _summary(_means(3, K=4), seed=2)
+    _, st = step(None, a, CFG, REGISTRY, lineage_id="t")
+    r, st1 = step(st, n, CFG, REGISTRY)
+    assert r.continuity_state == K_CHANGED and st1.anchor is st.anchor                         # a change of K is handled as before: the anchor does not move
+
+
+def test_no_aligned_step_ever_involves_a_flagged_fit_or_a_flagged_anchor():
+    rng = np.random.default_rng(7)
+    m = _means(3)
+    for trial in range(12):
+        flags = rng.random(8) < 0.5
+        st, aligned = None, 0
+        for i, f in enumerate(flags):
+            r, st = step(st, _summary(m, seed=100 * trial + i, fit_unstable=bool(f)), CFG, REGISTRY, lineage_id="t")
+            if r.continuity_state == ALIGNED:
+                aligned += 1
+                assert not r.fit_unstable and not r.anchor_fit_unstable and not f
+            if st.anchor.summary.fit_unstable:
+                assert all(flags[: i + 1])                                                     # an anchor is flagged only while every fit so far was flagged
+        assert aligned <= int((~flags[1:]).sum())
 
 
 def test_a_flagged_fit_is_not_served_even_with_a_perfect_gate_and_margin():

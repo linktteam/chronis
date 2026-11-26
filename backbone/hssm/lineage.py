@@ -14,8 +14,9 @@ every accepted fit a SECOND set of names, the stable ids, and says how far that 
   * Fail closed: `may_claim_same_as_before(record)` is True only for ALIGNED. The anchor moves only on ALIGNED and NEW_LINEAGE. A class of pair whose threshold could not be
     calibrated on the development data (dual to dual, baseline to dual and back: `PairThreshold.calibrated = False`) is never ALIGNED (reason `threshold_not_calibrated`).
   * FIT_UNSTABLE (WP9 A1, `fit_stability.py`): a baseline fit whose best healthy restarts do not agree (the same data with another random seed would give another partition) is flagged;
-    `step` never serves it as ALIGNED (reason `fit_unstable`), and an anchor that was flagged blocks later alignments (reason `anchor_fit_unstable`): the state is CONTINUITY_UNVERIFIED,
-    with the old names kept and the A3 choice available. A summary that carries no flag behaves exactly as in WP8.
+    `step` never serves it as ALIGNED (reason `fit_unstable`), and an anchor that was flagged blocks the alignment of the next fit (reason `anchor_fit_unstable`): the state is
+    CONTINUITY_UNVERIFIED, with the old names kept and the A3 choice available. A flagged anchor is replaced by the first fit that is not flagged (that step stays CONTINUITY_UNVERIFIED; the
+    best-guess names carry over), so later stable fits are compared with a stable anchor. A summary that carries no flag behaves exactly as in WP8.
   * Two channels (A6): channel 1 is the physical one above (regime means in real units, interpretable through the feature registry). Channel 2 is OPTIONAL and contextual: a per-regime
     profile (non-negative, sums to 1) that the CALLER supplies, for example topic or scene proportions aggregated per day. Nothing here extracts topics or scenes. The combined cost is
     `w1 * d1 / s1 + w2 * d2 / s2` (d2 = squared Hellinger distance; s = the anchor's own mean distance between its regimes in that channel); the default `w2 = 0` is channel 1 alone,
@@ -570,6 +571,11 @@ def step(state: LineageState | None, summary: FitSummary, config: AlignmentConfi
     proposed, pending = proposal()
     rec = _record(fit_index, summary, anchor, state.epoch, state.lineage_id, CONTINUITY_UNVERIFIED, MESSAGE_UNCONFIRMED + "; the old names are kept, new names can be chosen",
                   r2s, anchor.activity_rung, anchor.ordering_verified, al, th, reasons, proposed, (), channels_used=channels_used, channel_detail=detail)
+    if anchor.summary.fit_unstable and not summary.fit_unstable and al is not None:
+        # WP9 A1, dated change (tests/PREDECLARED_CRITERIA_WP9.md part 3): an unstable anchor must not kill the lineage. The claim for THIS step stays withheld (state above), but the first stable
+        # fit becomes the anchor with the best-guess names, so later stable fits can be compared with a stable anchor. Only a stable fit can become the anchor this way.
+        new_anchor = Anchor(summary, tuple(int(x) for x in r2s), fit_index, anchor.activity_rung, anchor.ordering_verified)
+        return rec, replace(state, anchor=new_anchor, n_fits=state.n_fits + 1, pending=pending)
     return rec, replace(state, n_fits=state.n_fits + 1, pending=pending)
 
 
