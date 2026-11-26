@@ -1,0 +1,115 @@
+{
+ "A": {
+  "R": {
+   "alignments": 112,
+   "served": 44,
+   "served_correct": 44,
+   "wrong_unflagged": 0,
+   "correct_rate": 1.0,
+   "wu_rate": 0.0,
+   "coverage": 0.39285714285714285
+  },
+  "Z": {
+   "alignments": 112,
+   "served": 41,
+   "served_correct": 41,
+   "wrong_unflagged": 0,
+   "correct_rate": 1.0,
+   "wu_rate": 0.0,
+   "coverage": 0.36607142857142855
+  },
+  "paired": {
+   "common": 112,
+   "z_wrong_r_right": 0,
+   "r_wrong_z_right": 0,
+   "z_wrong": 0,
+   "r_wrong": 0
+  },
+  "qualifies": false
+ },
+ "B": {
+  "R": {
+   "alignments": 111,
+   "served": 50,
+   "served_correct": 50,
+   "wrong_unflagged": 0,
+   "correct_rate": 1.0,
+   "wu_rate": 0.0,
+   "coverage": 0.45045045045045046
+  },
+  "Z": {
+   "alignments": 111,
+   "served": 46,
+   "served_correct": 46,
+   "wrong_unflagged": 0,
+   "correct_rate": 1.0,
+   "wu_rate": 0.0,
+   "coverage": 0.4144144144144144
+  },
+  "paired": {
+   "common": 111,
+   "z_wrong_r_right": 0,
+   "r_wrong_z_right": 0,
+   "z_wrong": 0,
+   "r_wrong": 0
+  },
+  "qualifies": false
+ },
+ "C": {
+  "R": {
+   "alignments": 112,
+   "served": 2,
+   "served_correct": 2,
+   "wrong_unflagged": 0,
+   "correct_rate": 1.0,
+   "wu_rate": 0.0,
+   "coverage": 0.017857142857142856
+  },
+  "Z": {
+   "alignments": 112,
+   "served": 2,
+   "served_correct": 2,
+   "wrong_unflagged": 0,
+   "correct_rate": 1.0,
+   "wu_rate": 0.0,
+   "coverage": 0.017857142857142856
+  },
+  "paired": {
+   "common": 112,
+   "z_wrong_r_right": 0,
+   "r_wrong_z_right": 0,
+   "z_wrong": 0,
+   "r_wrong": 0
+  },
+  "qualifies": false
+ },
+ "none": {
+  "R": {
+   "alignments": 112,
+   "served": 29,
+   "served_correct": 29,
+   "wrong_unflagged": 0,
+   "correct_rate": 1.0,
+   "wu_rate": 0.0,
+   "coverage": 0.25892857142857145
+  },
+  "Z": {
+   "alignments": 112,
+   "served": 30,
+   "served_correct": 30,
+   "wrong_unflagged": 0,
+   "correct_rate": 1.0,
+   "wu_rate": 0.0,
+   "coverage": 0.26785714285714285
+  },
+  "paired": {
+   "common": 112,
+   "z_wrong_r_right": 0,
+   "r_wrong_z_right": 0,
+   "z_wrong": 0,
+   "r_wrong": 0
+  },
+  "qualifies": false
+ },
+ "chosen": null
+}

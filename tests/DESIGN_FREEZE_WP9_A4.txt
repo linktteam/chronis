@@ -1,0 +1,2 @@
+{"design": "A"}
+Frozen 2026-11-26 from the A4 development run (wp9_evidence/a4_dev_analysis.txt, users 9261..9276): NO design (A, B, C) made the z-space control fail (0 wrong-and-unflagged under both methods in every design), so by the declared rule (tests/PREDECLARED_CRITERIA_WP9.md Part 6) the control stays inert and the evaluation is run on design A. The evaluation is run after the A2 freeze so that the default AlignmentConfig is final.

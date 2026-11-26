@@ -1,0 +1,30 @@
+A4 dev: 416 fits; AlignmentConfig defaults min_separation 4.0
+
+design A
+  R (stored scaler): alignments 112, served 44 (coverage 39%), correct among served 44/44 = 100.0%, wrong-and-unflagged 0/112 = 0.0%
+  Z (own z-space)  : alignments 112, served 41 (coverage 37%), correct among served 41/41 = 100.0%, wrong-and-unflagged 0/112 = 0.0%
+  paired on 112 common alignments: Z wrong and R right 0, R wrong and Z right 0
+  R works (>= 40 alignments, >= 95% correct, <= 1% wrong-unflagged): True; Z fails as required: False
+  QUALIFIES: False
+
+design B
+  R (stored scaler): alignments 111, served 50 (coverage 45%), correct among served 50/50 = 100.0%, wrong-and-unflagged 0/111 = 0.0%
+  Z (own z-space)  : alignments 111, served 46 (coverage 41%), correct among served 46/46 = 100.0%, wrong-and-unflagged 0/111 = 0.0%
+  paired on 111 common alignments: Z wrong and R right 0, R wrong and Z right 0
+  R works (>= 40 alignments, >= 95% correct, <= 1% wrong-unflagged): True; Z fails as required: False
+  QUALIFIES: False
+
+design C
+  R (stored scaler): alignments 112, served 2 (coverage 2%), correct among served 2/2 = 100.0%, wrong-and-unflagged 0/112 = 0.0%
+  Z (own z-space)  : alignments 112, served 2 (coverage 2%), correct among served 2/2 = 100.0%, wrong-and-unflagged 0/112 = 0.0%
+  paired on 112 common alignments: Z wrong and R right 0, R wrong and Z right 0
+  R works (>= 40 alignments, >= 95% correct, <= 1% wrong-unflagged): True; Z fails as required: False
+  QUALIFIES: False
+
+design none
+  R (stored scaler): alignments 112, served 29 (coverage 26%), correct among served 29/29 = 100.0%, wrong-and-unflagged 0/112 = 0.0%
+  Z (own z-space)  : alignments 112, served 30 (coverage 27%), correct among served 30/30 = 100.0%, wrong-and-unflagged 0/112 = 0.0%
+  paired on 112 common alignments: Z wrong and R right 0, R wrong and Z right 0
+  R works (>= 40 alignments, >= 95% correct, <= 1% wrong-unflagged): True; Z fails as required: False
+
+declared rule: first qualifying design in order A, B, C -> NONE QUALIFIES: the control stays inert on every design tried; the evaluation is run on design A
