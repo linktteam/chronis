@@ -2,6 +2,17 @@
 
 Entries are for behaviour that a consumer of `backbone/hssm/` can observe. Newest first. Module paths and field names under `backbone/hssm/` are stable; new fields are additive only.
 
+## WP9 (branch `ledger/wp9`, from `ledger/wp8` 7887118)
+
+Everything below is additive. Raw outputs of fits that do not use an opt-in option are bit-identical to WP8 (counts in the WP9 report). Design and numbers: `tests/PREDECLARED_CRITERIA_WP9.md`, the per-item results documents, `docs/INTEGRATION_CONTRACT_HSSM.md` section 9.11.
+
+- **A1 FIT_UNSTABLE.** New module `backbone/hssm/fit_stability.py`; six new keys in `HSSMResult.restart_summary` (`consensus_m`, `consensus_tau`, `n_healthy_restarts`, `consensus_min_ari`, `fit_unstable`, `fit_unstable_reason`); `FitSummary.fit_unstable` / `fit_unstable_reason`, `LineageRecord.fit_unstable` / `anchor_fit_unstable`; lineage reasons `fit_unstable` and `anchor_fit_unstable` (never ALIGNED). The selected model and every published number are unchanged.
+- **A3 K change.** New module `backbone/hssm/k_change.py`; `FitSummary.k_change`, `LineageRecord.k_change`, lineage reason `k_change_suspected` (state `CONTINUITY_UNVERIFIED`, old names kept, never "same as before"); `summarize_fit(..., k_change=None)` and `make_summary(..., k_change=None)` gain an optional argument; config `K_CHANGE_RECENT_DAYS`, `K_CHANGE_DELTA_UP`, `K_CHANGE_DELTA_DOWN`.
+- **B3 "unsure number of phases".** New modules `backbone/hssm/k_adequacy.py` and `backbone/hssm/alerts.py`; `HSSMResult.k_adequacy` and the property `k_unsure` (baseline; `{}` for the dual engine); one developer alert per unsure fit (hashed user id); config `K_ADEQUACY_*`. Which K is selected does not change.
+- **B1 cold-start certification (opt-in).** New module `backbone/hssm/cold_start_cert.py`; `fit_hssm(..., certify_prior_anchored=False)`; `HSSMResult.certification`, property `certified_prior_anchored`; state `CERTIFIED_PRIOR_ANCHORED`; `HSSMResult.withheld_reason` is now built from the new `_withheld_reasons()` (same text, same order; a certified prior-anchored fit drops only `fit_state_not_converged`); config `COLD_START_CERT_*`.
+- **Study tooling (no behaviour change):** `data/synthetic_identity.generate_identity_stream(..., feature_scale_change=None)` (A4 negative control; default streams bit-identical, 8 hashes pinned in tests).
+- **Test changes to older packages:** `tests/test_wp8_item4_engines.py` uses a 120-day anchor (the 90-day fit of seed 8791 is FIT_UNSTABLE under A1); `tests/test_wp7r_item0_contract_doc.py` reads `_withheld_reasons` as well as `withheld_reason` (B1 moved the reason list).
+
 ## WP8 (branch `ledger/wp8`)
 
 ### Item 0b: BIC parameter-count default is now "free" (owner decision B1)
