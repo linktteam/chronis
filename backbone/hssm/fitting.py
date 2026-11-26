@@ -712,6 +712,7 @@ class HSSMResult:
     collapse_report: dict = field(default_factory=dict)  # effective days per regime, minimum, variances at the floor, threshold, collapsed
     restart_summary: dict = field(default_factory=dict)  # multi-start stability metadata (ledger N1); descriptive, never changes publishing
     guard_repairs: int = 0                               # guard events of the selected fit that the duration repair resolved
+    certification: dict = field(default_factory=dict)    # WP9 B1 (dual, prior-anchored, opt-in): state CERTIFIED_PRIOR_ANCHORED / NOT_CERTIFIED / NOT_APPLICABLE, reasons, statistics; {} when not asked for
     k_adequacy: dict = field(default_factory=dict)       # WP9 B3 (baseline only, additive): is the selected K adequate? `k_unsure`, reasons, signals; never changes which K is selected
     # WP6 item 3 part 2 (dual model): per regime, True when the final duration parameters lie at a wall of the duration box. Empty for the baseline.
     duration_at_bound: dict = field(default_factory=dict)
@@ -757,6 +758,12 @@ class HSSMResult:
         return max(int(now) - int(at_build), 0)
 
     @property
+    def certified_prior_anchored(self) -> bool:
+        """WP9 B1: True only for a prior-anchored fit whose EM state is REJECTED_UPDATE or MAX_ITER_REACHED and whose predictive certification passed (`cold_start_cert`)."""
+        c = self.certification or {}
+        return bool(c.get("state") == "CERTIFIED_PRIOR_ANCHORED" and self.used_shared_prior and getattr(self.fit_state, "value", self.fit_state) in ("REJECTED_UPDATE", "MAX_ITER_REACHED"))
+
+    @property
     def withheld_reason(self) -> Optional[str]:
         """None when insights may be used; otherwise every cause that applies. RULE: withheld when `fit_degraded` is True,
         or `fit_state == FitState.NUMERICAL_FAILURE`, or `states_pass_fallbacks > 0` (the fallback fired in the estimate_states pass
@@ -764,11 +771,17 @@ class HSSMResult:
         WP6 item 3 (P0-07): also withheld when the fit did not converge (`fit_state` is MAX_ITER_REACHED, REJECTED_UPDATE, FAILED or RUNNING),
         and when the selected baseline fit is collapsed (`fit_collapsed`). MODEL_SELECTION_CONTESTED is judged by the fit's own state in
         `convergence_metadata["fit_state"]` (a result without it counts as converged), so a contested result stays publishable."""
+        reasons = self._withheld_reasons()
+        return "; ".join(reasons) if reasons else None
+
+    def _withheld_reasons(self, ignore_non_convergence: bool = False) -> list:
+        """The list behind `withheld_reason`. `ignore_non_convergence` leaves out the `fit_state_not_converged` reason (used by the B1 certification to ask whether anything ELSE
+        withholds the fit); a CERTIFIED_PRIOR_ANCHORED fit also leaves it out, and nothing else."""
         reasons = []
         underlying = self.fit_state
         if underlying == FitState.MODEL_SELECTION_CONTESTED:       # a model-selection state of a fit that converged: read the fit's own state
             underlying = (self.convergence_metadata or {}).get("fit_state", FitState.CONVERGED)
-        if underlying in _NOT_CONVERGED_STATES:
+        if underlying in _NOT_CONVERGED_STATES and not ignore_non_convergence and not self.certified_prior_anchored:
             reasons.append(f"fit_state_not_converged: fit_state is {getattr(underlying, 'value', underlying)}, the EM fit did not reach convergence")
         if self.fit_collapsed:
             cr = self.collapse_report or {}
@@ -787,7 +800,7 @@ class HSSMResult:
         late = self.late_fallbacks
         if late > 0:
             reasons.append(f"late_fallbacks: the -1e6 Cholesky fallback fired {late} time(s) on the model after this result was built")
-        return "; ".join(reasons) if reasons else None
+        return reasons
 
     @property
     def insights_withheld(self) -> bool:
@@ -929,6 +942,19 @@ def _log_holdback(result: HSSMResult, random_seed: Optional[int]) -> None:
     )
 
 
+def _attach_certification(result: HSSMResult, X, model, k: int, n_init: int, max_iter: int, max_duration: int, base_seed: int, shared_prior, shared_prior_n0) -> None:
+    """WP9 B1: set `result.certification`. Fails closed: whatever goes wrong the verdict is NOT_CERTIFIED (the fit stays withheld by the EM rule) and the fit itself is never broken."""
+    from backbone.hssm import cold_start_cert as C
+    try:
+        em_state = str(getattr(result.fit_state, "value", result.fit_state))
+        elig = dict(used_shared_prior=bool(result.used_shared_prior), n0=result.shared_prior_n0, em_state=em_state, other_reasons=result._withheld_reasons(ignore_non_convergence=True))
+        refit = C.make_refit_fn(n_regimes=k, n_features=X.shape[1], latent_dim=model.L, n_init=n_init, max_iter=max_iter, max_duration=max_duration, base_seed=base_seed,
+                                shared_prior=shared_prior, shared_prior_n0=shared_prior_n0)
+        result.certification = C.certify_prior_anchored(X, C.DualAdapter(model), refit, eligibility=elig)
+    except Exception as exc:                                                       # noqa: BLE001
+        result.certification = dict(state="NOT_CERTIFIED", reasons=["certification_error"], error=f"{type(exc).__name__}: {str(exc)[:120]}", schema_version=1)
+
+
 def _attach_k_adequacy(result: HSSMResult, report: dict, candidates: tuple, user_id: str, dataset_hash: str) -> None:
     """WP9 B3: additive `k_adequacy` and, when `k_unsure`, one developer alert (`alerts.emit`: the user id only as a hash). Fails closed: an exception in the assessment is recorded as k_unsure with the
     reason `assessment_failed` and never breaks the fit."""
@@ -964,6 +990,7 @@ def fit_hssm(
     shared_prior: "SharedPrior | None" = None,
     shared_prior_n0: float | None = None,
     max_duration_retry: int | None = None,
+    certify_prior_anchored: bool = False,
 ) -> HSSMResult:
     """Canonical fitting entrypoint for backbone.hssm per directive.
 
@@ -991,6 +1018,10 @@ def fit_hssm(
                   If the selected dual fit ends with a degenerate duration (`degenerate_duration`, see `dual_duration_degeneracy`), the selected K is
                   fitted once more with `max_duration = max_duration_retry` (same seeds, restarts and iterations) and the retry replaces the first fit
                   only if it is NOT degenerate. `convergence_metadata["dmax_retry"]` records what happened. Default `None`: identical to before.
+      certify_prior_anchored (WP9 B1, off by default): only with a shared prior (dual-timescale). A prior-anchored fit that EM did not finish (REJECTED_UPDATE or MAX_ITER_REACHED) and that
+                  nothing else withholds is certified by `cold_start_cert.certify_prior_anchored` (rolling-origin held-out score against a single Gaussian plus parameter stability,
+                  three extra fits, so about three times the fit time). The verdict is `result.certification`; a certified fit is publishable (`withheld_reason` drops the
+                  non-convergence reason only). Default `False`: identical to before.
     """
     if isinstance(matrix, pd.DataFrame):
         X = matrix.to_numpy(dtype=float)
@@ -1012,6 +1043,10 @@ def fit_hssm(
             raise ValueError("max_duration_retry cannot be combined with a shared prior")
         if isinstance(max_duration_retry, bool) or not isinstance(max_duration_retry, (int, np.integer)) or int(max_duration_retry) <= int(max_duration):
             raise ValueError(f"max_duration_retry must be an integer larger than max_duration ({max_duration}); got {max_duration_retry!r}")
+
+    if certify_prior_anchored:
+        if model_type not in ("dual_timescale", "dual", "full_hssm") or shared_prior is None:
+            raise ValueError("certify_prior_anchored applies to prior-anchored fits only (model_type='dual_timescale' with a shared_prior)")
 
     if shared_prior is None:
         if shared_prior_n0 is not None:
@@ -1196,6 +1231,8 @@ def fit_hssm(
                 "prior_uncertainty_in_m_t_std": False,
                 "bic_note": "BIC and AIC use the unpenalised log-likelihood at the shrunk parameters",
             }
+        if certify_prior_anchored:
+            _attach_certification(dual_result, X, best_dual_model, best_k, n_initializations, max_iter, max_duration, (random_seed or 0) + best_k * 1000, shared_prior, shared_prior_n0)
         _log_holdback(dual_result, random_seed)
         return dual_result
 
