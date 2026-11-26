@@ -4,7 +4,7 @@ Seeds 9801..9812 (9801..9806 hard: separation 0.5..1.0; 9807..9812 medium: 1.0..
 Day-30 fit: the shortest prefix [0, end0) with at least 30 present days (end0 >= 30; the cold-start gate counts present days). The stored matrix is z-scored with the scaler of [0, end0); the days
 that arrive later are z-scored with that stored scaler. Of the fits withheld at day 30: `recertify` with the rows to day 60 and, if still withheld, again with the rows to day 90.
 For every user: a fresh fit on the same matrix (F1, equals the re-certification by construction: determinism check) and a fresh window fit with its own z-scoring (F2) at days 60 and 90.
-One line per user, resumable."""
+One line per user, resumable. `--candidates 5` is the supplementary arm of Part 9c (K forced to 5 so that fits ARE withheld at day 30)."""
 import argparse, contextlib, io, json, logging, os, sys, time, warnings
 
 import numpy as np
@@ -44,7 +44,7 @@ def summarize(r):
     return dict(withheld=bool(r.insights_withheld), reasons=[str(x)[:60] for x in r._withheld_reasons()], fit_state=str(r.fit_state.value), K=int(r.K), independent_publishable=independent_publish_check(r))
 
 
-def one(user):
+def one(user, candidates=None):
     logging.disable(logging.CRITICAL)
     from backbone.hssm.fitting import fit_hssm
     from backbone.hssm.recertify import recertify
@@ -62,6 +62,8 @@ def one(user):
             w0 = st.window(0, end0)
             mean, std = w0["scaler_mean"], w0["scaler_std"]
             kw = dict(SETTINGS, random_seed=user, user_id=f"b6-{user}", dataset_hash=f"b6h{user}")
+            if candidates:
+                kw["candidate_ks"] = tuple(candidates)
             r0 = fit_hssm(matrix=w0["matrix"], timestamps=np.arange(end0, dtype=float), **kw)
             rec["day30"] = summarize(r0)
             stored = w0["matrix"]
@@ -104,7 +106,8 @@ def one(user):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("--out", required=True); a = ap.parse_args()
+    ap = argparse.ArgumentParser(); ap.add_argument("--out", required=True); ap.add_argument("--candidates", default=None, help="supplementary arm (Part 9c): e.g. 5 forces K = 5"); a = ap.parse_args()
+    cands = [int(x) for x in a.candidates.split(",")] if a.candidates else None
     done = set()
     if os.path.exists(a.out):
         for ln in open(a.out):
@@ -117,7 +120,7 @@ def main():
     for user in SEEDS:
         if user in done:
             continue
-        rec = one(user)
+        rec = one(user, cands)
         with open(a.out, "a") as fh:
             fh.write(json.dumps(rec) + "\n"); fh.flush(); os.fsync(fh.fileno())
         print(user, "ok" if rec["ok"] else rec.get("error"), rec["seconds"], "s", flush=True)

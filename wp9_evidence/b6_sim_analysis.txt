@@ -1,0 +1,7 @@
+B6 re-certification simulation: 12 users (seeds 9801..9812; hard 9801..9806, medium 9807..9812), production fit_hssm, candidates (2, 3, 4), 10 restarts, 100 iterations
+fits withheld at day 30 (the first prefix with >= 30 present days): 0/12 -> TOO FEW TO READ (declared: fewer than 4)
+published at day 30: 12/12; fresh window fits (own z-scoring) published at day 60: 12/12, at day 90: 12/12
+withhold reasons among the fresh fits at days 60 and 90: none
+
+NO-RELAXATION CHECK (hard level): outputs with a published state 36; violations (publishable by the module but refused by an independent recomputation, a result handed out with a withheld state, rules_relaxed true) 0 (+ 0 with rules_relaxed true) -> MET (0 violations)
+The check is vacuous for the re-certification path when no fit is withheld at day 30: it then covers the day-30 and fresh fits only.
