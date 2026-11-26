@@ -33,7 +33,7 @@ PURE = [
     ("A19 an exception in a fit is not contained", K, "            except Exception:                                                               # noqa: BLE001  an unfinished fit is unavailable", "            except KeyError:                                                                # noqa: BLE001  an unfinished fit is unavailable"),
     ("A20 an exception in the assessment escapes", K, "    except Exception as exc:                                                                # noqa: BLE001  fail closed: no claim", "    except KeyError as exc:                                                                 # noqa: BLE001  fail closed: no claim"),
     ("A21 K = 1 is fitted", K, "            if K < 2:", "            if K < 1:"),
-    ("A22 the reason of an anchor without a window is changed", K, "return dict(rec, reason=\"anchor_has_no_window\"", "return dict(rec, reason=\"anchor_has_no_window_\""),
+    ("A22 the reason of an anchor without a window is changed", K, "return dict(rec, k_best=int(s.K), reason=\"anchor_has_no_window\")", "return dict(rec, k_best=int(s.K), reason=\"anchor_has_no_window_\")"),
     ("A23 the anchor labels are ignored", K, "anchor_within_variances(s.raw_window, s.labels, s.K)", "anchor_within_variances(s.raw_window, np.zeros_like(s.labels), s.K)"),
     ("A24 the anchor means are negated", K, "return assess_k_change(s.raw_means, variances,", "return assess_k_change(-s.raw_means, variances,"),
     ("L01 a suspected change adds no reason", LIN, "        reasons.append(\"k_change_suspected\")", "        pass"),

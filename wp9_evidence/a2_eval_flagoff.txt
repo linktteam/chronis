@@ -1,0 +1,25 @@
+A2 evaluation (768 fits, weekly windows, seed A chains), consensus flag ON versus OFF, s = 0.95 / 0; REPORTED, nothing was chosen from it
+
+first 10 restarts
+  flag on  h = 0.0: pooled coverage 221/432 = 51.2%, wrong-and-unflagged 0/432 | hard 28/144 w0 | medium 86/144 w0 | easy 107/144 w0
+  flag on  h = 2.0: pooled coverage 216/432 = 50.0%, wrong-and-unflagged 0/432 | hard 23/144 w0 | medium 86/144 w0 | easy 107/144 w0
+  flag on  h = 2.5: pooled coverage 214/432 = 49.5%, wrong-and-unflagged 0/432 | hard 21/144 w0 | medium 86/144 w0 | easy 107/144 w0
+  flag on  h = 3.0: pooled coverage 210/432 = 48.6%, wrong-and-unflagged 0/432 | hard 17/144 w0 | medium 86/144 w0 | easy 107/144 w0
+  flag on  h = 4.0: pooled coverage 183/432 = 42.4%, wrong-and-unflagged 0/432 | hard 11/144 w0 | medium 67/144 w0 | easy 105/144 w0
+  flag off h = 0.0: pooled coverage 411/432 = 95.1%, wrong-and-unflagged 34/432 | hard 125/144 w28 | medium 142/144 w6 | easy 144/144 w0
+  flag off h = 2.0: pooled coverage 384/432 = 88.9%, wrong-and-unflagged 17/432 | hard 109/144 w15 | medium 131/144 w2 | easy 144/144 w0
+  flag off h = 2.5: pooled coverage 333/432 = 77.1%, wrong-and-unflagged 0/432 | hard 66/144 w0 | medium 123/144 w0 | easy 144/144 w0
+  flag off h = 3.0: pooled coverage 296/432 = 68.5%, wrong-and-unflagged 0/432 | hard 30/144 w0 | medium 122/144 w0 | easy 144/144 w0
+  flag off h = 4.0: pooled coverage 238/432 = 55.1%, wrong-and-unflagged 0/432 | hard 23/144 w0 | medium 80/144 w0 | easy 135/144 w0
+
+first 20 restarts
+  flag on  h = 0.0: pooled coverage 273/432 = 63.2%, wrong-and-unflagged 2/432 | hard 50/144 w1 | medium 101/144 w1 | easy 122/144 w0
+  flag on  h = 2.0: pooled coverage 262/432 = 60.6%, wrong-and-unflagged 1/432 | hard 45/144 w1 | medium 95/144 w0 | easy 122/144 w0
+  flag on  h = 2.5: pooled coverage 251/432 = 58.1%, wrong-and-unflagged 0/432 | hard 34/144 w0 | medium 95/144 w0 | easy 122/144 w0
+  flag on  h = 3.0: pooled coverage 243/432 = 56.2%, wrong-and-unflagged 0/432 | hard 26/144 w0 | medium 95/144 w0 | easy 122/144 w0
+  flag on  h = 4.0: pooled coverage 210/432 = 48.6%, wrong-and-unflagged 0/432 | hard 19/144 w0 | medium 76/144 w0 | easy 115/144 w0
+  flag off h = 0.0: pooled coverage 406/432 = 94.0%, wrong-and-unflagged 23/432 | hard 119/144 w20 | medium 143/144 w3 | easy 144/144 w0
+  flag off h = 2.0: pooled coverage 380/432 = 88.0%, wrong-and-unflagged 14/432 | hard 95/144 w13 | medium 141/144 w1 | easy 144/144 w0
+  flag off h = 2.5: pooled coverage 319/432 = 73.8%, wrong-and-unflagged 0/432 | hard 48/144 w0 | medium 127/144 w0 | easy 144/144 w0
+  flag off h = 3.0: pooled coverage 297/432 = 68.8%, wrong-and-unflagged 0/432 | hard 27/144 w0 | medium 126/144 w0 | easy 144/144 w0
+  flag off h = 4.0: pooled coverage 238/432 = 55.1%, wrong-and-unflagged 0/432 | hard 24/144 w0 | medium 79/144 w0 | easy 135/144 w0

@@ -1,0 +1,27 @@
+S01 the validation level is exclusive: KILLED
+S02 the lowest calibration coverage is chosen: KILLED
+S03 ties go to the smaller h: KILLED
+S04 ties go to the smaller s: KILLED
+S05 zero wrong is judged on the pooled set in step 1: KILLED
+S06 the candidate is validated on the calibration half: KILLED
+S07 a validation half without alignments is accepted: KILLED
+S08 step 3 maximises the calibration coverage: KILLED
+S09 the fallback takes the lowest coverage: KILLED
+S10 the fallback takes the most wrong: KILLED
+S11 the halves are swapped: KILLED
+S12 refits are all steps: KILLED
+S13 empty chains count: KILLED
+S14 the user selection is ignored: KILLED
+S15 the identical-lineage level is 90%: KILLED
+S16 the coverage level is 75%: KILLED
+S17 the wrong-and-unflagged level is 2%: KILLED
+S18 the coverage is over the alignments: KILLED
+S19 the fit-level agreement level is 0.5: KILLED
+S20 a window off the 14-day schedule is compared: KILLED
+S21 a pair counts as flagged only when both are: KILLED
+S22 the chains are split the wrong way: KILLED
+S23 a case is counted only when both seeds serve: KILLED
+S24 the strict identity needs one seed only: KILLED
+S25 a flagged anchor is not counted as a violation: KILLED
+S26 the day agreement level is exclusive: KILLED
+26/26 killed

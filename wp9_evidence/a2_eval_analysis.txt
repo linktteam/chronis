@@ -1,0 +1,91 @@
+EVALUATION: 768 fits; users per stratum {'hard': 16, 'medium': 16, 'easy': 16}; frozen candidate {'h': 2.5, 's': 0.95, 'u': True}
+
+===== PRIMARY: first 10 restarts =====
+-- pooled: accepted refits 432, alignments 432
+   A1 criterion 1 identical lineage among served (strict; target >= 95%): 92/136 = 67.6% (95% CI 59.4-74.9%) -> NOT MET
+   WP8 definition (windows fed by >= 1 seed): 164/288 = 56.9% (95% CI 51.2-62.5%); windows with exactly one seed flagged 58; first fits (both unflagged) with the same names 18/18
+   A1 criterion 2 ALIGNED steps involving a flagged fit or anchor: 0 of 230 (target 0)
+   A1 criterion 3 served share (accepted refits ending ALIGNED; reported): 214/432 = 49.5% (95% CI 44.8-54.2%); fit level: both seeds unflagged 130/288 windows, same partition 128/130 = 98.5% (95% CI 94.6-99.6%)
+   A2 coverage (target >= 80%): 214/432 = 49.5% (95% CI 44.8-54.2%) -> NOT MET
+   A2 wrong-and-unflagged among all alignments (target <= 1%): 0/432 = 0.0% (95% CI 0.0-0.9%) -> MET
+   correct among served: 214/214 = 100.0% (95% CI 98.2-100.0%); flagged and would have been right 172, wrong 46
+-- hard: accepted refits 144, alignments 144
+   A1 criterion 1 identical lineage among served (strict; target >= 95%): 6/13 = 46.2% (95% CI 23.2-70.9%) -> NOT MET
+   WP8 definition (windows fed by >= 1 seed): 35/96 = 36.5% (95% CI 27.5-46.4%); windows with exactly one seed flagged 19; first fits (both unflagged) with the same names 1/1
+   A1 criterion 2 ALIGNED steps involving a flagged fit or anchor: 0 of 19 (target 0)
+   A1 criterion 3 served share (accepted refits ending ALIGNED; reported): 21/144 = 14.6% (95% CI 9.7-21.3%); fit level: both seeds unflagged 14/96 windows, same partition 14/14 = 100.0% (95% CI 78.5-100.0%)
+   A2 coverage (target >= 80%): 21/144 = 14.6% (95% CI 9.7-21.3%) -> NOT MET
+   A2 wrong-and-unflagged among all alignments (target <= 1%): 0/144 = 0.0% (95% CI 0.0-2.6%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)
+   correct among served: 21/21 = 100.0% (95% CI 84.5-100.0%); flagged and would have been right 84, wrong 39
+-- medium: accepted refits 144, alignments 144
+   A1 criterion 1 identical lineage among served (strict; target >= 95%): 39/54 = 72.2% (95% CI 59.1-82.4%) -> NOT MET
+   WP8 definition (windows fed by >= 1 seed): 58/96 = 60.4% (95% CI 50.4-69.6%); windows with exactly one seed flagged 18; first fits (both unflagged) with the same names 5/5
+   A1 criterion 2 ALIGNED steps involving a flagged fit or anchor: 0 of 94 (target 0)
+   A1 criterion 3 served share (accepted refits ending ALIGNED; reported): 86/144 = 59.7% (95% CI 51.6-67.4%); fit level: both seeds unflagged 52/96 windows, same partition 52/52 = 100.0% (95% CI 93.1-100.0%)
+   A2 coverage (target >= 80%): 86/144 = 59.7% (95% CI 51.6-67.4%) -> NOT MET
+   A2 wrong-and-unflagged among all alignments (target <= 1%): 0/144 = 0.0% (95% CI 0.0-2.6%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)
+   correct among served: 86/86 = 100.0% (95% CI 95.7-100.0%); flagged and would have been right 51, wrong 7
+-- easy: accepted refits 144, alignments 144
+   A1 criterion 1 identical lineage among served (strict; target >= 95%): 47/69 = 68.1% (95% CI 56.4-77.9%) -> NOT MET
+   WP8 definition (windows fed by >= 1 seed): 71/96 = 74.0% (95% CI 64.4-81.7%); windows with exactly one seed flagged 21; first fits (both unflagged) with the same names 12/12
+   A1 criterion 2 ALIGNED steps involving a flagged fit or anchor: 0 of 117 (target 0)
+   A1 criterion 3 served share (accepted refits ending ALIGNED; reported): 107/144 = 74.3% (95% CI 66.6-80.7%); fit level: both seeds unflagged 64/96 windows, same partition 62/64 = 96.9% (95% CI 89.3-99.1%)
+   A2 coverage (target >= 80%): 107/144 = 74.3% (95% CI 66.6-80.7%) -> NOT MET
+   A2 wrong-and-unflagged among all alignments (target <= 1%): 0/144 = 0.0% (95% CI 0.0-2.6%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)
+   correct among served: 107/107 = 100.0% (95% CI 96.5-100.0%); flagged and would have been right 37, wrong 0
+
+-- coverage / wrong-and-unflagged curve on the evaluation set (primary; REPORTED, not used to choose; consensus flag on, s = 0.95) --
+   h = 0.0: coverage 221/432 = 51.2%, wrong-and-unflagged 0/432
+   h = 1.0: coverage 221/432 = 51.2%, wrong-and-unflagged 0/432
+   h = 1.5: coverage 221/432 = 51.2%, wrong-and-unflagged 0/432
+   h = 2.0: coverage 216/432 = 50.0%, wrong-and-unflagged 0/432
+   h = 2.5: coverage 214/432 = 49.5%, wrong-and-unflagged 0/432
+   h = 3.0: coverage 210/432 = 48.6%, wrong-and-unflagged 0/432
+   h = 3.5: coverage 197/432 = 45.6%, wrong-and-unflagged 0/432
+   h = 4.0: coverage 183/432 = 42.4%, wrong-and-unflagged 0/432
+   h = 5.0: coverage 122/432 = 28.2%, wrong-and-unflagged 0/432
+
+===== SECONDARY: first 20 restarts =====
+-- pooled: accepted refits 432, alignments 432
+   A1 criterion 1 identical lineage among served (strict; target >= 95%): 128/155 = 82.6% (95% CI 75.8-87.7%) -> NOT MET
+   WP8 definition (windows fed by >= 1 seed): 209/288 = 72.6% (95% CI 67.1-77.4%); windows with exactly one seed flagged 39; first fits (both unflagged) with the same names 24/24
+   A1 criterion 2 ALIGNED steps involving a flagged fit or anchor: 0 of 284 (target 0)
+   A1 criterion 3 served share (accepted refits ending ALIGNED; reported): 251/432 = 58.1% (95% CI 53.4-62.7%); fit level: both seeds unflagged 179/288 windows, same partition 178/179 = 99.4% (95% CI 96.9-99.9%)
+   A2 coverage (target >= 80%): 251/432 = 58.1% (95% CI 53.4-62.7%) -> NOT MET
+   A2 wrong-and-unflagged among all alignments (target <= 1%): 0/432 = 0.0% (95% CI 0.0-0.9%) -> MET
+   correct among served: 251/251 = 100.0% (95% CI 98.5-100.0%); flagged and would have been right 136, wrong 45
+-- hard: accepted refits 144, alignments 144
+   A1 criterion 1 identical lineage among served (strict; target >= 95%): 12/21 = 57.1% (95% CI 36.5-75.5%) -> NOT MET
+   WP8 definition (windows fed by >= 1 seed): 47/96 = 49.0% (95% CI 39.2-58.8%); windows with exactly one seed flagged 17; first fits (both unflagged) with the same names 2/2
+   A1 criterion 2 ALIGNED steps involving a flagged fit or anchor: 0 of 33 (target 0)
+   A1 criterion 3 served share (accepted refits ending ALIGNED; reported): 34/144 = 23.6% (95% CI 17.4-31.2%); fit level: both seeds unflagged 30/96 windows, same partition 30/30 = 100.0% (95% CI 88.6-100.0%)
+   A2 coverage (target >= 80%): 34/144 = 23.6% (95% CI 17.4-31.2%) -> NOT MET
+   A2 wrong-and-unflagged among all alignments (target <= 1%): 0/144 = 0.0% (95% CI 0.0-2.6%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)
+   correct among served: 34/34 = 100.0% (95% CI 89.8-100.0%); flagged and would have been right 75, wrong 35
+-- medium: accepted refits 144, alignments 144
+   A1 criterion 1 identical lineage among served (strict; target >= 95%): 49/58 = 84.5% (95% CI 73.1-91.6%) -> NOT MET
+   WP8 definition (windows fed by >= 1 seed): 76/96 = 79.2% (95% CI 70.0-86.1%); windows with exactly one seed flagged 13; first fits (both unflagged) with the same names 7/7
+   A1 criterion 2 ALIGNED steps involving a flagged fit or anchor: 0 of 107 (target 0)
+   A1 criterion 3 served share (accepted refits ending ALIGNED; reported): 95/144 = 66.0% (95% CI 57.9-73.2%); fit level: both seeds unflagged 66/96 windows, same partition 66/66 = 100.0% (95% CI 94.5-100.0%)
+   A2 coverage (target >= 80%): 95/144 = 66.0% (95% CI 57.9-73.2%) -> NOT MET
+   A2 wrong-and-unflagged among all alignments (target <= 1%): 0/144 = 0.0% (95% CI 0.0-2.6%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)
+   correct among served: 95/95 = 100.0% (95% CI 96.1-100.0%); flagged and would have been right 39, wrong 10
+-- easy: accepted refits 144, alignments 144
+   A1 criterion 1 identical lineage among served (strict; target >= 95%): 67/76 = 88.2% (95% CI 79.0-93.6%) -> NOT MET
+   WP8 definition (windows fed by >= 1 seed): 86/96 = 89.6% (95% CI 81.9-94.2%); windows with exactly one seed flagged 9; first fits (both unflagged) with the same names 15/15
+   A1 criterion 2 ALIGNED steps involving a flagged fit or anchor: 0 of 144 (target 0)
+   A1 criterion 3 served share (accepted refits ending ALIGNED; reported): 122/144 = 84.7% (95% CI 78.0-89.7%); fit level: both seeds unflagged 83/96 windows, same partition 82/83 = 98.8% (95% CI 93.5-99.8%)
+   A2 coverage (target >= 80%): 122/144 = 84.7% (95% CI 78.0-89.7%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches below the threshold)
+   A2 wrong-and-unflagged among all alignments (target <= 1%): 0/144 = 0.0% (95% CI 0.0-2.6%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)
+   correct among served: 122/122 = 100.0% (95% CI 96.9-100.0%); flagged and would have been right 22, wrong 0
+
+-- coverage / wrong-and-unflagged curve on the evaluation set (secondary; REPORTED, not used to choose; consensus flag on, s = 0.95) --
+   h = 0.0: coverage 273/432 = 63.2%, wrong-and-unflagged 2/432
+   h = 1.0: coverage 273/432 = 63.2%, wrong-and-unflagged 2/432
+   h = 1.5: coverage 273/432 = 63.2%, wrong-and-unflagged 2/432
+   h = 2.0: coverage 262/432 = 60.6%, wrong-and-unflagged 1/432
+   h = 2.5: coverage 251/432 = 58.1%, wrong-and-unflagged 0/432
+   h = 3.0: coverage 243/432 = 56.2%, wrong-and-unflagged 0/432
+   h = 3.5: coverage 230/432 = 53.2%, wrong-and-unflagged 0/432
+   h = 4.0: coverage 210/432 = 48.6%, wrong-and-unflagged 0/432
+   h = 5.0: coverage 135/432 = 31.2%, wrong-and-unflagged 0/432

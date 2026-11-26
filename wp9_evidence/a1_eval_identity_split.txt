@@ -1,0 +1,9 @@
+A1 identical-lineage cases split by what happened (evaluation, frozen gate, flag on); strict case = a 14-day window where at least one seed ends ALIGNED
+first 10 restarts, pooled: strict cases 136: served by both with the same names 92; served by both with DIFFERENT names 2; served by one seed only 42
+first 10 restarts, hard: strict cases 13: served by both with the same names 6; served by both with DIFFERENT names 0; served by one seed only 7
+first 10 restarts, medium: strict cases 54: served by both with the same names 39; served by both with DIFFERENT names 1; served by one seed only 14
+first 10 restarts, easy: strict cases 69: served by both with the same names 47; served by both with DIFFERENT names 1; served by one seed only 21
+first 20 restarts, pooled: strict cases 155: served by both with the same names 128; served by both with DIFFERENT names 1; served by one seed only 26
+first 20 restarts, hard: strict cases 21: served by both with the same names 12; served by both with DIFFERENT names 0; served by one seed only 9
+first 20 restarts, medium: strict cases 58: served by both with the same names 49; served by both with DIFFERENT names 0; served by one seed only 9
+first 20 restarts, easy: strict cases 76: served by both with the same names 67; served by both with DIFFERENT names 1; served by one seed only 8
