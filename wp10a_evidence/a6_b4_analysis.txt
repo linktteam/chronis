@@ -1,0 +1,45 @@
+B4 ANALYSIS (WP10A A6 part 1): 64 users fitted (0 failed fits excluded); production dual fit with the prior (n0 = 5), certify_prior_anchored = True; generated users, one training length (about 90 days)
+certified (CERTIFIED_PRIOR_ANCHORED) fits: 12; withheld fits: 39; withhold reasons by condition: {'C0': {'fit_state_not_converged': 7, 'degenerate_duration': 1}, 'C1': {'fit_state_not_converged': 6, 'degenerate_duration': 5}, 'C2': {'fit_state_not_converged': 8, 'degenerate_duration': 3}, 'C3': {'fit_state_not_converged': 4, 'degenerate_duration': 5}}
+
+HEADLINE, published fits only (nominal: 1 sd 0.6827, 2 sd 0.9545; each cell is dimension 0 / dimension 1; the unit is the user)
+  C0 favourable control: users 16, published 8, withheld 8; used 8: 1sd 0.69 / 0.70, 2sd 0.90 / 0.90; mean z^2 2.3 / 2.6; bootstrap 95% lower [0.55, 0.60, 0.77, 0.78] upper [0.79, 0.79, 0.99, 0.97] (order 1sd d0, 1sd d1, 2sd d0, 2sd d1)
+      in band (+-0.10 of both nominal levels in both dimensions): YES; signed distance to nominal: +0.01, +0.02, -0.05, -0.05
+  C1 off-centre prior: users 16, published 5, withheld 11; used 5 -> too few published fits to read (< 6); for the record: 1sd 0.57 / 0.58, 2sd 0.78 / 0.77
+  C2 atypical users: users 16, published 5, withheld 11; used 5 -> too few published fits to read (< 6); for the record: 1sd 0.65 / 0.71, 2sd 0.90 / 0.84
+  C3 misspecified fit: users 16, published 7, withheld 9; used 7: 1sd 0.70 / 0.72, 2sd 0.98 / 0.94; mean z^2 0.8 / 1.1; bootstrap 95% lower [0.59, 0.65, 0.95, 0.88] upper [0.79, 0.78, 1.00, 0.98] (order 1sd d0, 1sd d1, 2sd d0, 2sd d1)
+      in band (+-0.10 of both nominal levels in both dimensions): YES; signed distance to nominal: +0.01, +0.04, +0.02, -0.01
+  C1 off-centre prior against C0: not read (a group has fewer than 6 published users)
+  C2 atypical users against C0: not read (a group has fewer than 6 published users)
+  C3 misspecified fit against C0: difference of the 2-sd coverage +0.07 / +0.04 (bootstrap 95% [-0.02, +0.21] / [-0.06, +0.17]) -> not worse than C0 by more than 0.10
+      C0/favourable: users 16, published 8, withheld 8
+      C1/off_centre_1sd: users 8, published 2, withheld 6
+      C1/off_centre_2sd: users 8, published 3, withheld 5
+      C2/atypical_3x: users 16, published 5, withheld 11
+      C3/dmax_30: users 4, published 3, withheld 1
+      C3/dmax_8: users 4, published 0, withheld 4
+      C3/drop_feature: users 4, published 3, withheld 1
+      C3/k_too_small: users 4, published 1, withheld 3
+
+SECONDARY, all fits (published or not; labelled: a withheld fit has no user-facing uncertainty) (nominal: 1 sd 0.6827, 2 sd 0.9545; each cell is dimension 0 / dimension 1; the unit is the user)
+  C0 favourable control: users 16, published 8, withheld 8; used 16: 1sd 0.69 / 0.70, 2sd 0.89 / 0.89; mean z^2 3.8 / 3.8; bootstrap 95% lower [0.60, 0.61, 0.78, 0.78] upper [0.76, 0.77, 0.98, 0.96] (order 1sd d0, 1sd d1, 2sd d0, 2sd d1)
+      in band (+-0.10 of both nominal levels in both dimensions): YES; signed distance to nominal: +0.01, +0.02, -0.07, -0.07
+  C1 off-centre prior: users 16, published 5, withheld 11; used 16: 1sd 0.62 / 0.66, 2sd 0.85 / 0.86; mean z^2 7.5 / 5.0; bootstrap 95% lower [0.51, 0.55, 0.75, 0.76] upper [0.72, 0.75, 0.93, 0.95] (order 1sd d0, 1sd d1, 2sd d0, 2sd d1)
+      in band (+-0.10 of both nominal levels in both dimensions): NO; signed distance to nominal: -0.06, -0.02, -0.11, -0.09
+  C2 atypical users: users 16, published 5, withheld 11; used 16: 1sd 0.68 / 0.73, 2sd 0.87 / 0.88; mean z^2 5.9 / 10.1; bootstrap 95% lower [0.58, 0.61, 0.74, 0.76] upper [0.78, 0.83, 0.95, 0.98] (order 1sd d0, 1sd d1, 2sd d0, 2sd d1)
+      in band (+-0.10 of both nominal levels in both dimensions): YES; signed distance to nominal: +0.00, +0.04, -0.09, -0.07
+  C3 misspecified fit: users 16, published 7, withheld 9; used 16: 1sd 0.62 / 0.63, 2sd 0.84 / 0.85; mean z^2 5.3 / 3.8; bootstrap 95% lower [0.51, 0.54, 0.72, 0.75] upper [0.72, 0.71, 0.94, 0.93] (order 1sd d0, 1sd d1, 2sd d0, 2sd d1)
+      in band (+-0.10 of both nominal levels in both dimensions): NO; signed distance to nominal: -0.06, -0.05, -0.11, -0.10
+  C1 off-centre prior against C0: difference of the 2-sd coverage -0.04 / -0.02 (bootstrap 95% [-0.17, +0.10] / [-0.14, +0.10]) -> not worse than C0 by more than 0.10
+  C2 atypical users against C0: difference of the 2-sd coverage -0.02 / -0.00 (bootstrap 95% [-0.17, +0.12] / [-0.14, +0.14]) -> not worse than C0 by more than 0.10
+  C3 misspecified fit against C0: difference of the 2-sd coverage -0.05 / -0.04 (bootstrap 95% [-0.19, +0.11] / [-0.16, +0.10]) -> not worse than C0 by more than 0.10
+      C0/favourable: users 16, published 8, withheld 8
+      C1/off_centre_1sd: users 8, published 2, withheld 6
+      C1/off_centre_2sd: users 8, published 3, withheld 5
+      C2/atypical_3x: users 16, published 5, withheld 11
+      C3/dmax_30: users 4, published 3, withheld 1
+      C3/dmax_8: users 4, published 0, withheld 4
+      C3/drop_feature: users 4, published 3, withheld 1
+      C3/k_too_small: users 4, published 1, withheld 3
+
+Reading: coverage is measured against the true fast state mapped into the fitted basis (N17 affine map, in sample); N17 stays an expected failure whatever this shows; confidence_display_gate stays 'early_estimate'.
+Not run: the parametric-bootstrap comparison of the design note; K one too large (the shared prior has K = 2). Real users: UNKNOWN.
