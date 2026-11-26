@@ -1,0 +1,576 @@
+........................................................................ [  6%]
+..............x.x............x...................x.x.................... [ 12%]
+........................................................................ [ 18%]
+........................................................................ [ 24%]
+.........................................F.............................. [ 30%]
+........................................................................ [ 36%]
+........................................................................ [ 42%]
+........................................................................ [ 49%]
+........................................................................ [ 55%]
+........................................................................ [ 61%]
+........................................................................ [ 67%]
+........................................................................ [ 73%]
+........................................................................ [ 79%]
+........................................................................ [ 85%]
+........................................................................ [ 91%]
+........................................................................ [ 98%]
+......................                                                   [100%]
+=================================== FAILURES ===================================
+___________ test_new_arguments_are_last_optional_and_default_to_none ___________
+
+    def test_new_arguments_are_last_optional_and_default_to_none():
+        for fn, tail in ((fit_hssm, ["shared_prior", "shared_prior_n0", "max_duration_retry"]), (fit_dual_with_random_restarts, ["shared_prior", "shared_prior_n0"])):
+            params = list(inspect.signature(fn).parameters.values())
+            # WP7-R item 5 added `max_duration_retry` after the WP5 arguments of fit_hssm (new arguments stay last, optional, default None): the WP5 pair keeps its place
+>           assert [p.name for p in params[-len(tail):]] == tail and all(p.default is None for p in params[-len(tail):]), fn.__name__
+E           AssertionError: fit_hssm
+E           assert (['shared_prio...ior_anchored'] == ['shared_prio...ration_retry']
+E             
+E             At index 0 diff: 'shared_prior_n0' != 'shared_prior'
+E             Use -v to get more diff)
+
+tests/test_wp5_integration.py:56: AssertionError
+=============================== warnings summary ===============================
+tests/test_anti_leakage.py::test_116_model_fit_records_fit_dataset_hash
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.3161, sigma=0.9798).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_anti_leakage.py::test_116_model_fit_records_fit_dataset_hash
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.3244, sigma=0.9431).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_anti_leakage.py::test_116_model_fit_records_fit_dataset_hash
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.3147, sigma=0.9490).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_baseline_identity.py::test_hssm_result_baseline_identity_fields
+tests/test_canonical_api.py::test_fit_hssm_is_canonical_entrypoint
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.1846, sigma=1.1450).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_baseline_identity.py::test_hssm_result_baseline_identity_fields
+tests/test_canonical_api.py::test_fit_hssm_is_canonical_entrypoint
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=2.7751, sigma=1.2830).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_baseline_identity.py::test_hssm_result_baseline_identity_fields
+tests/test_canonical_api.py::test_fit_hssm_is_canonical_entrypoint
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.1778, sigma=1.1335).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_baseline_identity.py::test_hssm_result_baseline_identity_fields
+tests/test_canonical_api.py::test_fit_hssm_is_canonical_entrypoint
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.2464, sigma=1.0434).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_calibration.py::test_sample_from_fitted_hssm_shapes
+tests/test_calibration.py::test_seeded_condition_has_lower_variance_in_target_regime
+tests/test_calibration.py::test_grid_search_finds_a_working_operating_point
+tests/test_calibration.py::test_NT_split_not_shared_scalar
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.5124, sigma=0.3054).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_canonical_api.py::test_hssm_result_contains_all_directive_fields
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.2007, sigma=1.1378).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_canonical_api.py::test_hssm_result_contains_all_directive_fields
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=2.7885, sigma=1.2909).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_canonical_api.py::test_hssm_result_contains_all_directive_fields
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.1996, sigma=1.1193).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_canonical_api.py::test_hssm_result_contains_all_directive_fields
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.2632, sigma=1.0337).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_canonical_api.py::test_baseline_never_fakes_fast_state
+tests/test_canonical_api.py::test_legacy_backward_compatibility_aliases
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=2.8173, sigma=1.3838).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_dual_model_heldout_prediction.py::test_no_fit_or_scoring_pass_used_the_cholesky_fallback[B2]
+  /home/claude/work/hssm_l/tests/utils/heldout_prediction.py:153: UserWarning: [DualTimescaleHSSM] Monotonicity violation at iter 17: LL dropped from -223.4360 to -223.4452. Backtracking.
+    model.fit(data.X_train, n_iter=n_iter_for(seed))
+
+tests/test_dual_model_heldout_prediction.py::test_no_fit_or_scoring_pass_used_the_cholesky_fallback[B2]
+  /home/claude/work/hssm_l/tests/utils/heldout_prediction.py:153: UserWarning: [DualTimescaleHSSM] Monotonicity violation at iter 12: LL dropped from -252.9039 to -253.0059. Backtracking.
+    model.fit(data.X_train, n_iter=n_iter_for(seed))
+
+tests/test_dual_model_heldout_prediction.py::test_no_fit_or_scoring_pass_used_the_cholesky_fallback[B2]
+  /home/claude/work/hssm_l/tests/utils/heldout_prediction.py:153: UserWarning: [DualTimescaleHSSM] Monotonicity violation at iter 13: LL dropped from -242.2531 to -243.1256. Backtracking.
+    model.fit(data.X_train, n_iter=n_iter_for(seed))
+
+tests/test_dual_model_heldout_prediction.py::test_no_fit_or_scoring_pass_used_the_cholesky_fallback[B2]
+  /home/claude/work/hssm_l/tests/utils/heldout_prediction.py:153: UserWarning: [DualTimescaleHSSM] Monotonicity violation at iter 13: LL dropped from -244.9459 to -245.5693. Backtracking.
+    model.fit(data.X_train, n_iter=n_iter_for(seed))
+
+tests/test_dual_model_heldout_prediction.py::test_no_fit_or_scoring_pass_used_the_cholesky_fallback[B2]
+  /home/claude/work/hssm_l/tests/utils/heldout_prediction.py:153: UserWarning: [DualTimescaleHSSM] Monotonicity violation at iter 19: LL dropped from -243.0344 to -243.1235. Backtracking.
+    model.fit(data.X_train, n_iter=n_iter_for(seed))
+
+tests/test_dual_model_heldout_prediction.py::test_no_fit_or_scoring_pass_used_the_cholesky_fallback[B2]
+  /home/claude/work/hssm_l/tests/utils/heldout_prediction.py:153: UserWarning: [DualTimescaleHSSM] Monotonicity violation at iter 12: LL dropped from -217.2072 to -217.8288. Backtracking.
+    model.fit(data.X_train, n_iter=n_iter_for(seed))
+
+tests/test_dual_model_heldout_prediction.py::test_no_fit_or_scoring_pass_used_the_cholesky_fallback[B2_alt]
+  /home/claude/work/hssm_l/tests/utils/heldout_prediction.py:153: UserWarning: [DualTimescaleHSSM] Monotonicity violation at iter 14: LL dropped from -266.9348 to -266.9503. Backtracking.
+    model.fit(data.X_train, n_iter=n_iter_for(seed))
+
+tests/test_dual_model_heldout_prediction.py::test_no_fit_or_scoring_pass_used_the_cholesky_fallback[B2_alt]
+  /home/claude/work/hssm_l/tests/utils/heldout_prediction.py:153: UserWarning: [DualTimescaleHSSM] Monotonicity violation at iter 9: LL dropped from -305.5207 to -305.6675. Backtracking.
+    model.fit(data.X_train, n_iter=n_iter_for(seed))
+
+tests/test_dual_model_heldout_prediction.py::test_no_fit_or_scoring_pass_used_the_cholesky_fallback[B2_alt]
+  /home/claude/work/hssm_l/tests/utils/heldout_prediction.py:153: UserWarning: [DualTimescaleHSSM] Monotonicity violation at iter 15: LL dropped from -213.5215 to -213.5239. Backtracking.
+    model.fit(data.X_train, n_iter=n_iter_for(seed))
+
+tests/test_dual_model_heldout_prediction.py::test_no_fit_or_scoring_pass_used_the_cholesky_fallback[B2_alt]
+  /home/claude/work/hssm_l/tests/utils/heldout_prediction.py:153: UserWarning: [DualTimescaleHSSM] Monotonicity violation at iter 9: LL dropped from -222.6575 to -226.2316. Backtracking.
+    model.fit(data.X_train, n_iter=n_iter_for(seed))
+
+tests/test_dual_model_heldout_prediction.py::test_no_fit_or_scoring_pass_used_the_cholesky_fallback[B2_alt]
+  /home/claude/work/hssm_l/tests/utils/heldout_prediction.py:153: UserWarning: [DualTimescaleHSSM] Monotonicity violation at iter 9: LL dropped from -222.7036 to -226.2956. Backtracking.
+    model.fit(data.X_train, n_iter=n_iter_for(seed))
+
+tests/test_dual_model_heldout_prediction.py::test_no_fit_or_scoring_pass_used_the_cholesky_fallback[B2_alt]
+  /home/claude/work/hssm_l/tests/utils/heldout_prediction.py:153: UserWarning: [DualTimescaleHSSM] Monotonicity violation at iter 14: LL dropped from -178.2500 to -178.2515. Backtracking.
+    model.fit(data.X_train, n_iter=n_iter_for(seed))
+
+tests/test_evidence.py::test_128_limitations_block_overclaim_guard
+tests/test_evidence.py::test_130_acceptance_ladder_capability_consistency
+tests/test_handoff.py::test_119_baseline_model_fast_state_contract_safety
+tests/test_handoff.py::test_120_result_regime_posterior_simplex_normalization
+tests/test_handoff.py::test_legacy_properties_backward_compatibility
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.2982, sigma=0.9921).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_evidence.py::test_128_limitations_block_overclaim_guard
+tests/test_evidence.py::test_130_acceptance_ladder_capability_consistency
+tests/test_handoff.py::test_119_baseline_model_fast_state_contract_safety
+tests/test_handoff.py::test_120_result_regime_posterior_simplex_normalization
+tests/test_handoff.py::test_legacy_properties_backward_compatibility
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.3078, sigma=0.9538).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_evidence.py::test_128_limitations_block_overclaim_guard
+tests/test_evidence.py::test_130_acceptance_ladder_capability_consistency
+tests/test_handoff.py::test_119_baseline_model_fast_state_contract_safety
+tests/test_handoff.py::test_120_result_regime_posterior_simplex_normalization
+tests/test_handoff.py::test_legacy_properties_backward_compatibility
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.2998, sigma=0.9570).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_feature_reduction.py::test_vif_removes_multicollinear_pair
+  /home/claude/work/hssm_l/backbone/shared/feature_reduction.py:68: Pandas4Warning: The copy keyword is deprecated and will be removed in a future version. Copy-on-Write is active in pandas since 3.0 which utilizes a lazy copy mechanism that defers copies until necessary. Use .copy() to make an eager copy if necessary.
+    return numeric_frame.astype(float, copy=False)
+
+tests/test_fit_orchestration.py::test_backtracking_guard_rejects_decrease
+  /home/claude/work/hssm_l/tests/test_fit_orchestration.py:56: UserWarning: [DualTimescaleHSSM] Monotonicity violation at iter 2: LL dropped from -40.9413 to -227.7999. Backtracking.
+    model.fit(X, n_iter=10)
+
+tests/test_hssm_core.py::test_bic_selects_true_k_on_obvious_structure
+tests/test_hssm_core.py::test_k_selection_never_hardcodes_a_favorite
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.0241, sigma=1.1884).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_core.py::test_bic_selects_true_k_on_obvious_structure
+tests/test_hssm_core.py::test_k_selection_never_hardcodes_a_favorite
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 2: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.3762, sigma=0.3490).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_core.py::test_run_log_records_every_attempt
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=2.6441, sigma=1.4373).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_core.py::test_run_log_records_every_attempt
+tests/test_hssm_core.py::test_non_converged_run_never_selected_even_if_ll_looks_high
+tests/test_hssm_core.py::test_all_inits_failing_raises_not_silently_returns_none
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.4010, sigma=0.0316).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_core.py::test_non_converged_run_never_selected_even_if_ll_looks_high
+tests/test_hssm_core.py::test_all_inits_failing_raises_not_silently_returns_none
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.0367, sigma=1.1705).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_core.py::test_different_seed_can_change_init_but_stays_sane
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=1.3445, sigma=0.1014).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_core.py::test_different_seed_can_change_init_but_stays_sane
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.0836, sigma=1.0941).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_core.py::test_canonicalization_stable_across_runs_with_different_raw_label_order
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.0096, sigma=1.1646).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_core.py::test_hssm_convergence_rate_above_ninety_percent
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.0571, sigma=0.2065).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_fitting.py::test_fit_report_reports_convergence_rate
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.6374, sigma=0.1933).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_fitting.py::test_fit_report_reports_convergence_rate
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.6985, sigma=0.0868).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_fitting.py::test_more_random_inits_does_not_change_selection_logic
+tests/test_hssm_fitting.py::test_more_random_inits_does_not_change_selection_logic
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.3649, sigma=0.3468).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_holdback_closure.py::test_state_comparator_detects_differences
+tests/test_hssm_holdback_closure.py::test_state_comparator_detects_differences
+tests/test_hssm_holdback_closure.py::test_gated_healthy_baseline_call_is_bit_identical_to_the_old_function
+tests/test_hssm_holdback_closure.py::test_gated_healthy_baseline_call_is_bit_identical_to_the_old_function
+tests/test_hssm_holdback_closure.py::test_gated_healthy_baseline_call_is_bit_identical_to_the_old_function
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.2342, sigma=1.0171).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_holdback_closure.py::test_state_comparator_detects_differences
+tests/test_hssm_holdback_closure.py::test_state_comparator_detects_differences
+tests/test_hssm_holdback_closure.py::test_gated_healthy_baseline_call_is_bit_identical_to_the_old_function
+tests/test_hssm_holdback_closure.py::test_gated_healthy_baseline_call_is_bit_identical_to_the_old_function
+tests/test_hssm_holdback_closure.py::test_gated_healthy_baseline_call_is_bit_identical_to_the_old_function
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.4179, sigma=0.7294).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_holdback_closure.py::test_state_comparator_detects_differences
+tests/test_hssm_holdback_closure.py::test_state_comparator_detects_differences
+tests/test_hssm_holdback_closure.py::test_gated_healthy_baseline_call_is_bit_identical_to_the_old_function
+tests/test_hssm_holdback_closure.py::test_gated_healthy_baseline_call_is_bit_identical_to_the_old_function
+tests/test_hssm_holdback_closure.py::test_gated_healthy_baseline_call_is_bit_identical_to_the_old_function
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=2.9889, sigma=1.3165).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_holdback_closure.py::test_state_comparator_detects_differences
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.1995, sigma=0.9305).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_result_holdback.py::test_baseline_path_has_safe_defaults_and_is_not_withheld
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.4166, sigma=0.0604).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_result_holdback.py::test_baseline_path_has_safe_defaults_and_is_not_withheld
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.0990, sigma=0.9788).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_result_holdback.py::test_baseline_path_has_safe_defaults_and_is_not_withheld
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=2.7874, sigma=1.3736).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_hssm_result_holdback.py::test_baseline_path_has_safe_defaults_and_is_not_withheld
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=2.8783, sigma=1.2549).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_input_contract.py::test_31_sessions_allowed
+tests/test_input_contract.py::test_vf14_t3_fit_hssm_direct_31_sessions_succeeds
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=1.3960, sigma=0.0774).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_input_contract.py::test_31_sessions_allowed
+tests/test_input_contract.py::test_vf14_t3_fit_hssm_direct_31_sessions_succeeds
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.1746, sigma=0.3870).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_input_contract.py::test_31_sessions_allowed
+tests/test_input_contract.py::test_vf14_t3_fit_hssm_direct_31_sessions_succeeds
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.4554, sigma=0.3310).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_input_contract.py::test_50_sessions_allowed
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=1.0859, sigma=0.0774).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_input_contract.py::test_50_sessions_allowed
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=1.3818, sigma=0.0356).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_input_contract.py::test_gate_boundary_is_exactly_30
+tests/test_input_contract.py::test_vf14_t2_fit_hssm_direct_30_sessions_succeeds
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=1.4022, sigma=0.0646).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_input_contract.py::test_gate_boundary_is_exactly_30
+tests/test_input_contract.py::test_vf14_t2_fit_hssm_direct_30_sessions_succeeds
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.1696, sigma=0.3783).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_input_contract.py::test_gate_boundary_is_exactly_30
+tests/test_input_contract.py::test_vf14_t2_fit_hssm_direct_30_sessions_succeeds
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=1.7892, sigma=0.0325).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_input_contract.py::test_vf14_t4_fit_hssm_gated_wrapper_boundary_parity
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.7024, sigma=0.1261).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_input_contract.py::test_vf14_t4_fit_hssm_gated_wrapper_boundary_parity
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.8716, sigma=0.2013).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_input_contract.py::test_vf14_t4_fit_hssm_gated_wrapper_boundary_parity
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.3466, sigma=0.3474).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_input_contract.py::test_vf14_t4_fit_hssm_gated_wrapper_boundary_parity
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.3230, sigma=0.3466).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_input_contract.py::test_vf14_t4_fit_hssm_gated_wrapper_boundary_parity
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.3074, sigma=0.3449).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_input_contract.py::test_vf14_t4_fit_hssm_gated_wrapper_boundary_parity
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=1.0539, sigma=0.1289).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_input_contract.py::test_vf14_t4_fit_hssm_gated_wrapper_boundary_parity
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=1.0678, sigma=0.1152).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_missingness_likelihood.py::test_fitting_converges_with_sporadic_missingness
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=2.9598, sigma=1.3368).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_missingness_likelihood.py::test_fitting_converges_with_sporadic_missingness
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=3.3427, sigma=0.9246).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_1_partial_missingness.py::test_s34_1_t3_bic_selection_stability_fixed
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 2: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=1.1127, sigma=0.0970).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_1_partial_missingness.py::test_s34_1_step2_full_pipeline_fit_hssm_partial_missingness_fixed
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.6432, sigma=0.1794).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_1_partial_missingness.py::test_s34_1_step2_full_pipeline_fit_hssm_partial_missingness_fixed
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.6915, sigma=0.0380).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_1_partial_missingness.py::test_s34_1_step3_cold_start_confidence_contract_tiers_fixed
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.2222, sigma=0.4946).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_4_dmax_diagnostics.py::test_sweep_dmax_sensitivity
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.7313, sigma=0.1454).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_4_dmax_diagnostics.py::test_sweep_dmax_sensitivity
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=1.1122, sigma=0.0994).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_4_dmax_diagnostics.py::test_sweep_dmax_sensitivity
+  /home/claude/work/hssm_l/backbone/hssm/model.py:91: RuntimeWarning: overflow encountered in exp
+    pdf = lognorm.pdf(d_vals, s=s, scale=np.exp(m))
+
+tests/test_s34_4_dmax_diagnostics.py::test_sweep_dmax_sensitivity
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.0009, sigma=0.0316).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_4_dmax_diagnostics.py::test_sweep_dmax_sensitivity
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.4138, sigma=0.3425).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_4_dmax_diagnostics.py::test_sweep_dmax_sensitivity
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.7223, sigma=0.1433).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_4_dmax_diagnostics.py::test_sweep_dmax_sensitivity
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.7256, sigma=0.1372).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_4_dmax_diagnostics.py::test_sweep_dmax_sensitivity
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.0023, sigma=0.0400).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t1_monotonicity_violation_triggers_rejected_update_and_preserves_history
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.0865, sigma=0.2292).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t1_monotonicity_violation_triggers_rejected_update_and_preserves_history
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=1.1240, sigma=0.0867).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.0871, sigma=0.2298).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 2: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.6695, sigma=0.1547).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 2: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=1.1250, sigma=0.0968).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.3072, sigma=0.3453).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.4038, sigma=0.3418).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.3557, sigma=0.3465).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.3472, sigma=0.3466).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.3471, sigma=0.3466).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 2: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.2482, sigma=0.3377).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.3475, sigma=0.3466).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_5_em_monotonicity.py::test_s34_5_t3_random_restarts_never_selects_rejected_update_or_failed
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.3477, sigma=0.3466).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_6_calendar_day_units.py::test_s34_6_t2_cold_start_boundary_with_partial_missingness
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.6983, sigma=0.1238).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_6_calendar_day_units.py::test_s34_6_t2_cold_start_boundary_with_partial_missingness
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.3041, sigma=0.3442).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_6_calendar_day_units.py::test_s34_6_t2_cold_start_boundary_with_partial_missingness
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.3209, sigma=0.3458).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_6_calendar_day_units.py::test_s34_6_t2_cold_start_boundary_with_partial_missingness
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.3010, sigma=0.3465).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_6_calendar_day_units.py::test_s34_6_t2_cold_start_boundary_with_partial_missingness
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.2943, sigma=0.3445).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_6_calendar_day_units.py::test_s34_6_t2_cold_start_boundary_with_partial_missingness
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.3234, sigma=0.3470).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_6_calendar_day_units.py::test_s34_6_t2_cold_start_boundary_with_partial_missingness
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=1.0466, sigma=0.1358).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_6_calendar_day_units.py::test_s34_6_t2_cold_start_boundary_with_partial_missingness
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.6783, sigma=0.1062).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_6_calendar_day_units.py::test_s34_6_t2_cold_start_boundary_with_partial_missingness
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.6795, sigma=0.1321).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_6_calendar_day_units.py::test_s34_6_t2_cold_start_boundary_with_partial_missingness
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=1.0474, sigma=0.1360).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_7_canonical_export.py::test_t1_fresh_import_and_hssm_result_schema
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 2: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=1.3885, sigma=0.0342).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_7_canonical_export.py::test_t1_export_with_timestamps
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.0019, sigma=0.0362).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_7_canonical_export.py::test_t2_cross_package_pipeline_smoke_test
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.2906, sigma=0.3453).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_7_canonical_export.py::test_t2_cross_package_pipeline_smoke_test
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.3325, sigma=0.3498).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_7_canonical_export.py::test_t2_cross_package_pipeline_smoke_test
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.6602, sigma=0.1489).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_s34_7_canonical_export.py::test_t2_cross_package_pipeline_smoke_test
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.6425, sigma=0.1804).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_validation.py::test_planted_recovery_meets_bar_for_multiple_users
+tests/test_validation.py::test_NT_coincidence_check_runs
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.0227, sigma=0.1235).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_validation.py::test_planted_recovery_meets_bar_for_multiple_users
+tests/test_validation.py::test_NT_coincidence_check_runs
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.2993, sigma=0.3482).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_validation.py::test_planted_recovery_meets_bar_for_multiple_users
+tests/test_validation.py::test_NT_coincidence_check_runs
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 1: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.4591, sigma=0.3342).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_wp5_integration.py::test_prior_fit_is_the_shrinkage_engine_started_at_the_prior_with_the_frozen_strength
+tests/test_wp5_integration.py::test_the_strength_argument_is_used_and_recorded
+tests/test_wp5_integration.py::test_with_a_prior_k_is_the_priors_and_other_candidates_are_not_fitted
+tests/test_wp5_integration.py::test_the_prior_branch_is_a_single_deterministic_fit_without_the_restart_minimum
+  /home/claude/work/hssm_l/backbone/hssm/fitting.py:411: UserWarning: [DualTimescaleHSSM] Monotonicity violation at iter 2: LL dropped from -121.5515 to -121.8765. Backtracking.
+    model.fit(X, n_iter=n_iter, timestamps=timestamps, verbose=verbose)
+
+tests/test_wp5_integration.py::test_prior_fit_is_the_shrinkage_engine_started_at_the_prior_with_the_frozen_strength
+  /home/claude/work/hssm_l/tests/test_wp5_integration.py:83: UserWarning: [DualTimescaleHSSM] Monotonicity violation at iter 2: LL dropped from -121.5515 to -121.8765. Backtracking.
+    direct = ShrinkageDualHSSM(n_regimes=K, n_features=F, latent_dim=L, max_duration=DMAX, seed=2 * 1000 + 7, shared_prior=PRIOR, n0=5.0).fit(X, n_iter=6)
+
+tests/test_wp5_integration.py::test_the_hold_back_applies_to_prior_fits
+  /home/claude/work/hssm_l/tests/test_wp5_integration.py:162: UserWarning: [DualTimescaleHSSM] Monotonicity violation at iter 2: LL dropped from -121.5515 to -121.8765. Backtracking.
+    out = real_fit(self, *a, **k)
+
+tests/test_wp5_shrinkage.py::test_the_prior_pulls_harder_the_larger_n0_and_dominates_when_huge
+  /home/claude/work/hssm_l/tests/test_wp5_shrinkage.py:320: UserWarning: [DualTimescaleHSSM] Monotonicity violation at iter 2: LL dropped from -186.5968 to -187.2310. Backtracking.
+    m = _engine(shared_prior=prior, n0=n0).fit(u.X_train, n_iter=4)
+
+tests/test_wp6_item3_baseline_and_withholding.py::test_without_an_event_the_fit_equals_the_old_loop_bit_for_bit[5-0.0001]
+  /home/claude/work/hssm_l/tests/test_wp6_item3_baseline_and_withholding.py:71: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 2: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=1.1261, sigma=0.0969).
+    m._m_step(X, g, e, x)
+
+tests/test_wp6_item3_baseline_and_withholding.py::test_without_an_event_the_fit_equals_the_old_loop_bit_for_bit[5-0.0001]
+  /home/claude/work/hssm_l/tests/test_wp6_item3_baseline_and_withholding.py:71: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 2: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=1.1047, sigma=0.0414).
+    m._m_step(X, g, e, x)
+
+tests/test_wp6_item3_baseline_and_withholding.py::test_without_an_event_the_fit_equals_the_old_loop_bit_for_bit[5-0.0001]
+  /home/claude/work/hssm_l/tests/test_wp6_item3_baseline_and_withholding.py:71: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=0.0011, sigma=0.0316).
+    m._m_step(X, g, e, x)
+
+tests/test_wp7r_item2_bic_count.py::test_the_switch_reaches_the_k_selection_bic
+tests/test_wp7r_item2_bic_count.py::test_the_switch_reaches_the_k_selection_bic
+  /home/claude/work/hssm_l/backbone/hssm/model.py:449: UserWarning: [GaussianHSMM] Duration optimization fallback used for regime 0: L-BFGS-B did not converge (STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT). Using untruncated moment estimate (mu=1.6000, sigma=0.0473).
+    self._m_step(X_fit, regime_post, entry_post, xi_counts)
+
+tests/test_wp8_item3_ordering.py::test_a_rung_without_usable_data_is_not_available
+  /home/claude/work/hssm_l/backbone/hssm/ordering.py:97: RuntimeWarning: Mean of empty slice
+    mean_f = np.nanmean(raw, axis=0); sd_f = np.nanstd(raw, axis=0)
+
+tests/test_wp8_item3_ordering.py::test_a_rung_without_usable_data_is_not_available
+  /usr/local/lib/python3.13/site-packages/numpy/lib/_nanfunctions_impl.py:1997: RuntimeWarning: Degrees of freedom <= 0 for slice.
+    var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+
+tests/test_wp9_b1_cert.py::test_the_refit_is_the_production_fit_on_fewer_rows_and_the_scoring_is_the_n18_scoring
+  /home/claude/work/hssm_l/backbone/hssm/fitting.py:411: UserWarning: [DualTimescaleHSSM] Monotonicity violation at iter 2: LL dropped from -123.6665 to -123.7390. Backtracking.
+    model.fit(X, n_iter=n_iter, timestamps=timestamps, verbose=verbose)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_wp5_integration.py::test_new_arguments_are_last_optional_and_default_to_none
+1 failed, 1168 passed, 5 xfailed, 173 warnings in 2372.73s (0:39:32)
