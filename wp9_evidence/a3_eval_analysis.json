@@ -1,0 +1,55 @@
+{
+ "delta_up": 0.0,
+ "delta_down": 40.0,
+ "counts": {
+  "split": {
+   "n": 12,
+   "up": 0,
+   "down": 2
+  },
+  "merge": {
+   "n": 12,
+   "up": 0,
+   "down": 1
+  },
+  "none": {
+   "n": 12,
+   "up": 0,
+   "down": 1
+  }
+ },
+ "split_candidates": [
+  0,
+  0
+ ],
+ "merge_candidates": [
+  1,
+  1
+ ],
+ "records": {
+  "suspected": 6,
+  "k_changed": 216,
+  "bad": 0
+ },
+ "old_rule": {
+  "split": [
+   0,
+   0
+  ],
+  "merge": [
+   0,
+   1
+  ]
+ },
+ "k_selection": {
+  "see": {
+   "split": 0,
+   "merge": 4
+  },
+  "n": {
+   "split": 12,
+   "merge": 12
+  }
+ },
+ "unusable": []
+}

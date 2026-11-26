@@ -1,0 +1,13 @@
+A3 EVALUATION, users 9241..9252: 36 usable streams (unusable anchors: []); thresholds delta_up = 0.0, delta_down = 40.0; freeze file {'delta_up': 0.0, 'delta_down': 40.0}
+
+(a) split detection >= 50% (a stream counts when an `up` signal occurs at some refit): 0/12 = 0.0% (95% CI 0.0-24.2%) -> NOT MET
+(b) false alarm <= 10% per direction on the no-change streams: up 0/12 = 0.0% (95% CI 0.0-24.2%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold); down 1/12 = 8.3% (95% CI 1.5-35.4%) -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)
+(c) split-candidate precision >= 80% among the `up` signals of the split streams (per signal): 0/0 -> UNKNOWN (nothing to count)
+(d) records that are k_change_suspected (6) or K_CHANGED (216) and could be served as 'same as before' or lack the reason: 0 (must be 0) -> MET
+
+REPORTED without a level:
+  merge detection (a `down` signal at some refit of a merge stream): 1/12 = 8.3% (95% CI 1.5-35.4%); false alarm on the no-change streams, `down`: 1/12 = 8.3% (95% CI 1.5-35.4%)
+  merge-candidate precision among the `down` signals of the merge streams: 1/1 = 100.0% (95% CI 20.7-100.0%)
+  the OLD nearest-mean candidates on the same signals: split (K' = 4 refit, `up` signals of the split streams) 0/0; merge (K' = 2 refit) 0/1 = 0.0% (95% CI 0.0-79.3%)
+  WP8 comparison, K selection (2, 3, 4) on the final window [0, 150) sees the change: split streams 0/12 = 0.0% (95% CI 0.0-24.2%), merge streams 4/12 = 33.3% (95% CI 13.8-60.9%) (WP8: 3/24 = 12.5%; candidate precision 3/38 = 7.9%)
+  the wrong-direction signals: `down` in split streams 2/12 = 16.7% (95% CI 4.7-44.8%); `up` in merge streams 0/12 = 0.0% (95% CI 0.0-24.2%)
