@@ -1,0 +1,19 @@
+B3 EVALUATION, 48 fits (seeds 9501..9524, both designs) at frozen thresholds d0 = 1.5, delta = 0.0, signal (3) off
+
+offline recomputation equals the production field `k_adequacy.k_unsure` in all stored fits: True (mismatches: [])
+BIC-selected K correct: 26/48; easy 18/24; hard 8/24
+
+(a) detection of wrong-K fits >= 60%: 13/22 = 59.1% (Wilson 38.7-76.7%) -> NOT MET
+(b) false alarm on right-K fits of the easy design <= 25%: 2/18 = 11.1% (Wilson 3.1-32.8%) -> MET on the point estimate, NOT DEMONSTRATED
+(c) hard design, reported without a level: false alarm on right-K fits 7/8 = 87.5% (Wilson 52.9-97.8%); detection on wrong-K fits of the hard design 13/16 = 81.2% (Wilson 57.0-93.4%)
+
+tagged share by design and planted K:
+  easy  planted K=2: tagged 0/8; BIC right 8/8
+  easy  planted K=3: tagged 2/8; BIC right 6/8
+  easy  planted K=4: tagged 0/8; BIC right 4/8
+  hard  planted K=2: tagged 7/8; BIC right 8/8
+  hard  planted K=3: tagged 5/8; BIC right 0/8
+  hard  planted K=4: tagged 8/8; BIC right 0/8
+
+reasons that fired (a fit can have several): {'restart_disagreement': 9, 'regimes_overlap': 21}
+wrong-K fits with NO signal (the declared blind spot): 9 of 22: [(9511, 'easy', 3, 2), (9516, 'easy', 3, 2), (9518, 'easy', 4, 3), (9519, 'easy', 4, 3), (9523, 'easy', 4, 3), (9524, 'easy', 4, 2), (9510, 'hard', 3, 2), (9511, 'hard', 3, 2), (9512, 'hard', 3, 2)]

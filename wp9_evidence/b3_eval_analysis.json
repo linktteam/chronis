@@ -1,0 +1,86 @@
+{
+ "metrics": {
+  "d0": 1.5,
+  "delta": 0.0,
+  "sig3": false,
+  "n": 48,
+  "n_wrong": 22,
+  "n_right": 26,
+  "det": 13,
+  "fa_all": 9,
+  "fa_easy": 2,
+  "n_easy_right": 18,
+  "fa_hard": 7,
+  "n_hard_right": 8,
+  "tagged": 22
+ },
+ "a": {
+  "point": false,
+  "lb": false
+ },
+ "b": {
+  "point": true,
+  "ub": false
+ },
+ "mismatches": [],
+ "blind": [
+  [
+   9511,
+   "easy",
+   3,
+   2
+  ],
+  [
+   9516,
+   "easy",
+   3,
+   2
+  ],
+  [
+   9518,
+   "easy",
+   4,
+   3
+  ],
+  [
+   9519,
+   "easy",
+   4,
+   3
+  ],
+  [
+   9523,
+   "easy",
+   4,
+   3
+  ],
+  [
+   9524,
+   "easy",
+   4,
+   2
+  ],
+  [
+   9510,
+   "hard",
+   3,
+   2
+  ],
+  [
+   9511,
+   "hard",
+   3,
+   2
+  ],
+  [
+   9512,
+   "hard",
+   3,
+   2
+  ]
+ ],
+ "reasons": {
+  "restart_disagreement": 9,
+  "regimes_overlap": 21
+ }
+}
