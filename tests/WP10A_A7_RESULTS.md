@@ -1,0 +1,17 @@
+# WP10A A7: a re-certification arm that is not vacuous (B6): result
+
+Label for every number: Python 3.12, repo pins, generated users (`generate_identity_stream`), production `fit_hssm` (10 restarts, 100 iterations) and production `recertify` (unchanged since WP9). Pre-declaration: `tests/PREDECLARED_CRITERIA_WP10A.md` Part 5 (committed before any A7 seed was generated). Seeds 10601..10698. Run once; no criterion was changed.
+
+## Answer
+**All four hard levels MET, and the arm is no longer vacuous: 12 users were withheld at the first check and `recertify` published all 12 with the unchanged rules.**
+- **H1 non-vacuous (>= 8 withheld at the first check): 12 -> MET.** All from arm W1 (K forced to 5; 25 users were run in seed order until the 12th withheld, 5 more ran beyond the stopping rule and are not counted). The natural arm **W2 withheld 0 of 48** (very hard streams, separation 0.3 to 0.6, the production candidates (2, 3, 4): every fit was published with K = 2). That is a finding in itself: **the publish rule does not withhold fits whose regimes hardly differ**; whether such published fits are meaningful is UNKNOWN (not tested here).
+- **H2 no relaxation: 0 violations -> MET**, recomputed from the stored fields over all 73 users used: every published state (day 30 or re-certified) agrees with an independent recomputation of the publish rule from the raw attributes of the result; `rules_relaxed` was False on every call; no result was handed out with a withheld state; each of the 36 settings probes (12 withheld users x `n_initializations = 3`, the unknown setting `allow_fast_test_fit`, the unknown setting `config`) was refused with NOT_ELIGIBLE, no result, nothing fitted.
+- **H3 same procedure: 12/12 -> MET:** a fresh production fit on the same matrix and settings agrees with the `recertify` state on every call.
+- **H4 the checker can fail: 73 controls, 0 problems -> MET:** on every user with a published result, the unaltered snapshot of the attributes the independent check reads is accepted and each of five alterations (collapsed regime, degraded fit, degenerate duration, a state-pass fallback, a non-converged state) is refused.
+- **Reported without a level:** of the 12 withheld users, 12/12 are publishable with the rows to day 60 (Wilson 95% 76-100%) and 12/12 to day 90; all 12 were withheld for `collapsed_regime` (a regime with 1 to 3 effective days). More days cure a collapsed regime **on these generated users**; nothing is shown about the withheld fits of the dual engine or of real data (UNKNOWN).
+
+## Files
+`wp10a_evidence/a7_w1.jsonl`, `a7_w2.jsonl`, `a7_analysis.txt`, `a7_analysis.json`; scripts `integration_report/wp10a/scripts/a7_run.py`, `a7_analyze.py`; tests `tests/test_wp10a_a7_analyze.py` (43).
+
+## Mutation check
+`mutation_wp10a_a7.py`: 58 mutants of the analysis, the run helpers and driver, and the WP9 `independent_publish_check` / `summarize`: **57/58 killed** (`wp10a_evidence/mutation_wp10a_a7_run1.txt`). The survivor is **RM23** (the stored rows are not extended after the day-60 call): judged **equivalent**: the day-90 call then receives the rows 30..89 as "new" rows instead of 60..89, and the matrix handed to the fit (stored + new = rows 0..89) is identical, so no output differs. The 25 mutants of `recertify.py` itself (`wp9/scripts/mutation_b6.py`) are rerun in the report.

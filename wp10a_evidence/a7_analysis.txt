@@ -1,0 +1,20 @@
+A7 RE-CERTIFICATION, ARMS THAT ARE WITHHELD BY DESIGN (once; production fit_hssm, generated users; levels of Part 5 section 14, not moved)
+
+arm W1: users used 25 (extra beyond the stopping rule, not counted: 5; failed fits excluded: 0); withheld at day 30: 12; strata (users, withheld) {'hard': (12, 6), 'medium': (13, 6)}
+  withhold reasons at day 30: {'collapsed_regime': 12}
+  publishable after re-certification with the rows to day 60: 12/12 = 100% (Wilson 95% 76-100%)
+  publishable after re-certification with the rows to day 90: 12/12 = 100% (Wilson 95% 76-100%)
+  reasons of those still withheld at day 90: none
+
+arm W2: users used 48 (extra beyond the stopping rule, not counted: 0; failed fits excluded: 0); withheld at day 30: 0; strata (users, withheld) {'very_hard': (48, 0)}
+  withhold reasons at day 30: none
+
+pooled over the arms: withheld 12; publishable by day 60 12/12 (Wilson 76-100%), by day 90 12/12 (Wilson 76-100%)
+
+LEVELS
+  H1 non-vacuous (>= 8 users withheld at the first check): 12 -> MET
+  H2 no relaxation (0 violations): 0 -> MET
+  H3 same procedure (a fresh fit on the same matrix agrees on every recertify call): 12/12 -> MET
+  H4 the checker can fail (the unaltered snapshot published, each of the 5 alterations refused): 73 controls, problems 0 -> MET
+
+Not shown by this arm: that more days cure the withheld fits of the dual engine or of real data (UNKNOWN); the rates above are about generated users.

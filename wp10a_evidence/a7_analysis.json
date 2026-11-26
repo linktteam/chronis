@@ -1,0 +1,81 @@
+{
+ "blocks": {
+  "W1": {
+   "name": "W1",
+   "users": 25,
+   "extra": 5,
+   "failed": 0,
+   "withheld": 12,
+   "seeds_with_withheld": [
+    10601,
+    10602,
+    10603,
+    10604,
+    10606,
+    10611,
+    10615,
+    10618,
+    10621,
+    10622,
+    10624,
+    10625
+   ],
+   "p60": 12,
+   "p90": 12,
+   "day30_reasons": {
+    "collapsed_regime": 12
+   },
+   "still_withheld_reasons": {},
+   "strata": {
+    "hard": [
+     12,
+     6
+    ],
+    "medium": [
+     13,
+     6
+    ]
+   }
+  },
+  "W2": {
+   "name": "W2",
+   "users": 48,
+   "extra": 0,
+   "failed": 0,
+   "withheld": 0,
+   "seeds_with_withheld": [],
+   "p60": 0,
+   "p90": 0,
+   "day30_reasons": {},
+   "still_withheld_reasons": {},
+   "strata": {
+    "very_hard": [
+     48,
+     0
+    ]
+   }
+  }
+ },
+ "levels": {
+  "H1": {
+   "withheld": 12,
+   "level": 8,
+   "met": true
+  },
+  "H2": {
+   "violations": 0,
+   "detail": {},
+   "met": true
+  },
+  "H3": {
+   "calls": 12,
+   "disagreements": [],
+   "met": true
+  },
+  "H4": {
+   "controls": 73,
+   "problems": {},
+   "met": true
+  }
+ }
+}
