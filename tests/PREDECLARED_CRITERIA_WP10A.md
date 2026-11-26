@@ -170,3 +170,8 @@ Streams: `generate_identity_stream(user, 90, IdentitySpec(n_regimes=3, sep_lo, s
 
 ## 19. Mutation sets and tests
 `tests/test_wp10a_a6_b4.py` and `tests/test_wp10a_a6_harm.py` (the design, the pure analysis, the copied generator against the original) with mutation sets `mutation_wp10a_a6_b4.py` and `mutation_wp10a_a6_harm.py`; survivors named and judged in the report.
+
+# Part 6b (dated 2026-11-26, before any harmful-prior fit and before any B4 user beyond the pilot): how non-finite scores are handled in the validity rule and the levels of section 18
+- A fit whose held-out score is not finite (a failed or unusable scoring pass) is treated as **worse than the single Gaussian** in rule (b) of the development validity check and in E1 and E3, and is **left out of the mean in rule (a)** (the mean is over the fits whose score and whose personal-fit score are both finite; the number left out is reported). A personal fit or a Gaussian with a non-finite score makes that (seed, length) pair unusable for rules (a) and (b) (counted and reported).
+- Eligibility for the certificate is read from the fit itself: the EM state is REJECTED_UPDATE or MAX_ITER_REACHED and `_withheld_reasons(ignore_non_convergence=True)` is empty (the conditions of `cold_start_cert.certify_prior_anchored`); an arm-H fit that the public path refuses for another reason is counted as "refused by another rule" and does not enter E1.
+- The 95% upper bound for E1 is the exact one-sided Clopper-Pearson bound (1 when all are certified); nothing else changes.
