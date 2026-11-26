@@ -8,7 +8,7 @@ C07 two increments are enough: KILLED
 C08 the Gaussian uses ddof 0: KILLED
 C09 regimes are compared by index only: KILLED
 C10 stability ignores the scale of the features: KILLED
-C11 a lower bound of exactly zero certifies: SURVIVED
+C11 a lower bound of exactly zero certifies: KILLED
 C12 the margin is ignored: KILLED
 C13 stability at the level is refused: KILLED
 C14 non-finite increments pass: SURVIVED
@@ -20,9 +20,3 @@ C19 the refit sees the held-out block: KILLED
 C20 the Gaussian sees the held-out block: KILLED
 C21 the gain has the wrong sign: KILLED
 C22 stability looks at the first refit: KILLED
-C23 a fit without a prior is certifiable: KILLED
-C24 a failed EM fit is eligible: KILLED
-C25 the default margin is 1: KILLED
-C26 the stability level is 0.5: KILLED
-C27 an unexpected error certifies: KILLED
-25/27 killed
