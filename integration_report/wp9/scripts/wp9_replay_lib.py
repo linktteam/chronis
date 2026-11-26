@@ -52,7 +52,7 @@ _streams: dict = {}
 
 
 def raw_window9(job: dict) -> np.ndarray:
-    key = (job["user"], job.get("stratum", "wp8"), job.get("drift", 0.0), job.get("kchange"), job.get("n_days", 150))
+    key = (job["user"], job.get("stratum", "wp8"), job.get("drift", 0.0), job.get("kchange"), job.get("n_days", 150), repr(job.get("scale_change")))
     if key not in _streams:
         _streams[key] = F.stream_for(job)
     return _streams[key].window(job["start"], job["end"])["raw"]
