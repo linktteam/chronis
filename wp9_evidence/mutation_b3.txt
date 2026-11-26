@@ -4,8 +4,8 @@ B03 the variance of one regime only: KILLED
 B04 the overlap level is inclusive: KILLED
 B05 the BIC margin is inclusive: KILLED
 B06 the runner-up is the farthest candidate: KILLED
-B07 the largest-candidate reason is removed: NOT APPLIED (pattern count 0)
-B08 a single candidate counts as the largest: NOT APPLIED (pattern count 0)
+B07 the largest-candidate reason is removed: KILLED
+B08 a single candidate counts as the largest: KILLED
 B09 a missing stability assessment is trusted: KILLED
 B10 the best guess is not marked as shown: KILLED
 B11 the tag ignores the reasons: KILLED
@@ -21,4 +21,4 @@ B20 the default separation is 1.0: KILLED
 B22 the largest-candidate switch is ignored: KILLED
 B23 the largest-candidate default is on: KILLED
 B21 a result without an assessment is unsure: KILLED
-21/23 killed
+23/23 killed

@@ -30,7 +30,7 @@ Other numbers reported (no level): BIC-selected K correct 26/48 (easy 18/24, har
 Whether a real person's regime count is 3 (UNKNOWN); how often real fits are "easy" in this sense (UNKNOWN); it shows how often these signals coincide with a wrong BIC choice on this generator.
 
 ## Mutation checks (RUN on the final head)
-`mutation_b3.py` -> `wp9_evidence/mutation_b3.txt`: MUTATION_B3_PLACEHOLDER
+`mutation_b3.py` -> `wp9_evidence/mutation_b3.txt`: **23 of 23 killed** for the pure mutants (`k_adequacy.py`, `alerts.py`, `config.py`) and **5 of 5 killed** for the wiring mutants in `fitting.py` (`wp9_evidence/mutation_b3.txt`, `mutation_b3.txt.wiring`). The first re-run on the final head applied only 21 and killed 21 of 23: B07 and B08 did not apply (their text pattern no longer matched after signal (3) became switchable), and after the pattern repair B08 survived because the single-candidate test relied on a default that had changed to off. The test now switches the signal on explicitly; the re-run killed all 23.
 
 ## Artifacts
 `wp9_evidence/b3_dev_fits.jsonl`, `b3_dev_analysis.txt/.json`, `b3_eval_fits.jsonl` (48 fits), `b3_eval_analysis.txt/.json`, `mutation_b3.txt`; scripts `integration_report/wp9/scripts/b3_run.py`, `b3_analyze.py`, `mutation_b3.py`; tests `tests/test_wp9_b3_k_adequacy.py`.
