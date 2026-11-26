@@ -1,0 +1,51 @@
+B1 EVALUATION: seeds 9601..9624 (24 users), lengths (30, 60, 120), certification margin z = 3.0, stability level 0.25
+
+== length 30: 24 shrink5 fits
+E1 EM-publishable 7/24; eligible for certification 4; certified 0 (0/24 of all, 0/4 of eligible); publishable after 7/24
+   reasons recorded (a fit can have several): {'fit_already_converged': 17, 'other_withhold_reasons': 3, 'too_few_rows': 1, 'gain_not_demonstrated': 3, 'parameters_unstable': 2}
+E2 certified fits: n = 0 (NOT judged: n < 8)
+E3 publishable-after fits: n = 7, gain +1.038 (se 0.324), mean - 3 se +0.066, favouring 7/7 (NOT judged: n < 8)
+E4 risk-coverage: coverage 7/24 = 29%, gain on all 24 users +0.303 (se 0.133), mean - 3 se -0.096
+E5 scrambled: eligible 4, certified 1/24; held-out gain of certified fits: +1.00
+E5 shifted: eligible 3, certified 0/24
+E5 personal: eligible 20, certified 0/24
+
+== length 60: 24 shrink5 fits
+E1 EM-publishable 8/24; eligible for certification 6; certified 4 (4/24 of all, 4/6 of eligible); publishable after 12/24
+   reasons recorded (a fit can have several): {'fit_already_converged': 13, 'other_withhold_reasons': 5, 'gain_not_demonstrated': 1, 'parameters_unstable': 1}
+E2 certified fits: n = 4, gain +1.729 (se 0.126), mean - 3 se +1.350, favouring 4/4 (NOT judged: n < 8)
+E3 publishable-after fits: n = 12, gain +1.377 (se 0.131), mean - 3 se +0.983, favouring 12/12
+E4 risk-coverage: coverage 12/24 = 50%, gain on all 24 users +0.689 (se 0.157), mean - 3 se +0.217
+E5 scrambled: eligible 9, certified 4/24; held-out gain of certified fits: +1.12, +1.59, +2.08, +2.08
+E5 shifted: eligible 3, certified 1/24; held-out gain of certified fits: +1.22
+E5 personal: eligible 19, certified 0/24
+
+== length 120: 24 shrink5 fits
+E1 EM-publishable 9/24; eligible for certification 6; certified 5 (5/24 of all, 5/6 of eligible); publishable after 14/24
+   reasons recorded (a fit can have several): {'fit_already_converged': 16, 'gain_not_demonstrated': 1, 'other_withhold_reasons': 2}
+E2 certified fits: n = 5, gain +1.671 (se 0.138), mean - 3 se +1.257, favouring 5/5 (NOT judged: n < 8)
+E3 publishable-after fits: n = 14, gain +1.542 (se 0.102), mean - 3 se +1.234, favouring 14/14
+E4 risk-coverage: coverage 14/24 = 58%, gain on all 24 users +0.899 (se 0.169), mean - 3 se +0.392
+E5 scrambled: eligible 9, certified 9/24; held-out gain of certified fits: +1.92, +1.62, +1.71, +1.87, +1.19, +2.44, +2.69, +2.00, +1.93
+E5 shifted: eligible 3, certified 2/24; held-out gain of certified fits: +1.28, +1.36
+E5 personal: eligible 17, certified 1/24; held-out gain of certified fits: +1.53
+
+control validity on the evaluation seeds, shared-only score under the scrambled prior minus under the true prior: mean +0.279 nats/step over 72 cells -> NOT a valid control (reported, not judged in the headline E5)
+control validity on the evaluation seeds, shared-only score under the shifted prior minus under the true prior: mean -0.564 nats/step over 72 cells -> NOT a valid control (reported, not judged in the headline E5)
+
+E5 pooled over lengths: shrink5 certified 9/16 = 56% (Wilson 33-77%) of eligible
+   scrambled: certified 14/22 = 64% (Wilson 43-80%) of eligible -> NOT MET  [not a valid control on these seeds: not counted in the headline]
+   shifted: certified 3/9 = 33% (Wilson 12-65%) of eligible -> NOT MET  [not a valid control on these seeds: not counted in the headline]
+   personal: certified 1/56 = 2% (Wilson 0-9%) of eligible -> MET (<= 10% and <= half of shrink5)
+
+E6 certificate precision (all arms): certified fits with a positive held-out gain over the single Gaussian 27/27 = 100% (Wilson 88-100%)
+
+By-product, shrink5 publishable after certification by record length (same seed, longer record):
+   length 30: 7/24 publishable
+   length 60: 12/24 publishable
+   length 120: 14/24 publishable
+   withheld at 30 steps: 17; of these publishable at 60 steps: 6
+   withheld at 30 steps: 17; of these publishable at 120 steps: 9
+
+The cold-start gain on publishable-after fits does not survive (pre-declared sentence: every length judged with n >= 8 and every mean - 3 se > 0: [False, True, True]); on certified fits only: [False, False, False]
+Net deployment gain (risk-coverage) shown: False; controls criterion (headline: valid controls only, Part 5b): MET; over all three controls: NOT MET
