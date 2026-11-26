@@ -1,0 +1,182 @@
+EVALUATION (A3): 1728 fits; users 108; per stratum {'hard': 36, 'medium': 36, 'easy': 36}; frozen operating point {'h': 2.5, 'u': True, 's': 0.95}
+
+== POOLED EVALUATION POPULATION (EVAL + SAFE-EXTRA users; headline for the safety claim and for (a) to (c)) ==
+-- pooled: users 108, accepted refits 972, alignments 972
+   coverage 528/972 = 54.3% (95% CI 51.2-57.4%), wrong-and-unflagged 0/972
+   coverage target >= 80%: NOT MET
+   wrong-and-unflagged target <= 1%: MET
+   (a) names agree when both seeds serve: 233/241 = 96.7% (95% CI 93.6-98.3%)  -> NOT MET (target >= 98%)
+   (b) serve/withhold agreement: 464/540 = 85.9% (95% CI 82.7-88.6%); both serve 241, both withhold 223, exactly one serves 76; where at least one serves: 241/317 = 76.0% (95% CI 71.0-80.4%)
+   (c) days to first served lineage, seed A weekly: n=108: served by day 14 58, by day 28 71, by day 60 76, never 32; median among served 7; censored (never = 61) quartiles 7 / 14 / 61
+       seed B 14-day: n=108: served by day 14 45, by day 28 57, by day 60 70, never 38; median among served 14; censored (never = 61) quartiles 14 / 28 / 61
+   old A1-1 criterion (strict identical lineage among served, target 95%): 233/317 = 73.5% (95% CI 68.4-78.1%)  -> NOT MET
+-- hard: users 36, accepted refits 324, alignments 324
+   coverage 30/324 = 9.3% (95% CI 6.6-12.9%), wrong-and-unflagged 0/324
+   coverage target >= 80%: NOT MET
+   wrong-and-unflagged target <= 1%: MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)
+   (a) names agree when both seeds serve: 8/8 = 100.0% (95% CI 67.6-100.0%)  -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches below the threshold) (target >= 98%)
+   (b) serve/withhold agreement: 171/180 = 95.0% (95% CI 90.8-97.3%); both serve 8, both withhold 163, exactly one serves 9; where at least one serves: 8/17 = 47.1% (95% CI 26.2-69.0%)
+   (c) days to first served lineage, seed A weekly: n=36: served by day 14 2, by day 28 5, by day 60 8, never 28; median among served 21; censored (never = 61) quartiles 61 / 61 / 61
+       seed B 14-day: n=36: served by day 14 2, by day 28 2, by day 60 4, never 32; median among served 14; censored (never = 61) quartiles 61 / 61 / 61
+   old A1-1 criterion (strict identical lineage among served, target 95%): 8/17 = 47.1% (95% CI 26.2-69.0%)  -> NOT MET
+-- medium: users 36, accepted refits 324, alignments 324
+   coverage 221/324 = 68.2% (95% CI 63.0-73.0%), wrong-and-unflagged 0/324
+   coverage target >= 80%: NOT MET
+   wrong-and-unflagged target <= 1%: MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)
+   (a) names agree when both seeds serve: 94/97 = 96.9% (95% CI 91.3-98.9%)  -> NOT MET (target >= 98%)
+   (b) serve/withhold agreement: 141/180 = 78.3% (95% CI 71.8-83.7%); both serve 97, both withhold 44, exactly one serves 39; where at least one serves: 97/136 = 71.3% (95% CI 63.2-78.3%)
+   (c) days to first served lineage, seed A weekly: n=36: served by day 14 24, by day 28 30, by day 60 32, never 4; median among served 7; censored (never = 61) quartiles 7 / 14 / 28
+       seed B 14-day: n=36: served by day 14 15, by day 28 22, by day 60 30, never 6; median among served 14; censored (never = 61) quartiles 14 / 28 / 42
+   old A1-1 criterion (strict identical lineage among served, target 95%): 94/136 = 69.1% (95% CI 60.9-76.3%)  -> NOT MET
+-- easy: users 36, accepted refits 324, alignments 324
+   coverage 277/324 = 85.5% (95% CI 81.2-88.9%), wrong-and-unflagged 0/324
+   coverage target >= 80%: MET
+   wrong-and-unflagged target <= 1%: MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)
+   (a) names agree when both seeds serve: 131/136 = 96.3% (95% CI 91.7-98.4%)  -> NOT MET (target >= 98%)
+   (b) serve/withhold agreement: 152/180 = 84.4% (95% CI 78.4-89.0%); both serve 136, both withhold 16, exactly one serves 28; where at least one serves: 136/164 = 82.9% (95% CI 76.4-87.9%)
+   (c) days to first served lineage, seed A weekly: n=36: served by day 14 32, by day 28 36, by day 60 36, never 0; median among served 7; censored (never = 61) quartiles 7 / 7 / 7
+       seed B 14-day: n=36: served by day 14 28, by day 28 33, by day 60 36, never 0; median among served 14; censored (never = 61) quartiles 14 / 14 / 14
+   old A1-1 criterion (strict identical lineage among served, target 95%): 131/164 = 79.9% (95% CI 73.1-85.3%)  -> NOT MET
+
+== EVAL users only (10101..10148; the 48-user readout, reported beside the pooled one) ==
+-- pooled: users 48, accepted refits 432, alignments 432
+   coverage 247/432 = 57.2% (95% CI 52.5-61.8%), wrong-and-unflagged 0/432
+   coverage target >= 80%: NOT MET
+   wrong-and-unflagged target <= 1%: MET
+   (a) names agree when both seeds serve: 107/110 = 97.3% (95% CI 92.3-99.1%)  -> NOT MET (target >= 98%)
+   (b) serve/withhold agreement: 204/240 = 85.0% (95% CI 79.9-89.0%); both serve 110, both withhold 94, exactly one serves 36; where at least one serves: 110/146 = 75.3% (95% CI 67.8-81.6%)
+   (c) days to first served lineage, seed A weekly: n=48: served by day 14 26, by day 28 32, by day 60 36, never 12; median among served 7; censored (never = 61) quartiles 7 / 14 / 60
+       seed B 14-day: n=48: served by day 14 23, by day 28 25, by day 60 32, never 16; median among served 14; censored (never = 61) quartiles 14 / 28 / 61
+   old A1-1 criterion (strict identical lineage among served, target 95%): 107/146 = 73.3% (95% CI 65.6-79.8%)  -> NOT MET
+-- hard: users 16, accepted refits 144, alignments 144
+   coverage 22/144 = 15.3% (95% CI 10.3-22.0%), wrong-and-unflagged 0/144
+   coverage target >= 80%: NOT MET
+   wrong-and-unflagged target <= 1%: MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)
+   (a) names agree when both seeds serve: 5/5 = 100.0% (95% CI 56.6-100.0%)  -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches below the threshold) (target >= 98%)
+   (b) serve/withhold agreement: 72/80 = 90.0% (95% CI 81.5-94.8%); both serve 5, both withhold 67, exactly one serves 8; where at least one serves: 5/13 = 38.5% (95% CI 17.7-64.5%)
+   (c) days to first served lineage, seed A weekly: n=16: served by day 14 2, by day 28 3, by day 60 6, never 10; median among served 21; censored (never = 61) quartiles 35 / 61 / 61
+       seed B 14-day: n=16: served by day 14 2, by day 28 2, by day 60 3, never 13; median among served 14; censored (never = 61) quartiles 61 / 61 / 61
+   old A1-1 criterion (strict identical lineage among served, target 95%): 5/13 = 38.5% (95% CI 17.7-64.5%)  -> NOT MET
+-- medium: users 16, accepted refits 144, alignments 144
+   coverage 99/144 = 68.8% (95% CI 60.8-75.8%), wrong-and-unflagged 0/144
+   coverage target >= 80%: NOT MET
+   wrong-and-unflagged target <= 1%: MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)
+   (a) names agree when both seeds serve: 38/41 = 92.7% (95% CI 80.6-97.5%)  -> NOT MET (target >= 98%)
+   (b) serve/withhold agreement: 61/80 = 76.2% (95% CI 65.9-84.2%); both serve 41, both withhold 20, exactly one serves 19; where at least one serves: 41/60 = 68.3% (95% CI 55.8-78.7%)
+   (c) days to first served lineage, seed A weekly: n=16: served by day 14 10, by day 28 13, by day 60 14, never 2; median among served 7; censored (never = 61) quartiles 7 / 7 / 28
+       seed B 14-day: n=16: served by day 14 7, by day 28 9, by day 60 13, never 3; median among served 14; censored (never = 61) quartiles 14 / 28 / 56
+   old A1-1 criterion (strict identical lineage among served, target 95%): 38/60 = 63.3% (95% CI 50.7-74.4%)  -> NOT MET
+-- easy: users 16, accepted refits 144, alignments 144
+   coverage 126/144 = 87.5% (95% CI 81.1-91.9%), wrong-and-unflagged 0/144
+   coverage target >= 80%: MET
+   wrong-and-unflagged target <= 1%: MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches above the threshold)
+   (a) names agree when both seeds serve: 64/64 = 100.0% (95% CI 94.3-100.0%)  -> MET on the point estimate, NOT DEMONSTRATED (the 95% interval reaches below the threshold) (target >= 98%)
+   (b) serve/withhold agreement: 71/80 = 88.8% (95% CI 80.0-94.0%); both serve 64, both withhold 7, exactly one serves 9; where at least one serves: 64/73 = 87.7% (95% CI 78.2-93.4%)
+   (c) days to first served lineage, seed A weekly: n=16: served by day 14 14, by day 28 16, by day 60 16, never 0; median among served 7; censored (never = 61) quartiles 7 / 7 / 7
+       seed B 14-day: n=16: served by day 14 14, by day 28 14, by day 60 16, never 0; median among served 14; censored (never = 61) quartiles 14 / 14 / 14
+   old A1-1 criterion (strict identical lineage among served, target 95%): 64/73 = 87.7% (95% CI 78.2-93.4%)  -> NOT MET
+
+== SAFETY DEMONSTRATION (seed-A weekly chains, 10 restarts, the frozen operating point; unit = gate-eligible alignment) ==
+declared test: zero wrong-and-unflagged and the one-sided exact 95% upper bound at most 1% (needs n >= 299; with one wrong n >= 473)
+   pooled : wrong-and-unflagged 0/972; one-sided exact 95% upper bound 0.31%; two-sided Wilson upper 0.39%; 1% bound demonstrated: YES
+   hard   : wrong-and-unflagged 0/324; one-sided exact 95% upper bound 0.92%; two-sided Wilson upper 1.17%; 1% bound demonstrated: YES
+   medium : wrong-and-unflagged 0/324; one-sided exact 95% upper bound 0.92%; two-sided Wilson upper 1.17%; 1% bound demonstrated: YES
+   easy   : wrong-and-unflagged 0/324; one-sided exact 95% upper bound 0.92%; two-sided Wilson upper 1.17%; 1% bound demonstrated: YES
+
+== SECONDARY (reported, no verdict): current default (h = 2.5, flag ON) ==
+-- pooled: users 108, accepted refits 972, alignments 972
+   coverage 528/972 = 54.3% (95% CI 51.2-57.4%), wrong-and-unflagged 0/972
+   (a) names agree when both seeds serve: 233/241 = 96.7% (95% CI 93.6-98.3%)
+   (b) serve/withhold agreement: 464/540 = 85.9% (95% CI 82.7-88.6%); both serve 241, both withhold 223, exactly one serves 76; where at least one serves: 241/317 = 76.0% (95% CI 71.0-80.4%)
+   (c) days to first served lineage, seed A weekly: n=108: served by day 14 58, by day 28 71, by day 60 76, never 32; median among served 7; censored (never = 61) quartiles 7 / 14 / 61
+       seed B 14-day: n=108: served by day 14 45, by day 28 57, by day 60 70, never 38; median among served 14; censored (never = 61) quartiles 14 / 28 / 61
+   old A1-1 criterion (strict identical lineage among served, target 95%): 233/317 = 73.5% (95% CI 68.4-78.1%)
+-- hard: users 36, accepted refits 324, alignments 324
+   coverage 30/324 = 9.3% (95% CI 6.6-12.9%), wrong-and-unflagged 0/324
+   (a) names agree when both seeds serve: 8/8 = 100.0% (95% CI 67.6-100.0%)
+   (b) serve/withhold agreement: 171/180 = 95.0% (95% CI 90.8-97.3%); both serve 8, both withhold 163, exactly one serves 9; where at least one serves: 8/17 = 47.1% (95% CI 26.2-69.0%)
+   (c) days to first served lineage, seed A weekly: n=36: served by day 14 2, by day 28 5, by day 60 8, never 28; median among served 21; censored (never = 61) quartiles 61 / 61 / 61
+       seed B 14-day: n=36: served by day 14 2, by day 28 2, by day 60 4, never 32; median among served 14; censored (never = 61) quartiles 61 / 61 / 61
+   old A1-1 criterion (strict identical lineage among served, target 95%): 8/17 = 47.1% (95% CI 26.2-69.0%)
+-- medium: users 36, accepted refits 324, alignments 324
+   coverage 221/324 = 68.2% (95% CI 63.0-73.0%), wrong-and-unflagged 0/324
+   (a) names agree when both seeds serve: 94/97 = 96.9% (95% CI 91.3-98.9%)
+   (b) serve/withhold agreement: 141/180 = 78.3% (95% CI 71.8-83.7%); both serve 97, both withhold 44, exactly one serves 39; where at least one serves: 97/136 = 71.3% (95% CI 63.2-78.3%)
+   (c) days to first served lineage, seed A weekly: n=36: served by day 14 24, by day 28 30, by day 60 32, never 4; median among served 7; censored (never = 61) quartiles 7 / 14 / 28
+       seed B 14-day: n=36: served by day 14 15, by day 28 22, by day 60 30, never 6; median among served 14; censored (never = 61) quartiles 14 / 28 / 42
+   old A1-1 criterion (strict identical lineage among served, target 95%): 94/136 = 69.1% (95% CI 60.9-76.3%)
+-- easy: users 36, accepted refits 324, alignments 324
+   coverage 277/324 = 85.5% (95% CI 81.2-88.9%), wrong-and-unflagged 0/324
+   (a) names agree when both seeds serve: 131/136 = 96.3% (95% CI 91.7-98.4%)
+   (b) serve/withhold agreement: 152/180 = 84.4% (95% CI 78.4-89.0%); both serve 136, both withhold 16, exactly one serves 28; where at least one serves: 136/164 = 82.9% (95% CI 76.4-87.9%)
+   (c) days to first served lineage, seed A weekly: n=36: served by day 14 32, by day 28 36, by day 60 36, never 0; median among served 7; censored (never = 61) quartiles 7 / 7 / 7
+       seed B 14-day: n=36: served by day 14 28, by day 28 33, by day 60 36, never 0; median among served 14; censored (never = 61) quartiles 14 / 14 / 14
+   old A1-1 criterion (strict identical lineage among served, target 95%): 131/164 = 79.9% (95% CI 73.1-85.3%)
+
+== SECONDARY (reported, no verdict): flag OFF at the chosen h = 2.5 ==
+-- pooled: users 108, accepted refits 972, alignments 972
+   coverage 679/972 = 69.9% (95% CI 66.9-72.7%), wrong-and-unflagged 1/972
+   (a) names agree when both seeds serve: 334/363 = 92.0% (95% CI 88.8-94.4%)
+   (b) serve/withhold agreement: 517/540 = 95.7% (95% CI 93.7-97.1%); both serve 363, both withhold 154, exactly one serves 23; where at least one serves: 363/386 = 94.0% (95% CI 91.2-96.0%)
+   (c) days to first served lineage, seed A weekly: n=108: served by day 14 79, by day 28 80, by day 60 80, never 28; median among served 7; censored (never = 61) quartiles 7 / 7 / 61
+       seed B 14-day: n=108: served by day 14 75, by day 28 76, by day 60 76, never 32; median among served 14; censored (never = 61) quartiles 14 / 14 / 61
+   old A1-1 criterion (strict identical lineage among served, target 95%): 334/386 = 86.5% (95% CI 82.8-89.6%)
+-- hard: users 36, accepted refits 324, alignments 324
+   coverage 65/324 = 20.1% (95% CI 16.1-24.8%), wrong-and-unflagged 0/324
+   (a) names agree when both seeds serve: 24/33 = 72.7% (95% CI 55.8-84.9%)
+   (b) serve/withhold agreement: 171/180 = 95.0% (95% CI 90.8-97.3%); both serve 33, both withhold 138, exactly one serves 9; where at least one serves: 33/42 = 78.6% (95% CI 64.1-88.3%)
+   (c) days to first served lineage, seed A weekly: n=36: served by day 14 10, by day 28 11, by day 60 11, never 25; median among served 7; censored (never = 61) quartiles 14 / 61 / 61
+       seed B 14-day: n=36: served by day 14 8, by day 28 9, by day 60 9, never 27; median among served 14; censored (never = 61) quartiles 28 / 61 / 61
+   old A1-1 criterion (strict identical lineage among served, target 95%): 24/42 = 57.1% (95% CI 42.2-70.9%)
+-- medium: users 36, accepted refits 324, alignments 324
+   coverage 299/324 = 92.3% (95% CI 88.9-94.7%), wrong-and-unflagged 1/324
+   (a) names agree when both seeds serve: 140/155 = 90.3% (95% CI 84.6-94.0%)
+   (b) serve/withhold agreement: 166/180 = 92.2% (95% CI 87.4-95.3%); both serve 155, both withhold 11, exactly one serves 14; where at least one serves: 155/169 = 91.7% (95% CI 86.6-95.0%)
+   (c) days to first served lineage, seed A weekly: n=36: served by day 14 34, by day 28 34, by day 60 34, never 2; median among served 7; censored (never = 61) quartiles 7 / 7 / 7
+       seed B 14-day: n=36: served by day 14 32, by day 28 32, by day 60 32, never 4; median among served 14; censored (never = 61) quartiles 14 / 14 / 14
+   old A1-1 criterion (strict identical lineage among served, target 95%): 140/169 = 82.8% (95% CI 76.4-87.8%)
+-- easy: users 36, accepted refits 324, alignments 324
+   coverage 315/324 = 97.2% (95% CI 94.8-98.5%), wrong-and-unflagged 0/324
+   (a) names agree when both seeds serve: 170/175 = 97.1% (95% CI 93.5-98.8%)
+   (b) serve/withhold agreement: 180/180 = 100.0% (95% CI 97.9-100.0%); both serve 175, both withhold 5, exactly one serves 0; where at least one serves: 175/175 = 100.0% (95% CI 97.9-100.0%)
+   (c) days to first served lineage, seed A weekly: n=36: served by day 14 35, by day 28 35, by day 60 35, never 1; median among served 7; censored (never = 61) quartiles 7 / 7 / 7
+       seed B 14-day: n=36: served by day 14 35, by day 28 35, by day 60 35, never 1; median among served 14; censored (never = 61) quartiles 14 / 14 / 14
+   old A1-1 criterion (strict identical lineage among served, target 95%): 170/175 = 97.1% (95% CI 93.5-98.8%)
+
+== SECONDARY (reported, no verdict): flag OFF at h = 2.5 ==
+-- pooled: users 108, accepted refits 972, alignments 972
+   coverage 679/972 = 69.9% (95% CI 66.9-72.7%), wrong-and-unflagged 1/972
+   (a) names agree when both seeds serve: 334/363 = 92.0% (95% CI 88.8-94.4%)
+   (b) serve/withhold agreement: 517/540 = 95.7% (95% CI 93.7-97.1%); both serve 363, both withhold 154, exactly one serves 23; where at least one serves: 363/386 = 94.0% (95% CI 91.2-96.0%)
+   (c) days to first served lineage, seed A weekly: n=108: served by day 14 79, by day 28 80, by day 60 80, never 28; median among served 7; censored (never = 61) quartiles 7 / 7 / 61
+       seed B 14-day: n=108: served by day 14 75, by day 28 76, by day 60 76, never 32; median among served 14; censored (never = 61) quartiles 14 / 14 / 61
+   old A1-1 criterion (strict identical lineage among served, target 95%): 334/386 = 86.5% (95% CI 82.8-89.6%)
+-- hard: users 36, accepted refits 324, alignments 324
+   coverage 65/324 = 20.1% (95% CI 16.1-24.8%), wrong-and-unflagged 0/324
+   (a) names agree when both seeds serve: 24/33 = 72.7% (95% CI 55.8-84.9%)
+   (b) serve/withhold agreement: 171/180 = 95.0% (95% CI 90.8-97.3%); both serve 33, both withhold 138, exactly one serves 9; where at least one serves: 33/42 = 78.6% (95% CI 64.1-88.3%)
+   (c) days to first served lineage, seed A weekly: n=36: served by day 14 10, by day 28 11, by day 60 11, never 25; median among served 7; censored (never = 61) quartiles 14 / 61 / 61
+       seed B 14-day: n=36: served by day 14 8, by day 28 9, by day 60 9, never 27; median among served 14; censored (never = 61) quartiles 28 / 61 / 61
+   old A1-1 criterion (strict identical lineage among served, target 95%): 24/42 = 57.1% (95% CI 42.2-70.9%)
+-- medium: users 36, accepted refits 324, alignments 324
+   coverage 299/324 = 92.3% (95% CI 88.9-94.7%), wrong-and-unflagged 1/324
+   (a) names agree when both seeds serve: 140/155 = 90.3% (95% CI 84.6-94.0%)
+   (b) serve/withhold agreement: 166/180 = 92.2% (95% CI 87.4-95.3%); both serve 155, both withhold 11, exactly one serves 14; where at least one serves: 155/169 = 91.7% (95% CI 86.6-95.0%)
+   (c) days to first served lineage, seed A weekly: n=36: served by day 14 34, by day 28 34, by day 60 34, never 2; median among served 7; censored (never = 61) quartiles 7 / 7 / 7
+       seed B 14-day: n=36: served by day 14 32, by day 28 32, by day 60 32, never 4; median among served 14; censored (never = 61) quartiles 14 / 14 / 14
+   old A1-1 criterion (strict identical lineage among served, target 95%): 140/169 = 82.8% (95% CI 76.4-87.8%)
+-- easy: users 36, accepted refits 324, alignments 324
+   coverage 315/324 = 97.2% (95% CI 94.8-98.5%), wrong-and-unflagged 0/324
+   (a) names agree when both seeds serve: 170/175 = 97.1% (95% CI 93.5-98.8%)
+   (b) serve/withhold agreement: 180/180 = 100.0% (95% CI 97.9-100.0%); both serve 175, both withhold 5, exactly one serves 0; where at least one serves: 175/175 = 100.0% (95% CI 97.9-100.0%)
+   (c) days to first served lineage, seed A weekly: n=36: served by day 14 35, by day 28 35, by day 60 35, never 1; median among served 7; censored (never = 61) quartiles 7 / 7 / 7
+       seed B 14-day: n=36: served by day 14 35, by day 28 35, by day 60 35, never 1; median among served 14; censored (never = 61) quartiles 14 / 14 / 14
+   old A1-1 criterion (strict identical lineage among served, target 95%): 170/175 = 97.1% (95% CI 93.5-98.8%)
+
+== curve over the six candidates on the pooled evaluation population (REPORTED; nothing is chosen from it) ==
+   flag ON  h = 2.0 : pooled coverage 535/972 = 55.0% (95% CI 51.9-58.1%), wrong-and-unflagged 0/972 | hard 36/324 w0 | medium 222/324 w0 | easy 277/324 w0
+   flag ON  h = 2.25: pooled coverage 532/972 = 54.7% (95% CI 51.6-57.8%), wrong-and-unflagged 0/972 | hard 33/324 w0 | medium 222/324 w0 | easy 277/324 w0
+   flag ON  h = 2.5 : pooled coverage 528/972 = 54.3% (95% CI 51.2-57.4%), wrong-and-unflagged 0/972 | hard 30/324 w0 | medium 221/324 w0 | easy 277/324 w0
+   flag OFF h = 2.0 : pooled coverage 795/972 = 81.8% (95% CI 79.2-84.1%), wrong-and-unflagged 33/972 | hard 174/324 w32 | medium 306/324 w1 | easy 315/324 w0
+   flag OFF h = 2.25: pooled coverage 716/972 = 73.7% (95% CI 70.8-76.3%), wrong-and-unflagged 7/972 | hard 95/324 w6 | medium 306/324 w1 | easy 315/324 w0
+   flag OFF h = 2.5 : pooled coverage 679/972 = 69.9% (95% CI 66.9-72.7%), wrong-and-unflagged 1/972 | hard 65/324 w0 | medium 299/324 w1 | easy 315/324 w0

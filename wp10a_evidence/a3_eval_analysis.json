@@ -1,0 +1,1325 @@
+{
+ "gate": {
+  "h": 2.5,
+  "u": true,
+  "s": 0.95
+ },
+ "safety": {
+  "pooled": {
+   "n": 972,
+   "wrong": 0,
+   "exact_upper": 0.0030772845119276804,
+   "wilson_upper": 0.003936560438516156,
+   "demonstrated": true
+  },
+  "hard": {
+   "n": 324,
+   "wrong": 0,
+   "exact_upper": 0.009203473636780313,
+   "wilson_upper": 0.011717428583939121,
+   "demonstrated": true
+  },
+  "medium": {
+   "n": 324,
+   "wrong": 0,
+   "exact_upper": 0.009203473636780313,
+   "wilson_upper": 0.011717428583939121,
+   "demonstrated": true
+  },
+  "easy": {
+   "n": 324,
+   "wrong": 0,
+   "exact_upper": 0.009203473636780313,
+   "wilson_upper": 0.011717428583939121,
+   "demonstrated": true
+  }
+ },
+ "curve": {
+  "u=1,h=2.0": {
+   "pooled": {
+    "alignments": 972,
+    "served": 535,
+    "served_correct": 535,
+    "wrong_unflagged": 0,
+    "flagged": 437,
+    "flagged_would_be_wrong": 150,
+    "flagged_would_be_right": 287,
+    "cond_alignments": 826,
+    "cond_correct": 822,
+    "steps": 1080,
+    "k_changed": 0,
+    "refits": 972
+   },
+   "hard": {
+    "alignments": 324,
+    "served": 36,
+    "served_correct": 36,
+    "wrong_unflagged": 0,
+    "flagged": 288,
+    "flagged_would_be_wrong": 139,
+    "flagged_would_be_right": 149,
+    "cond_alignments": 188,
+    "cond_correct": 185,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   },
+   "medium": {
+    "alignments": 324,
+    "served": 222,
+    "served_correct": 222,
+    "wrong_unflagged": 0,
+    "flagged": 102,
+    "flagged_would_be_wrong": 9,
+    "flagged_would_be_right": 93,
+    "cond_alignments": 316,
+    "cond_correct": 315,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   },
+   "easy": {
+    "alignments": 324,
+    "served": 277,
+    "served_correct": 277,
+    "wrong_unflagged": 0,
+    "flagged": 47,
+    "flagged_would_be_wrong": 2,
+    "flagged_would_be_right": 45,
+    "cond_alignments": 322,
+    "cond_correct": 322,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   }
+  },
+  "u=1,h=2.25": {
+   "pooled": {
+    "alignments": 972,
+    "served": 532,
+    "served_correct": 532,
+    "wrong_unflagged": 0,
+    "flagged": 440,
+    "flagged_would_be_wrong": 150,
+    "flagged_would_be_right": 290,
+    "cond_alignments": 826,
+    "cond_correct": 822,
+    "steps": 1080,
+    "k_changed": 0,
+    "refits": 972
+   },
+   "hard": {
+    "alignments": 324,
+    "served": 33,
+    "served_correct": 33,
+    "wrong_unflagged": 0,
+    "flagged": 291,
+    "flagged_would_be_wrong": 139,
+    "flagged_would_be_right": 152,
+    "cond_alignments": 188,
+    "cond_correct": 185,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   },
+   "medium": {
+    "alignments": 324,
+    "served": 222,
+    "served_correct": 222,
+    "wrong_unflagged": 0,
+    "flagged": 102,
+    "flagged_would_be_wrong": 9,
+    "flagged_would_be_right": 93,
+    "cond_alignments": 316,
+    "cond_correct": 315,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   },
+   "easy": {
+    "alignments": 324,
+    "served": 277,
+    "served_correct": 277,
+    "wrong_unflagged": 0,
+    "flagged": 47,
+    "flagged_would_be_wrong": 2,
+    "flagged_would_be_right": 45,
+    "cond_alignments": 322,
+    "cond_correct": 322,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   }
+  },
+  "u=1,h=2.5": {
+   "pooled": {
+    "alignments": 972,
+    "served": 528,
+    "served_correct": 528,
+    "wrong_unflagged": 0,
+    "flagged": 444,
+    "flagged_would_be_wrong": 150,
+    "flagged_would_be_right": 294,
+    "cond_alignments": 826,
+    "cond_correct": 822,
+    "steps": 1080,
+    "k_changed": 0,
+    "refits": 972
+   },
+   "hard": {
+    "alignments": 324,
+    "served": 30,
+    "served_correct": 30,
+    "wrong_unflagged": 0,
+    "flagged": 294,
+    "flagged_would_be_wrong": 139,
+    "flagged_would_be_right": 155,
+    "cond_alignments": 188,
+    "cond_correct": 185,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   },
+   "medium": {
+    "alignments": 324,
+    "served": 221,
+    "served_correct": 221,
+    "wrong_unflagged": 0,
+    "flagged": 103,
+    "flagged_would_be_wrong": 9,
+    "flagged_would_be_right": 94,
+    "cond_alignments": 316,
+    "cond_correct": 315,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   },
+   "easy": {
+    "alignments": 324,
+    "served": 277,
+    "served_correct": 277,
+    "wrong_unflagged": 0,
+    "flagged": 47,
+    "flagged_would_be_wrong": 2,
+    "flagged_would_be_right": 45,
+    "cond_alignments": 322,
+    "cond_correct": 322,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   }
+  },
+  "u=0,h=2.0": {
+   "pooled": {
+    "alignments": 972,
+    "served": 795,
+    "served_correct": 762,
+    "wrong_unflagged": 33,
+    "flagged": 177,
+    "flagged_would_be_wrong": 116,
+    "flagged_would_be_right": 61,
+    "cond_alignments": 832,
+    "cond_correct": 823,
+    "steps": 1080,
+    "k_changed": 0,
+    "refits": 972
+   },
+   "hard": {
+    "alignments": 324,
+    "served": 174,
+    "served_correct": 142,
+    "wrong_unflagged": 32,
+    "flagged": 150,
+    "flagged_would_be_wrong": 98,
+    "flagged_would_be_right": 52,
+    "cond_alignments": 203,
+    "cond_correct": 194,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   },
+   "medium": {
+    "alignments": 324,
+    "served": 306,
+    "served_correct": 305,
+    "wrong_unflagged": 1,
+    "flagged": 18,
+    "flagged_would_be_wrong": 9,
+    "flagged_would_be_right": 9,
+    "cond_alignments": 314,
+    "cond_correct": 314,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   },
+   "easy": {
+    "alignments": 324,
+    "served": 315,
+    "served_correct": 315,
+    "wrong_unflagged": 0,
+    "flagged": 9,
+    "flagged_would_be_wrong": 9,
+    "flagged_would_be_right": 0,
+    "cond_alignments": 315,
+    "cond_correct": 315,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   }
+  },
+  "u=0,h=2.25": {
+   "pooled": {
+    "alignments": 972,
+    "served": 716,
+    "served_correct": 709,
+    "wrong_unflagged": 7,
+    "flagged": 256,
+    "flagged_would_be_wrong": 161,
+    "flagged_would_be_right": 95,
+    "cond_alignments": 813,
+    "cond_correct": 804,
+    "steps": 1080,
+    "k_changed": 0,
+    "refits": 972
+   },
+   "hard": {
+    "alignments": 324,
+    "served": 95,
+    "served_correct": 89,
+    "wrong_unflagged": 6,
+    "flagged": 229,
+    "flagged_would_be_wrong": 143,
+    "flagged_would_be_right": 86,
+    "cond_alignments": 184,
+    "cond_correct": 175,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   },
+   "medium": {
+    "alignments": 324,
+    "served": 306,
+    "served_correct": 305,
+    "wrong_unflagged": 1,
+    "flagged": 18,
+    "flagged_would_be_wrong": 9,
+    "flagged_would_be_right": 9,
+    "cond_alignments": 314,
+    "cond_correct": 314,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   },
+   "easy": {
+    "alignments": 324,
+    "served": 315,
+    "served_correct": 315,
+    "wrong_unflagged": 0,
+    "flagged": 9,
+    "flagged_would_be_wrong": 9,
+    "flagged_would_be_right": 0,
+    "cond_alignments": 315,
+    "cond_correct": 315,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   }
+  },
+  "u=0,h=2.5": {
+   "pooled": {
+    "alignments": 972,
+    "served": 679,
+    "served_correct": 678,
+    "wrong_unflagged": 1,
+    "flagged": 293,
+    "flagged_would_be_wrong": 167,
+    "flagged_would_be_right": 126,
+    "cond_alignments": 811,
+    "cond_correct": 804,
+    "steps": 1080,
+    "k_changed": 0,
+    "refits": 972
+   },
+   "hard": {
+    "alignments": 324,
+    "served": 65,
+    "served_correct": 65,
+    "wrong_unflagged": 0,
+    "flagged": 259,
+    "flagged_would_be_wrong": 149,
+    "flagged_would_be_right": 110,
+    "cond_alignments": 182,
+    "cond_correct": 175,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   },
+   "medium": {
+    "alignments": 324,
+    "served": 299,
+    "served_correct": 298,
+    "wrong_unflagged": 1,
+    "flagged": 25,
+    "flagged_would_be_wrong": 9,
+    "flagged_would_be_right": 16,
+    "cond_alignments": 314,
+    "cond_correct": 314,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   },
+   "easy": {
+    "alignments": 324,
+    "served": 315,
+    "served_correct": 315,
+    "wrong_unflagged": 0,
+    "flagged": 9,
+    "flagged_would_be_wrong": 9,
+    "flagged_would_be_right": 0,
+    "cond_alignments": 315,
+    "cond_correct": 315,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   }
+  }
+ },
+ "headline": {
+  "pooled": {
+   "tally": {
+    "alignments": 972,
+    "served": 528,
+    "served_correct": 528,
+    "wrong_unflagged": 0,
+    "flagged": 444,
+    "flagged_would_be_wrong": 150,
+    "flagged_would_be_right": 294,
+    "cond_alignments": 826,
+    "cond_correct": 822,
+    "steps": 1080,
+    "k_changed": 0,
+    "refits": 972
+   },
+   "names": [
+    233,
+    241
+   ],
+   "serve": {
+    "cases": 540,
+    "both_serve": 241,
+    "both_withhold": 223,
+    "one_serves": 76,
+    "agree": 464,
+    "agree_where_either_serves": [
+     241,
+     317
+    ]
+   },
+   "strict": [
+    233,
+    317
+   ],
+   "days_A": {
+    "n": 108,
+    "served_by_14": 58,
+    "served_by_28": 71,
+    "served_by_60": 76,
+    "never": 32,
+    "median_among_served": 7,
+    "q25_censored": 7,
+    "median_censored": 14,
+    "q75_censored": 61
+   },
+   "days_B": {
+    "n": 108,
+    "served_by_14": 45,
+    "served_by_28": 57,
+    "served_by_60": 70,
+    "never": 38,
+    "median_among_served": 14,
+    "q25_censored": 14,
+    "median_censored": 28,
+    "q75_censored": 61
+   },
+   "users": 108
+  },
+  "hard": {
+   "tally": {
+    "alignments": 324,
+    "served": 30,
+    "served_correct": 30,
+    "wrong_unflagged": 0,
+    "flagged": 294,
+    "flagged_would_be_wrong": 139,
+    "flagged_would_be_right": 155,
+    "cond_alignments": 188,
+    "cond_correct": 185,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   },
+   "names": [
+    8,
+    8
+   ],
+   "serve": {
+    "cases": 180,
+    "both_serve": 8,
+    "both_withhold": 163,
+    "one_serves": 9,
+    "agree": 171,
+    "agree_where_either_serves": [
+     8,
+     17
+    ]
+   },
+   "strict": [
+    8,
+    17
+   ],
+   "days_A": {
+    "n": 36,
+    "served_by_14": 2,
+    "served_by_28": 5,
+    "served_by_60": 8,
+    "never": 28,
+    "median_among_served": 21,
+    "q25_censored": 61,
+    "median_censored": 61,
+    "q75_censored": 61
+   },
+   "days_B": {
+    "n": 36,
+    "served_by_14": 2,
+    "served_by_28": 2,
+    "served_by_60": 4,
+    "never": 32,
+    "median_among_served": 14,
+    "q25_censored": 61,
+    "median_censored": 61,
+    "q75_censored": 61
+   },
+   "users": 36
+  },
+  "medium": {
+   "tally": {
+    "alignments": 324,
+    "served": 221,
+    "served_correct": 221,
+    "wrong_unflagged": 0,
+    "flagged": 103,
+    "flagged_would_be_wrong": 9,
+    "flagged_would_be_right": 94,
+    "cond_alignments": 316,
+    "cond_correct": 315,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   },
+   "names": [
+    94,
+    97
+   ],
+   "serve": {
+    "cases": 180,
+    "both_serve": 97,
+    "both_withhold": 44,
+    "one_serves": 39,
+    "agree": 141,
+    "agree_where_either_serves": [
+     97,
+     136
+    ]
+   },
+   "strict": [
+    94,
+    136
+   ],
+   "days_A": {
+    "n": 36,
+    "served_by_14": 24,
+    "served_by_28": 30,
+    "served_by_60": 32,
+    "never": 4,
+    "median_among_served": 7,
+    "q25_censored": 7,
+    "median_censored": 14,
+    "q75_censored": 28
+   },
+   "days_B": {
+    "n": 36,
+    "served_by_14": 15,
+    "served_by_28": 22,
+    "served_by_60": 30,
+    "never": 6,
+    "median_among_served": 14,
+    "q25_censored": 14,
+    "median_censored": 28,
+    "q75_censored": 42
+   },
+   "users": 36
+  },
+  "easy": {
+   "tally": {
+    "alignments": 324,
+    "served": 277,
+    "served_correct": 277,
+    "wrong_unflagged": 0,
+    "flagged": 47,
+    "flagged_would_be_wrong": 2,
+    "flagged_would_be_right": 45,
+    "cond_alignments": 322,
+    "cond_correct": 322,
+    "steps": 360,
+    "k_changed": 0,
+    "refits": 324
+   },
+   "names": [
+    131,
+    136
+   ],
+   "serve": {
+    "cases": 180,
+    "both_serve": 136,
+    "both_withhold": 16,
+    "one_serves": 28,
+    "agree": 152,
+    "agree_where_either_serves": [
+     136,
+     164
+    ]
+   },
+   "strict": [
+    131,
+    164
+   ],
+   "days_A": {
+    "n": 36,
+    "served_by_14": 32,
+    "served_by_28": 36,
+    "served_by_60": 36,
+    "never": 0,
+    "median_among_served": 7,
+    "q25_censored": 7,
+    "median_censored": 7,
+    "q75_censored": 7
+   },
+   "days_B": {
+    "n": 36,
+    "served_by_14": 28,
+    "served_by_28": 33,
+    "served_by_60": 36,
+    "never": 0,
+    "median_among_served": 14,
+    "q25_censored": 14,
+    "median_censored": 14,
+    "q75_censored": 14
+   },
+   "users": 36
+  }
+ },
+ "secondary": {
+  "current default (h = 2.5, flag ON)": {
+   "pooled": {
+    "tally": {
+     "alignments": 972,
+     "served": 528,
+     "served_correct": 528,
+     "wrong_unflagged": 0,
+     "flagged": 444,
+     "flagged_would_be_wrong": 150,
+     "flagged_would_be_right": 294,
+     "cond_alignments": 826,
+     "cond_correct": 822,
+     "steps": 1080,
+     "k_changed": 0,
+     "refits": 972
+    },
+    "names": [
+     233,
+     241
+    ],
+    "serve": {
+     "cases": 540,
+     "both_serve": 241,
+     "both_withhold": 223,
+     "one_serves": 76,
+     "agree": 464,
+     "agree_where_either_serves": [
+      241,
+      317
+     ]
+    },
+    "strict": [
+     233,
+     317
+    ],
+    "days_A": {
+     "n": 108,
+     "served_by_14": 58,
+     "served_by_28": 71,
+     "served_by_60": 76,
+     "never": 32,
+     "median_among_served": 7,
+     "q25_censored": 7,
+     "median_censored": 14,
+     "q75_censored": 61
+    },
+    "days_B": {
+     "n": 108,
+     "served_by_14": 45,
+     "served_by_28": 57,
+     "served_by_60": 70,
+     "never": 38,
+     "median_among_served": 14,
+     "q25_censored": 14,
+     "median_censored": 28,
+     "q75_censored": 61
+    },
+    "users": 108
+   },
+   "hard": {
+    "tally": {
+     "alignments": 324,
+     "served": 30,
+     "served_correct": 30,
+     "wrong_unflagged": 0,
+     "flagged": 294,
+     "flagged_would_be_wrong": 139,
+     "flagged_would_be_right": 155,
+     "cond_alignments": 188,
+     "cond_correct": 185,
+     "steps": 360,
+     "k_changed": 0,
+     "refits": 324
+    },
+    "names": [
+     8,
+     8
+    ],
+    "serve": {
+     "cases": 180,
+     "both_serve": 8,
+     "both_withhold": 163,
+     "one_serves": 9,
+     "agree": 171,
+     "agree_where_either_serves": [
+      8,
+      17
+     ]
+    },
+    "strict": [
+     8,
+     17
+    ],
+    "days_A": {
+     "n": 36,
+     "served_by_14": 2,
+     "served_by_28": 5,
+     "served_by_60": 8,
+     "never": 28,
+     "median_among_served": 21,
+     "q25_censored": 61,
+     "median_censored": 61,
+     "q75_censored": 61
+    },
+    "days_B": {
+     "n": 36,
+     "served_by_14": 2,
+     "served_by_28": 2,
+     "served_by_60": 4,
+     "never": 32,
+     "median_among_served": 14,
+     "q25_censored": 61,
+     "median_censored": 61,
+     "q75_censored": 61
+    },
+    "users": 36
+   },
+   "medium": {
+    "tally": {
+     "alignments": 324,
+     "served": 221,
+     "served_correct": 221,
+     "wrong_unflagged": 0,
+     "flagged": 103,
+     "flagged_would_be_wrong": 9,
+     "flagged_would_be_right": 94,
+     "cond_alignments": 316,
+     "cond_correct": 315,
+     "steps": 360,
+     "k_changed": 0,
+     "refits": 324
+    },
+    "names": [
+     94,
+     97
+    ],
+    "serve": {
+     "cases": 180,
+     "both_serve": 97,
+     "both_withhold": 44,
+     "one_serves": 39,
+     "agree": 141,
+     "agree_where_either_serves": [
+      97,
+      136
+     ]
+    },
+    "strict": [
+     94,
+     136
+    ],
+    "days_A": {
+     "n": 36,
+     "served_by_14": 24,
+     "served_by_28": 30,
+     "served_by_60": 32,
+     "never": 4,
+     "median_among_served": 7,
+     "q25_censored": 7,
+     "median_censored": 14,
+     "q75_censored": 28
+    },
+    "days_B": {
+     "n": 36,
+     "served_by_14": 15,
+     "served_by_28": 22,
+     "served_by_60": 30,
+     "never": 6,
+     "median_among_served": 14,
+     "q25_censored": 14,
+     "median_censored": 28,
+     "q75_censored": 42
+    },
+    "users": 36
+   },
+   "easy": {
+    "tally": {
+     "alignments": 324,
+     "served": 277,
+     "served_correct": 277,
+     "wrong_unflagged": 0,
+     "flagged": 47,
+     "flagged_would_be_wrong": 2,
+     "flagged_would_be_right": 45,
+     "cond_alignments": 322,
+     "cond_correct": 322,
+     "steps": 360,
+     "k_changed": 0,
+     "refits": 324
+    },
+    "names": [
+     131,
+     136
+    ],
+    "serve": {
+     "cases": 180,
+     "both_serve": 136,
+     "both_withhold": 16,
+     "one_serves": 28,
+     "agree": 152,
+     "agree_where_either_serves": [
+      136,
+      164
+     ]
+    },
+    "strict": [
+     131,
+     164
+    ],
+    "days_A": {
+     "n": 36,
+     "served_by_14": 32,
+     "served_by_28": 36,
+     "served_by_60": 36,
+     "never": 0,
+     "median_among_served": 7,
+     "q25_censored": 7,
+     "median_censored": 7,
+     "q75_censored": 7
+    },
+    "days_B": {
+     "n": 36,
+     "served_by_14": 28,
+     "served_by_28": 33,
+     "served_by_60": 36,
+     "never": 0,
+     "median_among_served": 14,
+     "q25_censored": 14,
+     "median_censored": 14,
+     "q75_censored": 14
+    },
+    "users": 36
+   }
+  },
+  "flag OFF at the chosen h = 2.5": {
+   "pooled": {
+    "tally": {
+     "alignments": 972,
+     "served": 679,
+     "served_correct": 678,
+     "wrong_unflagged": 1,
+     "flagged": 293,
+     "flagged_would_be_wrong": 167,
+     "flagged_would_be_right": 126,
+     "cond_alignments": 811,
+     "cond_correct": 804,
+     "steps": 1080,
+     "k_changed": 0,
+     "refits": 972
+    },
+    "names": [
+     334,
+     363
+    ],
+    "serve": {
+     "cases": 540,
+     "both_serve": 363,
+     "both_withhold": 154,
+     "one_serves": 23,
+     "agree": 517,
+     "agree_where_either_serves": [
+      363,
+      386
+     ]
+    },
+    "strict": [
+     334,
+     386
+    ],
+    "days_A": {
+     "n": 108,
+     "served_by_14": 79,
+     "served_by_28": 80,
+     "served_by_60": 80,
+     "never": 28,
+     "median_among_served": 7,
+     "q25_censored": 7,
+     "median_censored": 7,
+     "q75_censored": 61
+    },
+    "days_B": {
+     "n": 108,
+     "served_by_14": 75,
+     "served_by_28": 76,
+     "served_by_60": 76,
+     "never": 32,
+     "median_among_served": 14,
+     "q25_censored": 14,
+     "median_censored": 14,
+     "q75_censored": 61
+    },
+    "users": 108
+   },
+   "hard": {
+    "tally": {
+     "alignments": 324,
+     "served": 65,
+     "served_correct": 65,
+     "wrong_unflagged": 0,
+     "flagged": 259,
+     "flagged_would_be_wrong": 149,
+     "flagged_would_be_right": 110,
+     "cond_alignments": 182,
+     "cond_correct": 175,
+     "steps": 360,
+     "k_changed": 0,
+     "refits": 324
+    },
+    "names": [
+     24,
+     33
+    ],
+    "serve": {
+     "cases": 180,
+     "both_serve": 33,
+     "both_withhold": 138,
+     "one_serves": 9,
+     "agree": 171,
+     "agree_where_either_serves": [
+      33,
+      42
+     ]
+    },
+    "strict": [
+     24,
+     42
+    ],
+    "days_A": {
+     "n": 36,
+     "served_by_14": 10,
+     "served_by_28": 11,
+     "served_by_60": 11,
+     "never": 25,
+     "median_among_served": 7,
+     "q25_censored": 14,
+     "median_censored": 61,
+     "q75_censored": 61
+    },
+    "days_B": {
+     "n": 36,
+     "served_by_14": 8,
+     "served_by_28": 9,
+     "served_by_60": 9,
+     "never": 27,
+     "median_among_served": 14,
+     "q25_censored": 28,
+     "median_censored": 61,
+     "q75_censored": 61
+    },
+    "users": 36
+   },
+   "medium": {
+    "tally": {
+     "alignments": 324,
+     "served": 299,
+     "served_correct": 298,
+     "wrong_unflagged": 1,
+     "flagged": 25,
+     "flagged_would_be_wrong": 9,
+     "flagged_would_be_right": 16,
+     "cond_alignments": 314,
+     "cond_correct": 314,
+     "steps": 360,
+     "k_changed": 0,
+     "refits": 324
+    },
+    "names": [
+     140,
+     155
+    ],
+    "serve": {
+     "cases": 180,
+     "both_serve": 155,
+     "both_withhold": 11,
+     "one_serves": 14,
+     "agree": 166,
+     "agree_where_either_serves": [
+      155,
+      169
+     ]
+    },
+    "strict": [
+     140,
+     169
+    ],
+    "days_A": {
+     "n": 36,
+     "served_by_14": 34,
+     "served_by_28": 34,
+     "served_by_60": 34,
+     "never": 2,
+     "median_among_served": 7,
+     "q25_censored": 7,
+     "median_censored": 7,
+     "q75_censored": 7
+    },
+    "days_B": {
+     "n": 36,
+     "served_by_14": 32,
+     "served_by_28": 32,
+     "served_by_60": 32,
+     "never": 4,
+     "median_among_served": 14,
+     "q25_censored": 14,
+     "median_censored": 14,
+     "q75_censored": 14
+    },
+    "users": 36
+   },
+   "easy": {
+    "tally": {
+     "alignments": 324,
+     "served": 315,
+     "served_correct": 315,
+     "wrong_unflagged": 0,
+     "flagged": 9,
+     "flagged_would_be_wrong": 9,
+     "flagged_would_be_right": 0,
+     "cond_alignments": 315,
+     "cond_correct": 315,
+     "steps": 360,
+     "k_changed": 0,
+     "refits": 324
+    },
+    "names": [
+     170,
+     175
+    ],
+    "serve": {
+     "cases": 180,
+     "both_serve": 175,
+     "both_withhold": 5,
+     "one_serves": 0,
+     "agree": 180,
+     "agree_where_either_serves": [
+      175,
+      175
+     ]
+    },
+    "strict": [
+     170,
+     175
+    ],
+    "days_A": {
+     "n": 36,
+     "served_by_14": 35,
+     "served_by_28": 35,
+     "served_by_60": 35,
+     "never": 1,
+     "median_among_served": 7,
+     "q25_censored": 7,
+     "median_censored": 7,
+     "q75_censored": 7
+    },
+    "days_B": {
+     "n": 36,
+     "served_by_14": 35,
+     "served_by_28": 35,
+     "served_by_60": 35,
+     "never": 1,
+     "median_among_served": 14,
+     "q25_censored": 14,
+     "median_censored": 14,
+     "q75_censored": 14
+    },
+    "users": 36
+   }
+  },
+  "flag OFF at h = 2.5": {
+   "pooled": {
+    "tally": {
+     "alignments": 972,
+     "served": 679,
+     "served_correct": 678,
+     "wrong_unflagged": 1,
+     "flagged": 293,
+     "flagged_would_be_wrong": 167,
+     "flagged_would_be_right": 126,
+     "cond_alignments": 811,
+     "cond_correct": 804,
+     "steps": 1080,
+     "k_changed": 0,
+     "refits": 972
+    },
+    "names": [
+     334,
+     363
+    ],
+    "serve": {
+     "cases": 540,
+     "both_serve": 363,
+     "both_withhold": 154,
+     "one_serves": 23,
+     "agree": 517,
+     "agree_where_either_serves": [
+      363,
+      386
+     ]
+    },
+    "strict": [
+     334,
+     386
+    ],
+    "days_A": {
+     "n": 108,
+     "served_by_14": 79,
+     "served_by_28": 80,
+     "served_by_60": 80,
+     "never": 28,
+     "median_among_served": 7,
+     "q25_censored": 7,
+     "median_censored": 7,
+     "q75_censored": 61
+    },
+    "days_B": {
+     "n": 108,
+     "served_by_14": 75,
+     "served_by_28": 76,
+     "served_by_60": 76,
+     "never": 32,
+     "median_among_served": 14,
+     "q25_censored": 14,
+     "median_censored": 14,
+     "q75_censored": 61
+    },
+    "users": 108
+   },
+   "hard": {
+    "tally": {
+     "alignments": 324,
+     "served": 65,
+     "served_correct": 65,
+     "wrong_unflagged": 0,
+     "flagged": 259,
+     "flagged_would_be_wrong": 149,
+     "flagged_would_be_right": 110,
+     "cond_alignments": 182,
+     "cond_correct": 175,
+     "steps": 360,
+     "k_changed": 0,
+     "refits": 324
+    },
+    "names": [
+     24,
+     33
+    ],
+    "serve": {
+     "cases": 180,
+     "both_serve": 33,
+     "both_withhold": 138,
+     "one_serves": 9,
+     "agree": 171,
+     "agree_where_either_serves": [
+      33,
+      42
+     ]
+    },
+    "strict": [
+     24,
+     42
+    ],
+    "days_A": {
+     "n": 36,
+     "served_by_14": 10,
+     "served_by_28": 11,
+     "served_by_60": 11,
+     "never": 25,
+     "median_among_served": 7,
+     "q25_censored": 14,
+     "median_censored": 61,
+     "q75_censored": 61
+    },
+    "days_B": {
+     "n": 36,
+     "served_by_14": 8,
+     "served_by_28": 9,
+     "served_by_60": 9,
+     "never": 27,
+     "median_among_served": 14,
+     "q25_censored": 28,
+     "median_censored": 61,
+     "q75_censored": 61
+    },
+    "users": 36
+   },
+   "medium": {
+    "tally": {
+     "alignments": 324,
+     "served": 299,
+     "served_correct": 298,
+     "wrong_unflagged": 1,
+     "flagged": 25,
+     "flagged_would_be_wrong": 9,
+     "flagged_would_be_right": 16,
+     "cond_alignments": 314,
+     "cond_correct": 314,
+     "steps": 360,
+     "k_changed": 0,
+     "refits": 324
+    },
+    "names": [
+     140,
+     155
+    ],
+    "serve": {
+     "cases": 180,
+     "both_serve": 155,
+     "both_withhold": 11,
+     "one_serves": 14,
+     "agree": 166,
+     "agree_where_either_serves": [
+      155,
+      169
+     ]
+    },
+    "strict": [
+     140,
+     169
+    ],
+    "days_A": {
+     "n": 36,
+     "served_by_14": 34,
+     "served_by_28": 34,
+     "served_by_60": 34,
+     "never": 2,
+     "median_among_served": 7,
+     "q25_censored": 7,
+     "median_censored": 7,
+     "q75_censored": 7
+    },
+    "days_B": {
+     "n": 36,
+     "served_by_14": 32,
+     "served_by_28": 32,
+     "served_by_60": 32,
+     "never": 4,
+     "median_among_served": 14,
+     "q25_censored": 14,
+     "median_censored": 14,
+     "q75_censored": 14
+    },
+    "users": 36
+   },
+   "easy": {
+    "tally": {
+     "alignments": 324,
+     "served": 315,
+     "served_correct": 315,
+     "wrong_unflagged": 0,
+     "flagged": 9,
+     "flagged_would_be_wrong": 9,
+     "flagged_would_be_right": 0,
+     "cond_alignments": 315,
+     "cond_correct": 315,
+     "steps": 360,
+     "k_changed": 0,
+     "refits": 324
+    },
+    "names": [
+     170,
+     175
+    ],
+    "serve": {
+     "cases": 180,
+     "both_serve": 175,
+     "both_withhold": 5,
+     "one_serves": 0,
+     "agree": 180,
+     "agree_where_either_serves": [
+      175,
+      175
+     ]
+    },
+    "strict": [
+     170,
+     175
+    ],
+    "days_A": {
+     "n": 36,
+     "served_by_14": 35,
+     "served_by_28": 35,
+     "served_by_60": 35,
+     "never": 1,
+     "median_among_served": 7,
+     "q25_censored": 7,
+     "median_censored": 7,
+     "q75_censored": 7
+    },
+    "days_B": {
+     "n": 36,
+     "served_by_14": 35,
+     "served_by_28": 35,
+     "served_by_60": 35,
+     "never": 1,
+     "median_among_served": 14,
+     "q25_censored": 14,
+     "median_censored": 14,
+     "q75_censored": 14
+    },
+    "users": 36
+   }
+  }
+ }
+}
