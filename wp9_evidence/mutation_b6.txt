@@ -1,2 +1,26 @@
 R01 any number of restarts: KILLED
 R02 the minimum is 5 restarts: KILLED
+R03 a fast-test fit is allowed: KILLED
+R04 a cold-start config is allowed: KILLED
+R05 unknown settings are passed on: KILLED
+R06 a published fit is refitted: KILLED
+R07 the publish decision is inverted: KILLED
+R08 a withheld result is returned: KILLED
+R09 the record says the rules were relaxed: KILLED
+R10 no new days are fitted anyway: KILLED
+R11 the schedule is ignored: KILLED
+R12 always due: KILLED
+R13 a failed fit is publishable: KILLED
+R14 a cold-start refusal is publishable: KILLED
+R15 the timestamps are joined in the wrong order: KILLED
+R16 the new rows come first: SURVIVED
+R17 the sweep fits items that are not due: KILLED
+R18 the sweep does not advance the check day: KILLED
+R19 the sweep does not record the new state: KILLED
+R20 the reasons are dropped: KILLED
+R21 an unexpected error is publishable: KILLED
+R22 a boolean count of restarts is accepted: SURVIVED
+R23 a shape mismatch is fitted: KILLED
+R24 timestamps for part of the rows are accepted: KILLED
+R25 the schedule error stops the sweep: KILLED
+23/25 killed
