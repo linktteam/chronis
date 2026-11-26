@@ -1,0 +1,105 @@
+A1 diagnosis: 48 fits (48 ok), 24 (window, seed-pair) cases; strata hard 9201-9204, medium 9205-9208, easy 9209-9212; windows 90 and 150; restarts = the first n of 20
+
+== 4 restarts ==
+hard    cases 8, fit failed in a seed 0: same partition (ARI >= 0.99) 0/8 = 0.0% (0-32); ARI >= 0.9 1/8 = 12.5% (2-47); median ARI 0.680, min 0.464
+medium  cases 8, fit failed in a seed 0: same partition (ARI >= 0.99) 4/8 = 50.0% (22-78); ARI >= 0.9 6/8 = 75.0% (41-93); median ARI 0.991, min 0.564
+easy    cases 8, fit failed in a seed 0: same partition (ARI >= 0.99) 8/8 = 100.0% (68-100); ARI >= 0.9 8/8 = 100.0% (68-100); median ARI 1.000, min 1.000
+all     cases 24, fit failed in a seed 0: same partition (ARI >= 0.99) 12/24 = 50.0% (31-69); ARI >= 0.9 15/24 = 62.5% (43-79); median ARI 0.991, min 0.464
+disagreeing cases 12 of 24: equal likelihood, different partition (gap <= 1 nat): 1; local optima (log-likelihoods differ by more than 1 nat): 7; recovery failure (neither partition recovers the planted regimes): 4
+both seeds recover the planted regimes (ARI to truth >= 0.6) 19/24 = 79.2% (60-91); among those, same partition 12/19 = 63.2% (41-81)
+
+== 10 restarts ==
+hard    cases 8, fit failed in a seed 0: same partition (ARI >= 0.99) 1/8 = 12.5% (2-47); ARI >= 0.9 1/8 = 12.5% (2-47); median ARI 0.768, min 0.453
+medium  cases 8, fit failed in a seed 0: same partition (ARI >= 0.99) 6/8 = 75.0% (41-93); ARI >= 0.9 6/8 = 75.0% (41-93); median ARI 1.000, min 0.564
+easy    cases 8, fit failed in a seed 0: same partition (ARI >= 0.99) 8/8 = 100.0% (68-100); ARI >= 0.9 8/8 = 100.0% (68-100); median ARI 1.000, min 1.000
+all     cases 24, fit failed in a seed 0: same partition (ARI >= 0.99) 15/24 = 62.5% (43-79); ARI >= 0.9 15/24 = 62.5% (43-79); median ARI 1.000, min 0.453
+disagreeing cases 9 of 24: local optima (log-likelihoods differ by more than 1 nat): 6; recovery failure (neither partition recovers the planted regimes): 3
+both seeds recover the planted regimes (ARI to truth >= 0.6) 19/24 = 79.2% (60-91); among those, same partition 15/19 = 78.9% (57-91)
+
+== 20 restarts ==
+hard    cases 8, fit failed in a seed 0: same partition (ARI >= 0.99) 1/8 = 12.5% (2-47); ARI >= 0.9 2/8 = 25.0% (7-59); median ARI 0.770, min 0.575
+medium  cases 8, fit failed in a seed 0: same partition (ARI >= 0.99) 8/8 = 100.0% (68-100); ARI >= 0.9 8/8 = 100.0% (68-100); median ARI 1.000, min 1.000
+easy    cases 8, fit failed in a seed 0: same partition (ARI >= 0.99) 8/8 = 100.0% (68-100); ARI >= 0.9 8/8 = 100.0% (68-100); median ARI 1.000, min 1.000
+all     cases 24, fit failed in a seed 0: same partition (ARI >= 0.99) 17/24 = 70.8% (51-85); ARI >= 0.9 18/24 = 75.0% (55-88); median ARI 1.000, min 0.575
+disagreeing cases 7 of 24: equal likelihood, different partition (gap <= 1 nat): 2; local optima (log-likelihoods differ by more than 1 nat): 1; recovery failure (neither partition recovers the planted regimes): 4
+both seeds recover the planted regimes (ARI to truth >= 0.6) 19/24 = 79.2% (60-91); among those, same partition 17/19 = 89.5% (69-97)
+
+== does agreement of the best 3 restarts inside one fit predict that the other seed gives the same partition? (20 restarts) ==
+both fits' best-3 minimum ARI >= 0.8: 16 of 24 cases kept; of those same partition 16/16 = 100.0% (81-100), both recover 16/16 = 100.0% (81-100)
+both fits' best-3 minimum ARI >= 0.9: 16 of 24 cases kept; of those same partition 16/16 = 100.0% (81-100), both recover 16/16 = 100.0% (81-100)
+both fits' best-3 minimum ARI >= 0.95: 15 of 24 cases kept; of those same partition 15/15 = 100.0% (80-100), both recover 15/15 = 100.0% (80-100)
+both fits' best-3 minimum ARI >= 0.99: 14 of 24 cases kept; of those same partition 14/14 = 100.0% (78-100), both recover 14/14 = 100.0% (78-100)
+
+== the same, with 10 and 4 restarts (best 3 of the first n) ==
+n = 10, level 0.9: 15 of 24 kept; same partition 14/15 = 93.3% (70-99)
+n = 10, level 0.99: 12 of 24 kept; same partition 12/12 = 100.0% (76-100)
+n = 4, level 0.9: 5 of 24 kept; same partition 5/5 = 100.0% (57-100)
+n = 4, level 0.99: 3 of 24 kept; same partition 3/3 = 100.0% (44-100)
+
+== per case, 20 restarts: user end | ARI(sel a, sel b) | ll gap | ARI to truth a, b | best-3 min ARI a, b | class ==
+9201  90 | 0.675 |     6.49 | 0.419 0.572 | 0.470 0.532 | recovery failure (neither partition recovers the planted regimes)
+9201 150 | 0.888 |     0.02 | 0.440 0.408 | 0.516 0.511 | recovery failure (neither partition recovers the planted regimes)
+9202  90 | 0.652 |     0.19 | 0.606 0.413 | 0.474 0.652 | equal likelihood, different partition (gap <= 1 nat)
+9202 150 | 1.000 |     0.00 | 0.862 0.862 | 0.790 0.813 | same
+9203  90 | 0.575 |     0.04 | 0.551 0.472 | 0.501 0.586 | recovery failure (neither partition recovers the planted regimes)
+9203 150 | 0.820 |     2.60 | 0.729 0.839 | 0.728 0.936 | local optima (log-likelihoods differ by more than 1 nat)
+9204  90 | 0.721 |     3.29 | 0.538 0.534 | 0.513 0.384 | recovery failure (neither partition recovers the planted regimes)
+9204 150 | 0.901 |     0.79 | 0.643 0.642 | 0.642 0.463 | equal likelihood, different partition (gap <= 1 nat)
+9205  90 | 1.000 |     0.00 | 1.000 1.000 | 1.000 1.000 | same
+9205 150 | 1.000 |     0.00 | 0.925 0.925 | 1.000 1.000 | same
+9206  90 | 1.000 |     0.00 | 1.000 1.000 | 0.935 0.916 | same
+9206 150 | 1.000 |     0.00 | 1.000 1.000 | 1.000 1.000 | same
+9207  90 | 1.000 |     0.00 | 1.000 1.000 | 1.000 1.000 | same
+9207 150 | 1.000 |     0.00 | 1.000 1.000 | 1.000 1.000 | same
+9208  90 | 1.000 |     0.06 | 1.000 1.000 | 0.960 1.000 | same
+9208 150 | 1.000 |     0.00 | 1.000 1.000 | 1.000 1.000 | same
+9209  90 | 1.000 |     0.00 | 1.000 1.000 | 1.000 1.000 | same
+9209 150 | 1.000 |     0.00 | 1.000 1.000 | 1.000 1.000 | same
+9210  90 | 1.000 |     0.00 | 0.964 0.964 | 1.000 1.000 | same
+9210 150 | 1.000 |     0.00 | 1.000 1.000 | 1.000 1.000 | same
+9211  90 | 1.000 |     0.00 | 1.000 1.000 | 1.000 1.000 | same
+9211 150 | 1.000 |     0.00 | 1.000 1.000 | 1.000 1.000 | same
+9212  90 | 1.000 |     0.00 | 0.968 0.968 | 1.000 1.000 | same
+9212 150 | 1.000 |     0.00 | 0.982 0.982 | 1.000 1.000 | same
+
+== candidate rules (a fit PASSES the rule when it is not flagged); pairs = (window, two seeds) ==
+n=10 top3    0.9  : fits passing 30/48 (hard 0/16, medium 14/16, easy 16/16); pairs with both passing 15/24: same partition 14/15 = 93.3% (70-99); pairs where exactly one seed is flagged 0
+n=10 top3    0.95 : fits passing 28/48 (hard 0/16, medium 12/16, easy 16/16); pairs with both passing 13/24: same partition 13/13 = 100.0% (77-100); pairs where exactly one seed is flagged 2
+n=10 top3    0.99 : fits passing 26/48 (hard 0/16, medium 10/16, easy 16/16); pairs with both passing 12/24: same partition 12/12 = 100.0% (76-100); pairs where exactly one seed is flagged 2
+n=10 top2    0.99 : fits passing 29/48 (hard 1/16, medium 12/16, easy 16/16); pairs with both passing 13/24: same partition 12/13 = 92.3% (67-99); pairs where exactly one seed is flagged 3
+n=10 reached 2    : fits passing 29/48 (hard 1/16, medium 12/16, easy 16/16); pairs with both passing 13/24: same partition 12/13 = 92.3% (67-99); pairs where exactly one seed is flagged 3
+n=10 reached 3    : fits passing 26/48 (hard 0/16, medium 10/16, easy 16/16); pairs with both passing 12/24: same partition 12/12 = 100.0% (76-100); pairs where exactly one seed is flagged 2
+n=10 reached 4    : fits passing 26/48 (hard 0/16, medium 10/16, easy 16/16); pairs with both passing 12/24: same partition 12/12 = 100.0% (76-100); pairs where exactly one seed is flagged 2
+n=20 top3    0.9  : fits passing 33/48 (hard 1/16, medium 16/16, easy 16/16); pairs with both passing 16/24: same partition 16/16 = 100.0% (81-100); pairs where exactly one seed is flagged 1
+n=20 top3    0.95 : fits passing 30/48 (hard 0/16, medium 14/16, easy 16/16); pairs with both passing 15/24: same partition 15/15 = 100.0% (80-100); pairs where exactly one seed is flagged 0
+n=20 top3    0.99 : fits passing 29/48 (hard 0/16, medium 13/16, easy 16/16); pairs with both passing 14/24: same partition 14/14 = 100.0% (78-100); pairs where exactly one seed is flagged 1
+n=20 top2    0.99 : fits passing 35/48 (hard 3/16, medium 16/16, easy 16/16); pairs with both passing 17/24: same partition 16/17 = 94.1% (73-99); pairs where exactly one seed is flagged 1
+n=20 reached 2    : fits passing 35/48 (hard 3/16, medium 16/16, easy 16/16); pairs with both passing 17/24: same partition 16/17 = 94.1% (73-99); pairs where exactly one seed is flagged 1
+n=20 reached 3    : fits passing 29/48 (hard 0/16, medium 13/16, easy 16/16); pairs with both passing 14/24: same partition 14/14 = 100.0% (78-100); pairs where exactly one seed is flagged 1
+n=20 reached 4    : fits passing 27/48 (hard 0/16, medium 11/16, easy 16/16); pairs with both passing 13/24: same partition 13/13 = 100.0% (77-100); pairs where exactly one seed is flagged 1
+
+== per case, 10 restarts: user end | ARI between seeds | best-3 min ARI a, b | restarts reaching the selected partition a, b | recovery (ARI to truth) a, b ==
+9201  90 | 0.515 | 0.542 0.480 | 1 1 | 0.723 0.462
+9201 150 | 0.453 | 0.607 0.636 | 1 1 | 0.553 0.408
+9202  90 | 0.728 | 0.410 0.728 | 1 1 | 0.861 0.606
+9202 150 | 1.000 | 0.502 0.754 | 1 1 | 0.862 0.862
+9203  90 | 0.808 | 0.398 0.541 | 1 1 | 0.444 0.543
+9203 150 | 0.846 | 0.653 0.526 | 2 1 | 0.729 0.807
+9204  90 | 0.721 | 0.585 0.299 | 1 1 | 0.538 0.534
+9204 150 | 0.895 | 0.642 0.463 | 1 1 | 0.643 0.626
+9205  90 | 0.873 | 0.903 1.000 | 2 4 | 0.873 1.000
+9205 150 | 1.000 | 1.000 1.000 | 9 6 | 0.925 0.925
+9206  90 | 0.564 | 0.655 0.597 | 1 1 | 0.584 0.916
+9206 150 | 1.000 | 1.000 1.000 | 4 4 | 1.000 1.000
+9207  90 | 1.000 | 1.000 1.000 | 7 8 | 1.000 1.000
+9207 150 | 1.000 | 1.000 1.000 | 7 9 | 1.000 1.000
+9208  90 | 1.000 | 0.930 0.960 | 1 2 | 1.000 1.000
+9208 150 | 1.000 | 1.000 0.977 | 7 1 | 1.000 1.000
+9209  90 | 1.000 | 1.000 1.000 | 5 9 | 1.000 1.000
+9209 150 | 1.000 | 1.000 1.000 | 8 7 | 1.000 1.000
+9210  90 | 1.000 | 1.000 1.000 | 5 5 | 0.964 0.964
+9210 150 | 1.000 | 1.000 1.000 | 8 8 | 1.000 1.000
+9211  90 | 1.000 | 1.000 1.000 | 9 5 | 1.000 1.000
+9211 150 | 1.000 | 1.000 1.000 | 8 5 | 1.000 1.000
+9212  90 | 1.000 | 1.000 1.000 | 8 6 | 0.968 0.968
+9212 150 | 1.000 | 1.000 1.000 | 9 9 | 0.982 0.982
