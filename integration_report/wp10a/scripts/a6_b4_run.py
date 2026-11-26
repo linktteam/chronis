@@ -1,6 +1,6 @@
 """WP10A A6 part 1: B4, does the posterior sd of the fast state (`m_t_std`) keep its coverage outside the favourable case? (design: tests/PREDECLARED_CRITERIA_WP10A.md Part 6, sections 16-19). usage:
   PYTHONPATH=. python3 integration_report/wp10a/scripts/a6_b4_run.py --out FILE.jsonl [--workers 2] [--limit N] [--seeds 10701,10709] [--pilot]
-32 users, seeds 10701..10732 (8 per condition): C0 favourable control, C1 off-centre prior, C2 atypical users (spread 3x), C3 misspecified fit. One fit per user: the production dual fit
+64 users, seeds 10701..10764 (16 per condition): C0 favourable control, C1 off-centre prior (+1 / +2 population sd), C2 atypical users (spread 3x), C3 misspecified fit (feature dropped, Dmax 8, Dmax 30, K too small). One fit per user: the production dual fit
 `fit_hssm(model_type="dual_timescale", shared_prior=..., shared_prior_n0=5, certify_prior_anchored=True)` with the production defaults for restarts and iterations (no fast-test switch, production gate).
 Stored per user: the fit verdict (withheld or not, reasons, EM state, certification), the coverage of the true fast state in 1 and 2 posterior sd on the held-out days (and on the training days, for
 reference), the mean posterior sd. One line per user, resumable; every line is written as soon as the user is done (partial results). `--pilot`: one favourable user, prints CPU seconds."""
@@ -31,8 +31,9 @@ PRIOR_PATH = "wp7r_evidence/prior_main_wp5.json"
 SD_INTERCEPT = 0.6                                                                       # PopulationSpec().sd_intercept: one population sd of the intercepts
 NOMINAL1, NOMINAL2 = math.erf(1.0 / math.sqrt(2.0)), math.erf(2.0 / math.sqrt(2.0))
 CONDITIONS = ("C0", "C1", "C2", "C3")
-SEEDS = list(range(10701, 10733))
-C3_VARIANTS = ("drop_feature", "drop_feature", "dmax_8", "dmax_8", "dmax_30", "dmax_30", "k_too_small", "k_too_small")
+SEEDS = list(range(10701, 10765))
+PER_CONDITION = 16
+C3_VARIANTS = ("drop_feature",) * 4 + ("dmax_8",) * 4 + ("dmax_30",) * 4 + ("k_too_small",) * 4
 
 
 # ------------------------------------------------------------------------------------------------------------------- the design (pure, tested)
@@ -41,10 +42,10 @@ def job_for(seed: int) -> dict:
     if seed not in SEEDS:
         raise ValueError(f"seed {seed} is not a B4 seed")
     i = seed - SEEDS[0]
-    cond, j = CONDITIONS[i // 8], i % 8
+    cond, j = CONDITIONS[i // PER_CONDITION], i % PER_CONDITION
     job = dict(seed=seed, condition=cond, variant="favourable", prior_shift_sd=0.0, spread=1.0, true_K=K, drop_feature=None, dmax=DMAX)
     if cond == "C1":
-        job.update(variant="off_centre_1sd" if j < 4 else "off_centre_2sd", prior_shift_sd=1.0 if j < 4 else 2.0)
+        job.update(variant="off_centre_1sd" if j < 8 else "off_centre_2sd", prior_shift_sd=1.0 if j < 8 else 2.0)
     elif cond == "C2":
         job.update(variant="atypical_3x", spread=3.0)
     elif cond == "C3":
