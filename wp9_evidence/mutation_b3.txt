@@ -1,0 +1,16 @@
+B01 the separation sums over features instead of averaging: KILLED
+B02 the closest pair is never found: KILLED
+B03 the variance of one regime only: KILLED
+B04 the overlap level is inclusive: KILLED
+B05 the BIC margin is inclusive: KILLED
+B06 the runner-up is the farthest candidate: KILLED
+B07 the largest-candidate reason is removed: NOT APPLIED (pattern count 0)
+B08 a single candidate counts as the largest: NOT APPLIED (pattern count 0)
+B09 a missing stability assessment is trusted: KILLED
+B10 the best guess is not marked as shown: KILLED
+B11 the tag ignores the reasons: KILLED
+B12 the overlap signal is removed: KILLED
+B13 the restart signal is removed: KILLED
+B14 the user hash is 8 digits: KILLED
+B15 personal fields are accepted: KILLED
+B16 the event carries the user id: KILLED
