@@ -1,0 +1,38 @@
+BLAS library as reported by threadpoolctl (arch, threads) per configuration:
+  default/t1         [('SkylakeX', 1)]
+  default/t2         [('SkylakeX', 2)]
+  default/tunset     [('SkylakeX', 2)]
+  HASWELL/t1         [('Haswell', 1)]
+  HASWELL/t2         [('Haswell', 2)]
+  HASWELL/tunset     [('Haswell', 2)]
+  SKYLAKEX/t1        [('SkylakeX', 1)]
+  SKYLAKEX/t2        [('SkylakeX', 2)]
+  SKYLAKEX/tunset    [('SkylakeX', 2)]
+  SANDYBRIDGE/t1     [('Sandybridge', 1)]
+  SANDYBRIDGE/t2     [('Sandybridge', 2)]
+  SANDYBRIDGE/tunset [('Sandybridge', 2)]
+  NEHALEM/t1         [('Nehalem', 1)]
+  NEHALEM/t2         [('Nehalem', 2)]
+  NEHALEM/tunset     [('Nehalem', 2)]
+
+WITHIN a kernel, across thread settings (1, 2, unset):
+  default      reference default/t1: default/t2: bit-identical; default/tunset: bit-identical
+  HASWELL      reference HASWELL/t1: HASWELL/t2: bit-identical; HASWELL/tunset: bit-identical
+  SKYLAKEX     reference SKYLAKEX/t1: SKYLAKEX/t2: bit-identical; SKYLAKEX/tunset: bit-identical
+  SANDYBRIDGE  reference SANDYBRIDGE/t1: SANDYBRIDGE/t2: bit-identical; SANDYBRIDGE/tunset: bit-identical
+  NEHALEM      reference NEHALEM/t1: NEHALEM/t2: bit-identical; NEHALEM/tunset: bit-identical
+
+BETWEEN kernels (threads = 1 each), fit fields that differ bitwise / largest absolute and relative difference of the stored floats / discrete outcomes that differ:
+  default     vs HASWELL    : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000102 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00308; discrete outcomes that differ: none
+  default     vs SKYLAKEX   :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  default     vs SANDYBRIDGE: 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  default     vs NEHALEM    : 307 of 655 fit fields differ; stored floats that differ: 279; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  HASWELL     vs SKYLAKEX   : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000102 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00308; discrete outcomes that differ: none
+  HASWELL     vs SANDYBRIDGE: 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000275 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00823; discrete outcomes that differ: none
+  HASWELL     vs NEHALEM    : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000275 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00823; discrete outcomes that differ: none
+  SKYLAKEX    vs SANDYBRIDGE: 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  SKYLAKEX    vs NEHALEM    : 307 of 655 fit fields differ; stored floats that differ: 279; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  SANDYBRIDGE vs NEHALEM    : 298 of 655 fit fields differ; stored floats that differ: 273; max abs diff 1.88e-12 (at not_converged_fixture.model.log_likelihood_history_.35.f); max rel diff 6.01e-12; discrete outcomes that differ: none
+
+Discrete outcomes (identical in every configuration unless listed above):
+  {"converged_state": "FitState.CONVERGED", "not_converged_state": "FitState.MAX_ITER_REACHED", "seed1_fallback": "False", "seed2_fallback": "True", "converged_at_bound": "{0: False, 1: False}", "converged_degraded": "False"}

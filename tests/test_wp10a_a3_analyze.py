@@ -8,9 +8,21 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 
+import importlib.util
+
 SCRIPTS = Path(__file__).resolve().parents[1] / "integration_report" / "wp10a" / "scripts"
-sys.path.insert(0, str(SCRIPTS))
-import a3_analyze as X                                                                  # noqa: E402
+
+
+def _load(name, path):
+    """Load a script by PATH under a unique module name: the WP9 package has scripts of the same file name (a3_analyze.py), and `import a3_analyze` would return whichever was cached first."""
+    spec = importlib.util.spec_from_file_location(name, path)
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[name] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+
+X = _load("wp10a_a3_analyze", SCRIPTS / "a3_analyze.py")
 
 
 def row(end, state="ALIGNED"):

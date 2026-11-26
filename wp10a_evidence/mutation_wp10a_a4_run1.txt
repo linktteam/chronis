@@ -1,0 +1,52 @@
+M01 the gate is 2.0: KILLED
+M02 no sharpness floor: KILLED
+M03 30 alignments are enough: KILLED
+M04 the correct level is 90%: KILLED
+M05 the wrong-and-unflagged level is 2%: KILLED
+M06 zr >= 2 is enough: KILLED
+M07 the order of ties is reversed: KILLED
+M08 a zero sd is not guarded: KILLED
+M09 the control is not restored: KILLED
+M10 the control does not centre: KILLED
+M11 R works with 39 alignments: KILLED
+M12 R works needs more than 95% correct: KILLED
+M13 R works needs under 1% wrong: KILLED
+M14 old criterion: 95% is a failure: KILLED
+M15 old criterion: 1% is a failure: KILLED
+M16 zr ignores whether R was right: KILLED
+M17 rz ignores whether Z was right: SURVIVED
+M18 pairing takes the union: KILLED
+M19 a withheld correct answer counts as right: KILLED
+M20 a withheld wrong answer counts as wrong: KILLED
+M21 zr = 3 is not enough: KILLED
+M22 zr = rz counts as failure: KILLED
+M23 zr or the margin is enough: KILLED
+M24 qualifies needs R or the control: KILLED
+M25 best = smallest zr: KILLED
+M26 ties go to the last design: KILLED
+M27 best ignores qualification: KILLED
+M28 chains_d drops the shared windows: KILLED
+M29 chains_d in reverse window order: KILLED
+M30 chains_e puts the short window first: KILLED
+M31 chains_f takes the other seed: KILLED
+M32 R is replayed without the flag: KILLED
+M33 the patch is applied to R instead of Z: KILLED
+M34 the pair key drops the window: KILLED
+M35 withheld counts the usable fits: KILLED
+M36 the wrong-and-unflagged rate is per served: KILLED
+M37 the evaluation reads the wrong design: KILLED
+M38 the evaluation of D has no comparison: KILLED
+R01 design D triples nothing: KILLED
+R02 design D changes regime 1: KILLED
+R03 design D starts at day 75: KILLED
+R04 design D changes three features: KILLED
+R05 the development range starts at 10300: KILLED
+R06 the evaluation range overlaps development: KILLED
+R07 design E lengths are 20 and 40: KILLED
+R08 design E ends differ: KILLED
+R09 the shared windows include 75: KILLED
+R10 the anchor is [0, 100): KILLED
+R11 the fit seed is user + 1: KILLED
+R12 the evaluation does not need the freeze file: KILLED
+R13 design F is fitted: KILLED
+50/51 killed
