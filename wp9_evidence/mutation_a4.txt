@@ -1,0 +1,4 @@
+D01 the minimum number of alignments is 30: KILLED
+D02 the minimum number of alignments is exclusive: KILLED
+D03 the correct-among-served level of the raw method is exclusive: KILLED
+D04 the wrong-and-unflagged level of the raw method is exclusive: KILLED
