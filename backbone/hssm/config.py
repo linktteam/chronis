@@ -72,7 +72,7 @@ K_ADEQUACY_BIC_MARGIN = 0.0
 K_ADEQUACY_FLAG_LARGEST = False                 # signal (3): selected K is the largest candidate (K + 1 untried)
 
 # WP9 B1 (tests/PREDECLARED_CRITERIA_WP9.md section 16): certification of prior-anchored fits (opt-in, `fit_hssm(certify_prior_anchored=True)`).
-# `COLD_START_CERT_Z` is a PROVISIONAL value (3.0 = the N18 margin); the declared development rule sets it before the evaluation.
+# `COLD_START_CERT_Z` = 3.0 (the N18 margin), FROZEN by the declared development rule on seeds 9631..9642 (`wp9_evidence/b1_dev_analysis.txt`, `tests/DESIGN_FREEZE_WP9_B1.txt`): NO value of {1, 2, 3} met the declared rule, so 3.0 was taken and the shortfall is reported there.
 COLD_START_CERT_FRACTIONS = (0.50, 0.65, 0.80)   # rolling origins, as a share of the rows
 COLD_START_CERT_MIN_ROWS = 24                    # fewer rows: not certifiable
 COLD_START_CERT_MIN_TRAIN = 12                   # rows before the first origin

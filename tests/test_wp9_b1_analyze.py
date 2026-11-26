@@ -120,3 +120,50 @@ def test_a_publishable_set_with_a_loss_does_not_survive_and_risk_coverage_is_com
     recs = eval_table("CERTIFIED_PRIOR_ANCHORED", "NOT_CERTIFIED", shrink_gain=-1.0)
     res, txt = run_eval(tmp_path, recs)
     assert res["survives"] is False and res["per_length"]["30"]["risk_coverage"]["mean"] == pytest.approx(-1.0)
+
+
+def with_shared(recs, scrambled_gap, shifted_gap):
+    """Add the shared-only scores of the evaluation: the true prior scores -4.0, a control prior scores -4.0 + gap."""
+    out = dict(recs)
+    for s in sorted({k[0] for k in recs}):
+        for ln in A.LENGTHS:
+            for name, v in (("true", -4.0), ("scrambled", -4.0 + scrambled_gap), ("shifted", -4.0 + shifted_gap)):
+                out[(s, ln, f"shared_{name}")] = dict(seed=s, length=ln, arm=f"shared_{name}", mean=v, finite=True)
+    return out
+
+
+def test_a_control_that_is_not_worse_than_the_true_prior_on_the_evaluation_seeds_is_not_counted_in_the_headline(tmp_path):
+    base = eval_table("CERTIFIED_PRIOR_ANCHORED", "NOT_CERTIFIED")
+    for k, r in base.items():
+        if k[2] == "scrambled":
+            r["certification"]["state"] = "CERTIFIED_PRIOR_ANCHORED"                      # the scrambled control certifies as often as shrink5
+    recs = with_shared(base, scrambled_gap=+0.9, shifted_gap=-1.5)
+    res, txt = run_eval(tmp_path, recs)
+    assert res["controls_valid"] == dict(personal=True, scrambled=False, shifted=True)
+    assert res["controls_met"] is True and res["controls_met_all"] is False
+    assert "not a valid control on these seeds: not counted in the headline" in txt
+
+
+def test_a_valid_control_that_certifies_as_often_as_shrink5_fails_the_headline(tmp_path):
+    base = eval_table("CERTIFIED_PRIOR_ANCHORED", "NOT_CERTIFIED")
+    for k, r in base.items():
+        if k[2] == "shifted":
+            r["certification"]["state"] = "CERTIFIED_PRIOR_ANCHORED"
+    res, txt = run_eval(tmp_path, with_shared(base, scrambled_gap=-2.0, shifted_gap=-1.2))
+    assert res["controls_valid"]["shifted"] is True and res["controls_met"] is False and res["controls_met_all"] is False
+
+
+def test_validity_is_a_level_of_one_nat_inclusive_and_missing_shared_scores_leave_the_control_judged(tmp_path):
+    res, _ = run_eval(tmp_path, with_shared(eval_table("CERTIFIED_PRIOR_ANCHORED", "NOT_CERTIFIED"), scrambled_gap=-1.0, shifted_gap=-0.99))
+    assert res["controls_valid"]["scrambled"] is True and res["controls_valid"]["shifted"] is False
+    res2, _ = run_eval(tmp_path, eval_table("CERTIFIED_PRIOR_ANCHORED", "NOT_CERTIFIED"))
+    assert res2["controls_valid"] == dict(personal=True, scrambled=None, shifted=None)
+
+
+def test_the_by_product_counts_records_withheld_at_30_steps_that_are_publishable_at_longer_records(tmp_path):
+    recs = eval_table("NOT_CERTIFIED", "NOT_CERTIFIED", n=10)
+    for k, r in recs.items():
+        if k[2] == "shrink5" and k[1] == 60 and k[0] < 4:
+            r["published_after"] = True
+    _, txt = run_eval(tmp_path, recs)
+    assert "withheld at 30 steps: 10; of these publishable at 60 steps: 4" in txt and "of these publishable at 120 steps: 0" in txt

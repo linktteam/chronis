@@ -1,0 +1,14 @@
+B1 development: 12 seeds 9631..9642, lengths (30, 60, 120)
+
+control validity, shared-only score under the scrambled prior minus under the true prior: mean +0.905 nats/step over 36 (seed, length) cells -> NOT a valid control
+control validity, shared-only score under the shifted prior minus under the true prior: mean -1.054 nats/step over 36 (seed, length) cells -> valid (>= 1 nat worse)
+
+z = 1.0: shrink5 certified 7/13 = 54% (Wilson 29-77%); controls pooled 19/57 = 33% (Wilson 22-46%) (scrambled 15/22, shifted 2/7, personal 2/28)
+z = 2.0: shrink5 certified 7/13 = 54% (Wilson 29-77%); controls pooled 14/57 = 25% (Wilson 15-37%) (scrambled 12/22, shifted 1/7, personal 1/28)
+z = 3.0: shrink5 certified 3/13 = 23% (Wilson 8-50%); controls pooled 12/57 = 21% (Wilson 12-33%) (scrambled 10/22, shifted 1/7, personal 1/28)
+
+declared rule: smallest z in (1.0, 2.0, 3.0) with controls <= 10% and <= half the shrink5 share -> z = 3.0 (NO z met the rule: z = 3 taken, shortfall reported)
+consistency of the offline verdict at the config z (3.0) with the production state in shrink5 fits: mismatches []
+  length 30: shrink5 EM-publishable 5/12, eligible 2, decision reached 2, certified at z=3.0 0; too few rows 0
+  length 60: shrink5 EM-publishable 2/12, eligible 7, decision reached 7, certified at z=3.0 1; too few rows 0
+  length 120: shrink5 EM-publishable 4/12, eligible 4, decision reached 4, certified at z=3.0 2; too few rows 0

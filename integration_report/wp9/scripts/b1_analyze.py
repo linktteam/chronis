@@ -144,26 +144,45 @@ def eval_report(recs, out_txt, out_json):
             L.append(f"E5 {arm}: eligible {len(el)}, certified {len(ce)}/{len(ar)}" + (f"; held-out gain of certified fits: " + ", ".join(f"{ar[s]['mean'] - g[s]:+.2f}" for s in ce) if ce else ""))
             res[ln][arm] = dict(eligible=len(el), certified=len(ce), n=len(ar))
         L.append("")
+    # Part 5b: the control validity check of section 16 is recomputed on the evaluation seeds; personal (no prior, a test of the test) is valid by construction; None = no shared-only records, not checked (judged)
+    valid = {"personal": True}
+    for name in ("scrambled", "shifted"):
+        d = [recs[(s, ln, f"shared_{name}")]["mean"] - recs[(s, ln, "shared_true")]["mean"] for s in seeds for ln in LENGTHS if (s, ln, f"shared_{name}") in recs and (s, ln, "shared_true") in recs]
+        d = [x for x in d if math.isfinite(x)]
+        m = sum(d) / len(d) if d else float("nan")
+        valid[name] = (m <= -1.0) if d else None
+        L.append(f"control validity on the evaluation seeds, shared-only score under the {name} prior minus under the true prior: " + (f"mean {m:+.3f} nats/step over {len(d)} cells -> {'valid (>= 1 nat worse)' if valid[name] else 'NOT a valid control (reported, not judged in the headline E5)'}" if d else "no shared-only records: not checked, judged"))
+    L.append("")
     allsh = [r for (s, ln, a), r in recs.items() if a == "shrink5"]
     k_s = sum((r.get("certification") or {}).get("state") == "CERTIFIED_PRIOR_ANCHORED" for r in allsh); n_se = sum(eligible(r) for r in allsh)
     L.append(f"E5 pooled over lengths: shrink5 certified {fmt(k_s, n_se)} of eligible")
-    ctrl_ok = True
+    ctrl_ok = True; ctrl_ok_all = True
     for arm in CONTROLS:
         ar = [r for (s, ln, a), r in recs.items() if a == arm]
         k = sum((r.get("certification") or {}).get("state") == "CERTIFIED_PRIOR_ANCHORED" for r in ar); n = sum(eligible(r) for r in ar)
         met = n > 0 and rate(k, n) <= 0.10 and rate(k, n) <= 0.5 * rate(k_s, n_se)
-        ctrl_ok &= met
-        L.append(f"   {arm}: certified {fmt(k, n)} of eligible -> {'MET (<= 10% and <= half of shrink5)' if met else 'NOT MET'}" if n else f"   {arm}: no eligible fit -> NOT JUDGED")
+        ctrl_ok_all &= met
+        if valid.get(arm) is not False:
+            ctrl_ok &= met
+        L.append((f"   {arm}: certified {fmt(k, n)} of eligible -> {'MET (<= 10% and <= half of shrink5)' if met else 'NOT MET'}" if n else f"   {arm}: no eligible fit -> NOT JUDGED") + ("" if valid.get(arm) is not False else "  [not a valid control on these seeds: not counted in the headline]"))
     # E6 precision of the certificate over all arms
     cert_fits = [(s, ln, a) for (s, ln, a), r in recs.items() if a in FIT_ARMS and (r.get("certification") or {}).get("state") == "CERTIFIED_PRIOR_ANCHORED" and r.get("finite")]
     pos = sum(recs[k]["mean"] - recs[(k[0], k[1], "gauss")]["mean"] > 0 for k in cert_fits)
     L += ["", f"E6 certificate precision (all arms): certified fits with a positive held-out gain over the single Gaussian {fmt(pos, len(cert_fits))}"]
+    # by-product (not a declared level): what happens to a record that grows; fits of the same seed at 30, 60 and 120 steps (the records are separate fits, not prefixes of one another)
+    L += ["", "By-product, shrink5 publishable after certification by record length (same seed, longer record):"]
+    pubs = {ln: {s for s in seeds if (recs.get((s, ln, "shrink5")) or {}).get("published_after")} for ln in LENGTHS}
+    for ln in LENGTHS:
+        L.append(f"   length {ln}: {len(pubs[ln])}/{len(seeds)} publishable")
+    w30 = [s for s in seeds if (s, 30, "shrink5") in recs and s not in pubs[30]]
+    for ln in (60, 120):
+        L.append(f"   withheld at 30 steps: {len(w30)}; of these publishable at {ln} steps: {sum(s in pubs[ln] for s in w30)}")
     sent = "survives" if all(survive3) else "does not survive"
     L += ["", f"The cold-start gain on publishable-after fits {sent} (pre-declared sentence: every length judged with n >= 8 and every mean - 3 se > 0: {survive3}); on certified fits only: {survive_cert}",
-          f"Net deployment gain (risk-coverage) shown: {all(res[ln]['risk_coverage']['mean_minus_3se'] > 0 for ln in LENGTHS)}; controls criterion: {'MET' if ctrl_ok else 'NOT MET'}"]
+          f"Net deployment gain (risk-coverage) shown: {all(res[ln]['risk_coverage']['mean_minus_3se'] > 0 for ln in LENGTHS)}; controls criterion (headline: valid controls only, Part 5b): {'MET' if ctrl_ok else 'NOT MET'}; over all three controls: {'MET' if ctrl_ok_all else 'NOT MET'}"]
     open(out_txt, "w").write("\n".join(L) + "\n")
     if out_json:
-        json.dump(dict(z=z, per_length=res, controls_met=bool(ctrl_ok), survives=all(survive3)), open(out_json, "w"), indent=1, default=float)
+        json.dump(dict(z=z, per_length=res, controls_met=bool(ctrl_ok), controls_met_all=bool(ctrl_ok_all), controls_valid=valid, survives=all(survive3)), open(out_json, "w"), indent=1, default=float)
     print("\n".join(L))
 
 

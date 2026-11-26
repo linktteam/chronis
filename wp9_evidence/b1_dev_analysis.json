@@ -1,0 +1,79 @@
+{
+ "chosen_z": 3.0,
+ "rule_met": false,
+ "valid": {
+  "scrambled": false,
+  "shifted": true
+ },
+ "table": [
+  {
+   "z": 1.0,
+   "shrink5": [
+    7,
+    13
+   ],
+   "scrambled": [
+    15,
+    22
+   ],
+   "shifted": [
+    2,
+    7
+   ],
+   "personal": [
+    2,
+    28
+   ],
+   "controls": [
+    19,
+    57
+   ]
+  },
+  {
+   "z": 2.0,
+   "shrink5": [
+    7,
+    13
+   ],
+   "scrambled": [
+    12,
+    22
+   ],
+   "shifted": [
+    1,
+    7
+   ],
+   "personal": [
+    1,
+    28
+   ],
+   "controls": [
+    14,
+    57
+   ]
+  },
+  {
+   "z": 3.0,
+   "shrink5": [
+    3,
+    13
+   ],
+   "scrambled": [
+    10,
+    22
+   ],
+   "shifted": [
+    1,
+    7
+   ],
+   "personal": [
+    1,
+    28
+   ],
+   "controls": [
+    12,
+    57
+   ]
+  }
+ ]
+}
