@@ -1,0 +1,57 @@
+B01 eight users per condition: KILLED
+B02 the seeds start at 10700: KILLED
+B03 four users at one sd: KILLED
+B04 the far prior is three sds off: KILLED
+B05 atypical users have spread 2: KILLED
+B06 the dropped feature is the first: KILLED
+B07 Dmax is 12 in the short variant: KILLED
+B08 Dmax is 25 in the long variant: KILLED
+B09 the K-too-small users have two regimes: KILLED
+B10 one population sd is 0.5: KILLED
+B11 the prior is shifted the other way: KILLED
+B12 the prior keeps the dropped feature only: KILLED
+B13 the loadings keep the dropped feature: KILLED
+B14 two sd is three sd: KILLED
+B15 one sd is one and a half: KILLED
+B16 no affine map: KILLED
+B17 the rows are not selected: KILLED
+B18 the prior weight is 1: KILLED
+B19 the certificate is off: KILLED
+B20 K = 3 is fitted: KILLED
+B21 the fit seed is shifted: KILLED
+B22 the held-out rows are the training rows: KILLED
+B23 the matrix keeps the dropped feature: KILLED
+B24 the prior is not shifted: KILLED
+B25 the true K is not used for the users: KILLED
+B26 the spread is not used for the users: KILLED
+B27 the withheld flag is inverted: KILLED
+B28 the certified flag is always False: KILLED
+B29 four training segments: KILLED
+B30 finished users are run again: KILLED
+B31 the limit skips the first users: KILLED
+B32 the draws of the generator copy differ: KILLED
+B33 the first latent state has another scale: KILLED
+B34 the test states are not those of the observations: KILLED
+A01 the one-sd level is 1.5 sd: KILLED
+A02 the band is 0.15: KILLED
+A03 worse means 0.15 lower: KILLED
+A04 five users are enough to read: KILLED
+A05 1000 draws: KILLED
+A06 a failed user counts as published: KILLED
+A07 the first record of a seed counts: KILLED
+A08 the two-sd columns come first: KILLED
+A09 the band needs one dimension only: KILLED
+A10 worse needs both dimensions: KILLED
+A11 worse looks at one sd: KILLED
+A12 the signed distance is reversed: KILLED
+A13 a condition is readable with at least seven users: KILLED
+A14 the headline uses all fits: KILLED
+A15 the bootstrap seed is 1: KILLED
+A16 the difference is C0 minus the condition: KILLED
+A17 the bootstrap difference is a sum: KILLED
+A18 the percentile interval is 5 to 95: KILLED
+A19 the headline block is the all-fits block: KILLED
+A20 the withhold reason is the text after the colon: KILLED
+A21 the comparison ignores the readability of C0: KILLED
+A22 the worse verdict is inverted: KILLED
+56/56 killed

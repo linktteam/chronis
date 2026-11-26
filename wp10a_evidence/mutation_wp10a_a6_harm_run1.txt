@@ -1,0 +1,52 @@
+H01 H1 is 3: KILLED
+H02 H2 is 6: KILLED
+H03 H3 is 12: KILLED
+H04 the development seeds start at 9632: KILLED
+H05 the evaluation seeds start at 10772: KILLED
+H06 100 iterations: KILLED
+H07 n0 is 3: KILLED
+H08 two restarts: KILLED
+H09 no fast-test switch: KILLED
+H10 the fit seed is not shifted: KILLED
+H11 K = 3 is fitted: KILLED
+H12 the certificate is off: KILLED
+H13 eligibility ignores the other reasons: KILLED
+H14 MAX_ITER_REACHED is not eligible: KILLED
+H15 the EM verdict is read with the certificate on: KILLED
+H16 published_after is inverted: KILLED
+H17 the prior is shifted the other way: KILLED
+H18 the evaluation has no true-prior arm: KILLED
+H19 an arm without its Gaussian is complete: KILLED
+H20 the evaluation runs without the freeze file: KILLED
+H21 an unknown candidate is accepted: KILLED
+H22 the Gaussian is not scored: KILLED
+H23 the true prior arm gets the harmful prior: KILLED
+G01 the candidate order is reversed: KILLED
+G02 rule (a) needs -0.2: KILLED
+G03 rule (b) needs 5: KILLED
+G04 rule (c) needs 3: KILLED
+G05 the evaluation needs 11 fits: KILLED
+G06 the bound is undefined when all are certified: KILLED
+G07 the bound is the lower tail: KILLED
+G08 a score not flagged finite is used: KILLED
+G09 a tie is worse: KILLED
+G10 a non-finite score is not worse: KILLED
+G11 the difference is personal minus fit: KILLED
+G12 a pair is used when either score is finite: KILLED
+G13 every worse fit counts as eligible: KILLED
+G14 rule (a) is inverted: KILLED
+G15 rule (b) is strict: KILLED
+G16 rule (c) is strict: KILLED
+G17 one rule is enough: KILLED
+G18 the last verified candidate is chosen: KILLED
+G19 every worse fit counts as eligible in E1: KILLED
+G20 a certified fit is one that is not certified: KILLED
+G21 the control is valid with more than 12 fits: KILLED
+G22 E1 is met with one certified fit: KILLED
+G23 E0 needs two certified fits: KILLED
+G24 E3 counts the withheld fits: KILLED
+G25 the Gaussian need not be usable: KILLED
+G26 converged fits are those that did not converge: KILLED
+G27 the other-rule count includes converged fits: KILLED
+G28 the baseline reads the shrink5 arm as personal: KILLED
+51/51 killed

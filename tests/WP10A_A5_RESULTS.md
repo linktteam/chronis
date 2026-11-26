@@ -20,7 +20,7 @@ None eligible; total shortfalls MA 0.537, MB 0.475, MC 0.517 -> MB frozen.
 |---|---|---|---|
 | MB (frozen) | 36/94 = 38.3% (Wilson 29.1-48.4%) NOT MET | 56/94 = 59.6% (Wilson 49.5-68.9%), median latency 18 days, events before day 135: 0, NOT MET | 83/94 = 88.3% (Wilson 80.2-93.3%), median latency 14, events before day 135: 0, MET |
 | M0 production, same users | 49/96 = 51.0% (41.2-60.8%) NOT MET | 44/96 = 45.8% (36.2-55.8%), latency 12, events before day 135: 12, NOT MET | 81/96 = 84.4% (75.8-90.3%), latency 5, MET |
-MB's denominators are 94: two users have too few scoreable days once the transition days are removed (status `not_enough_scores`; they count in neither numerator nor denominator, as declared). The WP9 sensor-change result was 12/12 on 12 users; 83/94 is consistent with it (its Wilson interval contains the WP9 point value only from below; no regression is claimed beyond "still above the 70% level").
+MB's denominators are 94: two users have too few scoreable days once the transition days are removed (status `not_enough_scores`; they count in neither numerator nor denominator, as declared). The WP9 sensor-change result was 12/12 on 12 users (Wilson 76-100%); 83/94 = 88% (Wilson 80-93%) is consistent with it: no regression is claimed beyond "still above the 70% level".
 
 ## RUN, POST HOC (development users only, `wp10a_evidence/a5_diag_posthoc.txt`; labelled, not part of any declared study)
 - All **19 of 19** alarms of the production monitor on the stable development streams have a decoded regime change inside the 14-day window or the 28-day reference: the clustering by transitions found in WP9 is confirmed.
