@@ -1,0 +1,1 @@
+Evidence of WP9 runs: every study script lives in `integration_report/wp9/scripts/`, its output (fits, analyses, mutation results) in this directory. Labels RUN / READ / REPORTED / UNKNOWN as in the WP7-R and WP8 packages.
