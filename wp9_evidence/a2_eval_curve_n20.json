@@ -1,0 +1,134 @@
+{
+ "pooled": {
+  "tally": {
+   "alignments": 432,
+   "served": 251,
+   "served_correct": 251,
+   "wrong_unflagged": 0,
+   "flagged": 181,
+   "flagged_would_be_wrong": 45,
+   "flagged_would_be_right": 136,
+   "cond_alignments": 388,
+   "cond_correct": 387,
+   "steps": 480,
+   "k_changed": 0,
+   "refits": 432
+  },
+  "ident": {
+   "strict_identical": 128,
+   "strict_cases": 155,
+   "wp8_identical": 209,
+   "wp8_cases": 288,
+   "exactly_one_seed_flagged": 39,
+   "aligned_steps": 284,
+   "aligned_with_flagged_fit_or_anchor": 0,
+   "first_fits_agree": 24,
+   "first_fits_both_unflagged": 24
+  },
+  "fit_level": {
+   "pairs": 288,
+   "both_unflagged": 179,
+   "same_partition": 178,
+   "flagged_either": 109
+  }
+ },
+ "hard": {
+  "tally": {
+   "alignments": 144,
+   "served": 34,
+   "served_correct": 34,
+   "wrong_unflagged": 0,
+   "flagged": 110,
+   "flagged_would_be_wrong": 35,
+   "flagged_would_be_right": 75,
+   "cond_alignments": 110,
+   "cond_correct": 109,
+   "steps": 160,
+   "k_changed": 0,
+   "refits": 144
+  },
+  "ident": {
+   "strict_identical": 12,
+   "strict_cases": 21,
+   "wp8_identical": 47,
+   "wp8_cases": 96,
+   "exactly_one_seed_flagged": 17,
+   "aligned_steps": 33,
+   "aligned_with_flagged_fit_or_anchor": 0,
+   "first_fits_agree": 2,
+   "first_fits_both_unflagged": 2
+  },
+  "fit_level": {
+   "pairs": 96,
+   "both_unflagged": 30,
+   "same_partition": 30,
+   "flagged_either": 66
+  }
+ },
+ "medium": {
+  "tally": {
+   "alignments": 144,
+   "served": 95,
+   "served_correct": 95,
+   "wrong_unflagged": 0,
+   "flagged": 49,
+   "flagged_would_be_wrong": 10,
+   "flagged_would_be_right": 39,
+   "cond_alignments": 134,
+   "cond_correct": 134,
+   "steps": 160,
+   "k_changed": 0,
+   "refits": 144
+  },
+  "ident": {
+   "strict_identical": 49,
+   "strict_cases": 58,
+   "wp8_identical": 76,
+   "wp8_cases": 96,
+   "exactly_one_seed_flagged": 13,
+   "aligned_steps": 107,
+   "aligned_with_flagged_fit_or_anchor": 0,
+   "first_fits_agree": 7,
+   "first_fits_both_unflagged": 7
+  },
+  "fit_level": {
+   "pairs": 96,
+   "both_unflagged": 66,
+   "same_partition": 66,
+   "flagged_either": 30
+  }
+ },
+ "easy": {
+  "tally": {
+   "alignments": 144,
+   "served": 122,
+   "served_correct": 122,
+   "wrong_unflagged": 0,
+   "flagged": 22,
+   "flagged_would_be_wrong": 0,
+   "flagged_would_be_right": 22,
+   "cond_alignments": 144,
+   "cond_correct": 144,
+   "steps": 160,
+   "k_changed": 0,
+   "refits": 144
+  },
+  "ident": {
+   "strict_identical": 67,
+   "strict_cases": 76,
+   "wp8_identical": 86,
+   "wp8_cases": 96,
+   "exactly_one_seed_flagged": 9,
+   "aligned_steps": 144,
+   "aligned_with_flagged_fit_or_anchor": 0,
+   "first_fits_agree": 15,
+   "first_fits_both_unflagged": 15
+  },
+  "fit_level": {
+   "pairs": 96,
+   "both_unflagged": 83,
+   "same_partition": 82,
+   "flagged_either": 13
+  }
+ }
+}
