@@ -15,7 +15,7 @@ DONE (updated 2026-11-26 ~06:00 container clock; last push of ledger/wp9 = see `
 - A3 DONE: `tests/WP9_A3_RESULTS.md` (split detection 0/12 NOT MET; safety level (d) MET); mutants 34/34 (final head).
 - A4: dev DONE (control stays inert on all designs; freeze design A). EVAL queued (/tmp/chain_a4eval.sh waits for /tmp/chain_b3eval.done).
 - B2 DONE (`wp9_evidence/b2_*`). B3: dev DONE, frozen (d0 = 1.5, delta = 0, signal 3 off, `tests/DESIGN_FREEZE_WP9_B3.txt`, config updated); EVAL started (`b3_run.py --range eval`, partial in `wp9_evidence/b3_eval_fits.jsonl`, PAUSED with SIGSTOP, see below).
-- B1: code done; DEV partial (`wp9_evidence/b1_dev_fits.jsonl`, 144 lines when complete = 12 seeds x 3 lengths x 4 arms), PAUSED with SIGSTOP; then `b1_analyze.py dev` -> `COLD_START_CERT_Z` -> `tests/DESIGN_FREEZE_WP9_B1.txt` -> `b1_run.py --range eval` once (72 jobs, about 4 h with 2 workers) -> `b1_analyze.py eval`.
+- B1: code done; DEV DONE (`wp9_evidence/b1_dev_analysis.txt`, 288 lines = 12 seeds x 3 lengths x 8): NO z met the declared rule, z = 3.0 frozen (fallback, shortfall reported); scrambled control INVALID (shared-only score 0.905 nats/step better than the true prior), shifted valid. Part 5b (dated) + `tests/DESIGN_FREEZE_WP9_B1.txt` committed (23fcd67). EVAL STARTED (72 jobs): `b1_run.py --range eval --out wp9_evidence/b1_eval_fits.jsonl --workers 2` (resumable; 576 lines when complete = 24 seeds x 3 lengths x 8). Then `b1_analyze.py eval wp9_evidence/b1_eval_fits.jsonl wp9_evidence/b1_eval_analysis.txt wp9_evidence/b1_eval_analysis.json` -> `tests/WP9_B1_RESULTS.md` (with B2 and the by-product) -> re-run `mutation_b1.py` -> export.
 - B5: module `backbone/hssm/monitoring.py` + 45 tests; simulation DONE (`wp9_evidence/b5_sim_analysis.txt`: S1 false alarm 5/12 NOT MET, regime shift 5/12 NOT MET, sensor change 12/12 MET). B5 mutants 23/26 first run (3 survivors fixed with tests; re-run queued -> `wp9_evidence/mutation_b5.txt`).
 - B6: `backbone/hssm/recertify.py` + 22 tests; simulation `b6_run.py` RUNNING (`wp9_evidence/b6_sim.jsonl`, 12 users; analysis script TODO: count withheld at day 30, publishable at 60/90, violations must be 0); mutants `mutation_b6.py` RUNNING (`wp9_evidence/mutation_b6.txt`).
 - B4: NOT started; design note only if the budget runs out (needs the B1 evaluation first). Say so in the report.
@@ -26,7 +26,8 @@ SCHEDULING NOTE: `nice` has no effect in this VM (autogroup was switched off wit
 RESUMABLE COMMANDS (rerun if lost; all append to their jsonl and skip finished jobs)
   A2 eval:  PYTHONPATH=. setsid nohup python3 integration_report/wp9/scripts/a12_run.py wp9_evidence/a12_eval_fits.jsonl --only EVAL-A,EVAL-B --workers 2 > /tmp/a12_eval.log 2>&1 &     (768 fits)
   B3 eval:  PYTHONPATH=. setsid nohup python3 integration_report/wp9/scripts/b3_run.py --range eval --out wp9_evidence/b3_eval_fits.jsonl --workers 1 > /tmp/b3_eval.log 2>&1 &
-  B1 dev:   PYTHONPATH=. setsid nohup python3 integration_report/wp9/scripts/b1_run.py --range dev --out wp9_evidence/b1_dev_fits.jsonl --workers 2 > /tmp/b1_dev.log 2>&1 &
+  B1 eval:  PYTHONPATH=. setsid nohup python3 integration_report/wp9/scripts/b1_run.py --range eval --out wp9_evidence/b1_eval_fits.jsonl --workers 2 > /tmp/b1_eval.log 2>&1 &
+  B1 dev (finished):   PYTHONPATH=. setsid nohup python3 integration_report/wp9/scripts/b1_run.py --range dev --out wp9_evidence/b1_dev_fits.jsonl --workers 2 > /tmp/b1_dev.log 2>&1 &
   A4 eval:  PYTHONPATH=. setsid nohup python3 integration_report/wp9/scripts/a4_run.py --range eval --out wp9_evidence/a4_eval_fits.jsonl --workers 1 > /tmp/a4_eval.log 2>&1 &
   B6 sim:   PYTHONPATH=. setsid nohup python3 integration_report/wp9/scripts/b6_run.py --out wp9_evidence/b6_sim.jsonl > /tmp/b6_sim.log 2>&1 &
 
