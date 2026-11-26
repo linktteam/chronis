@@ -712,6 +712,7 @@ class HSSMResult:
     collapse_report: dict = field(default_factory=dict)  # effective days per regime, minimum, variances at the floor, threshold, collapsed
     restart_summary: dict = field(default_factory=dict)  # multi-start stability metadata (ledger N1); descriptive, never changes publishing
     guard_repairs: int = 0                               # guard events of the selected fit that the duration repair resolved
+    k_adequacy: dict = field(default_factory=dict)       # WP9 B3 (baseline only, additive): is the selected K adequate? `k_unsure`, reasons, signals; never changes which K is selected
     # WP6 item 3 part 2 (dual model): per regime, True when the final duration parameters lie at a wall of the duration box. Empty for the baseline.
     duration_at_bound: dict = field(default_factory=dict)
     # WP7-R item 5 (dual model only; safe defaults elsewhere): R2, a regime with a degenerate duration (at a wall of the box, or the duration pmf still rising at
@@ -791,6 +792,11 @@ class HSSMResult:
     @property
     def insights_withheld(self) -> bool:
         return self.withheld_reason is not None
+
+    @property
+    def k_unsure(self) -> bool:
+        """WP9 B3: True when the selected K looks inadequate (the best guess is still the selected K). False when the baseline assessment found nothing, and for a result without one (dual)."""
+        return bool((self.k_adequacy or {}).get("k_unsure", False))
 
     def _withheld_on_read(self) -> bool:
         """True when the insights are withheld. The first time this is seen for a result, one internal WARNING is logged (once per
@@ -921,6 +927,23 @@ def _log_holdback(result: HSSMResult, random_seed: Optional[int]) -> None:
         result.withheld_reason, result.fit_cholesky_fallbacks, exception_types, random_seed, result.user_id,
         result.fit_dataset_hash, result.model_class,
     )
+
+
+def _attach_k_adequacy(result: HSSMResult, report: dict, candidates: tuple, user_id: str, dataset_hash: str) -> None:
+    """WP9 B3: additive `k_adequacy` and, when `k_unsure`, one developer alert (`alerts.emit`: the user id only as a hash). Fails closed: an exception in the assessment is recorded as k_unsure with the
+    reason `assessment_failed` and never breaks the fit."""
+    from backbone.hssm import alerts
+    from backbone.hssm.k_adequacy import assess_k_adequacy
+    try:
+        rs = result.restart_summary or {}
+        ad = assess_k_adequacy(report["selected_k"], report["bic_by_k"], result.model.mu, result.model.var, rs.get("fit_unstable"), candidates=candidates)
+    except Exception as exc:                                                       # noqa: BLE001
+        ad = dict(k_unsure=True, reasons=["assessment_failed"], selected_k=int(report.get("selected_k", -1)), best_guess_shown=True, signals={"error": type(exc).__name__}, thresholds={})
+    result.k_adequacy = ad
+    if ad["k_unsure"]:
+        sig = ad.get("signals", {})
+        alerts.emit("k_unsure", user_id, K=ad["selected_k"], reasons=list(ad["reasons"]), min_separation_sd=sig.get("min_separation_sd"), runner_up_bic_gap=sig.get("runner_up_bic_gap"),
+                    dataset_hash=dataset_hash)
 
 
 def fit_hssm(
@@ -1319,5 +1342,6 @@ def fit_hssm(
         restart_summary=dict(getattr(model, "restart_summary_", None) or {}),
         guard_repairs=len(getattr(model, "guard_repairs_", [])),
     )
+    _attach_k_adequacy(baseline_result, report, tuple(candidate_ks), user_id, dataset_hash)
     _log_holdback(baseline_result, random_seed)
     return baseline_result

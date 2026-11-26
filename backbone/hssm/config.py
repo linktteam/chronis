@@ -58,3 +58,9 @@ DUAL_DURATION_BOUND_TOL = 1e-3          # absolute tolerance (in mu and in sigma
 # best FIT_CONSENSUS_M healthy restarts (by log-likelihood) do not all agree at adjusted Rand index FIT_CONSENSUS_TAU (0.99 is the level this package calls "the same partition").
 FIT_CONSENSUS_M = 3
 FIT_CONSENSUS_TAU = 0.99
+
+# WP9 B3 (tests/PREDECLARED_CRITERIA_WP9.md, B3 section): thresholds of the `k_adequacy` tag. Starting values (not yet calibrated: the declared development rule sets them before the evaluation):
+# regimes closer than 1 pooled within-regime sd per feature (root mean square over features) overlap strongly; a BIC gap under 6 points is "weak" evidence in the usual reading.
+# Never changes which K is selected.
+K_ADEQUACY_MIN_SEPARATION = 1.0
+K_ADEQUACY_BIC_MARGIN = 6.0
