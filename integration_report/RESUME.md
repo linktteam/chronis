@@ -8,7 +8,16 @@ Seeds WP9: diagnosis 9201..9212; development 9301..9360; evaluation (once, desig
 Priorities if budget runs short: A0..A2, then B1, B3; A3, A4, A5 in between; drop B6, B5, B4 (in that order) to design notes and say so.
 Owner decisions (locked): see brief section 1 (A1 Bible not awaited, B2 cold start stamp, B3 show best guess with "unsure" tag + developer flag, B4 dual stays WP10, B5 strict publish rule + re-check, B6 test shrinkage on fresh people, B7 n0 = 5 and 4-day rule stay, C1 percentage only at calibrated confidence >= 85%, C2/C9 both engines). Process: fail closed, previously healthy fits bit-identical (counts), field names and module paths stay, new fields additive only.
 
-DONE
-- A0 (in progress): branch created, RESUME rewritten, export script for wp9 (base 7887118) written.
+DONE (updated 2026-11-26 ~02:30 IST)
+- A0: branch, RESUME, export script; export wp9_item0 delivered (head f65b376, restore test PASSED).
+- Pre-declaration `tests/PREDECLARED_CRITERIA_WP9.md`: part 1 (d3b11f8), part 2 (fffaf82: A1 rule C = best 3 healthy restarts agree at ARI 0.99, A2 gate rule, eval designs), part 3 (9a60f17: flagged anchor replaced by first stable fit). DESIGN FREEZE FILE `tests/DESIGN_FREEZE_WP9_A12.txt` does NOT exist yet: a12_run.py refuses EVAL groups without it; it must be committed after the development analysis picks the candidate (first line = JSON {"h":..,"s":..,"u":true}).
+- A1 diagnosis (RUN, 9201..9212): `wp9_evidence/a1_diag_analysis.txt`. A1 code committed (b77e029, 9a60f17, a963a0a): `backbone/hssm/fit_stability.py`, additive restart_summary keys, FitSummary/LineageRecord flags, `tests/test_wp9_a1_consensus.py` (30 tests), 28/28 mutants killed (`wp9_evidence/mutation_a1.txt`; one equivalent mutant not counted). One WP8 test fixture changed (tests/test_wp8_item4_engines.py: 120-day fit as anchor because the 90-day fit of 8791 is FIT_UNSTABLE). Bit-identity batteries: `wp9_evidence/a1_battery_fast.txt` and `_full.txt` (12/12 + 12/12; new tree = b77e029; re-run on the final head before the report).
+- Replay/analysis scripts: `integration_report/wp9/scripts/{wp9_fit_lib,wp9_replay_lib,a12_run,a12_analyze}.py`, tests `tests/test_wp9_replay_lib.py` (10 pass). a12_analyze has a mutation check still TO WRITE (mutation_a12_scoring.py).
+- RUNNING (background, resumable): development fits `PYTHONPATH=. setsid nohup python3 integration_report/wp9/scripts/a12_run.py wp9_evidence/a12_dev_fits.jsonl --only DEV-A,DEV-B --workers 2 > /tmp/a12_dev.log 2>&1 &` (960 jobs; if the container restarted rerun this line, finished jobs are skipped).
 
-TODO (in order): A0 export, pre-declaration `tests/PREDECLARED_CRITERIA_WP9.md`, A1, A2, B1/B2, B3, A3, A4, A5, B6, B5, B4, report, WP9_ALL.zip.
+NEXT STEPS
+1. When dev fits finish (960 lines in wp9_evidence/a12_dev_fits.jsonl): `PYTHONPATH=. python3 integration_report/wp9/scripts/a12_analyze.py dev wp9_evidence/a12_dev_fits.jsonl wp9_evidence/a2_dev_analysis.txt wp9_evidence/a2_dev_curve.json`; commit; write DESIGN_FREEZE file with the chosen candidate; if s > 0 implement the sharpness floor additively in lineage (FitSummary.posterior_sharpness + AlignmentConfig.min_posterior_sharpness, default 0); if h differs from 4.0 change the AlignmentConfig default (test updates declared).
+2. Run EVAL once: `a12_run.py wp9_evidence/a12_eval_fits.jsonl --only EVAL-A,EVAL-B` (768 fits at 20 restarts, ~2.2 h), then `a12_analyze.py eval ...`, write `tests/WP9_A12_RESULTS.md`, update contract doc + CHANGELOG, export wp9_item1 (A1) / wp9_item2 (A2).
+3. Then B1+B2, B3, A3, A4, A5, A6 statement, B6, B5, B4, WP9_REPORT.md, final export, WP9_ALL.zip (zip every wp9_item export).
+
+TODO (in order): A1 evaluation + export, A2 dev + eval + export, B1/B2, B3, A3, A4, A5, B6, B5, B4, report, WP9_ALL.zip.
