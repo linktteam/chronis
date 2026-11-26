@@ -74,3 +74,9 @@ COLD_START_CERT_MIN_TRAIN = 12                   # rows before the first origin
 COLD_START_CERT_MIN_BLOCK = 3                    # rows of every held-out block
 COLD_START_CERT_TAU = 0.25                       # parameter stability: regime-mean movement, in single-Gaussian standard deviations (fixed, not tuned)
 COLD_START_CERT_Z = 3.0                          # margin in HAC standard errors of the mean gain over the single Gaussian
+
+# WP9 A3 (tests/PREDECLARED_CRITERIA_WP9.md Part 7): K-change detection on the recent window of a refit (`k_change.assess_k_change`). The two deltas (BIC points that the fit at K_a + 1 / K_a - 1
+# must beat the fit at K_a on the recent window by) are PROVISIONAL; the declared development rule sets them before the evaluation. Never changes which K is fitted.
+K_CHANGE_RECENT_DAYS = 45
+K_CHANGE_DELTA_UP = 10.0
+K_CHANGE_DELTA_DOWN = 10.0

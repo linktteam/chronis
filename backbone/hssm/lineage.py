@@ -116,6 +116,7 @@ class FitSummary:
     context_profiles: np.ndarray | None = None      # channel 2 (optional): (K, C), one non-negative row per regime that sums to 1, supplied by the caller
     fit_unstable: bool = False                      # WP9 A1: the multi-start consensus of the fit failed (`fit_stability`); such a fit is never served as ALIGNED. False = nothing known against it
     fit_unstable_reason: str | None = None
+    k_change: dict | None = None                    # WP9 A3: the K-change record of this refit against the anchor (`k_change.assess_k_change`); None = nothing known (behaves as in WP8)
 
     @property
     def K(self) -> int:
@@ -196,6 +197,7 @@ class LineageRecord:
     channel_detail: dict | None = None             # per channel: assignment, margins and whether it was confident on its own; None when only channel 1 was used
     fit_unstable: bool = False                     # WP9 A1 (additive): this fit's multi-start consensus failed; the state is then never ALIGNED
     anchor_fit_unstable: bool = False              # WP9 A1 (additive): the anchor this fit was compared with was FIT_UNSTABLE
+    k_change: dict | None = None                   # WP9 A3 (additive): the K-change signal of this refit (direction, BIC margin) and its overlap candidates, with the old regimes also in stable ids
 
     def as_dict(self) -> dict:
         def clean(x):
@@ -285,7 +287,8 @@ def regime_table(summary: "FitSummary", registry) -> list[dict]:
 
 
 # EXPERT_REVIEW(identity-distance): computes the identifiability signal (`separation_min`) that the gate `min_separation` is applied to.
-def make_summary(engine: str, raw_means, scaler_mean, scaler_std, labels, raw_window, exp_durations=None, context_profiles=None, fit_unstable: bool = False, fit_unstable_reason: str | None = None) -> FitSummary:
+def make_summary(engine: str, raw_means, scaler_mean, scaler_std, labels, raw_window, exp_durations=None, context_profiles=None, fit_unstable: bool = False, fit_unstable_reason: str | None = None,
+                 k_change: dict | None = None) -> FitSummary:
     raw_means = np.array(raw_means, dtype=float); raw_window = np.array(raw_window, dtype=float); labels = np.array(labels, dtype=int)
     scaler_mean = np.array(scaler_mean, dtype=float); scaler_std = np.array(scaler_std, dtype=float)
     if engine not in ("baseline", "dual"):
@@ -299,7 +302,8 @@ def make_summary(engine: str, raw_means, scaler_mean, scaler_std, labels, raw_wi
         raise ValueError("scaler_std must be positive")
     dur = None if exp_durations is None else np.array(exp_durations, dtype=float)
     ctx = None if context_profiles is None else validate_context_profiles(context_profiles, K)
-    return FitSummary(engine, raw_means, scaler_mean, scaler_std, labels, separation_min(raw_means, raw_window, labels), raw_window, dur, ctx, bool(fit_unstable), fit_unstable_reason)
+    return FitSummary(engine, raw_means, scaler_mean, scaler_std, labels, separation_min(raw_means, raw_window, labels), raw_window, dur, ctx, bool(fit_unstable), fit_unstable_reason,
+                      None if k_change is None else dict(k_change))
 
 
 def fit_stability_flag(result) -> tuple[bool, str | None]:
@@ -314,9 +318,10 @@ def fit_stability_flag(result) -> tuple[bool, str | None]:
     return bool(flag), rs.get("fit_unstable_reason")
 
 
-def summarize_fit(result, raw_window, scaler_mean, scaler_std) -> FitSummary:
+def summarize_fit(result, raw_window, scaler_mean, scaler_std, k_change: dict | None = None) -> FitSummary:
     """Summary of an `HSSMResult` of either engine. `raw_window` is the window in physical units that was z-scored with (scaler_mean, scaler_std) to give the model input.
-    Baseline regime means: `mu` (z-space). Dual: `regime_observation_means(extract_params(model))` (z-space). Both are converted to raw units with the stored scaler."""
+    Baseline regime means: `mu` (z-space). Dual: `regime_observation_means(extract_params(model))` (z-space). Both are converted to raw units with the stored scaler.
+    `k_change` (WP9 A3, optional): the record of `k_change.assess_against_anchor` for this refit; None = nothing known."""
     model = result.model
     labels = np.asarray(result.p_t_posterior).argmax(axis=1)
     if result.is_baseline_model:
@@ -330,7 +335,7 @@ def summarize_fit(result, raw_window, scaler_mean, scaler_std) -> FitSummary:
     pmf = duration_pmf(np.array(model.dur_mu), np.array(model.dur_sigma), int(model.Dmax))
     exp_dur = (pmf * np.arange(1, int(model.Dmax) + 1)).sum(axis=1)
     unstable, reason = fit_stability_flag(result)
-    return make_summary(engine, raw_means, scaler_mean, scaler_std, labels, raw_window, exp_dur, fit_unstable=unstable, fit_unstable_reason=reason)
+    return make_summary(engine, raw_means, scaler_mean, scaler_std, labels, raw_window, exp_dur, fit_unstable=unstable, fit_unstable_reason=reason, k_change=k_change)
 
 
 def annotate_result(result, record: LineageRecord):
@@ -441,6 +446,33 @@ def _correspondence(anchor_vec: np.ndarray, new_vec: np.ndarray, proposed_raw_to
 
 
 # EXPERT_REVIEW(identity-distance): writes the identifiability signal of the fit into the record next to the margins and the state.
+def _k_change_record(summary: FitSummary, anchor: Anchor | None) -> dict | None:
+    """The K-change record of the summary as stored in the lineage record (WP9 A3): a copy, with the OLD regimes of every overlap candidate also given in the anchor's STABLE ids
+    (`old_stable_regime` / `old_stable_regimes`; the raw ids of the anchor stay under their own keys). None when the summary carries no assessment."""
+    if not isinstance(summary.k_change, dict):                           # None or malformed: nothing known
+        return None
+    kc = dict(summary.k_change)
+    if anchor is None:
+        return kc
+    r2s = anchor.raw_to_stable
+    cands = []
+    for c in kc.get("candidates") or ():
+        c = dict(c)
+        if "old_raw_regime" in c:
+            c["old_stable_regime"] = int(r2s[int(c["old_raw_regime"])])
+        if "old_raw_regimes" in c:
+            c["old_stable_regimes"] = sorted(int(r2s[int(i)]) for i in c["old_raw_regimes"])
+        cands.append(c)
+    kc["candidates"] = tuple(cands)
+    return kc
+
+
+def k_change_suspected(summary: FitSummary) -> bool:
+    """True when the summary carries a K-change record that says a change of the number of regimes is suspected (WP9 A3). A missing or malformed record is False (nothing known = WP8 behaviour)."""
+    kc = summary.k_change
+    return bool(isinstance(kc, dict) and kc.get("suspected") is True)
+
+
 def _record(fit_index, summary, anchor, epoch, lineage_id, state_name, message, raw_to_stable, rung, verified, al, th, reasons, proposed, candidates, user_choice=None,
             channels_used=("physical",), channel_detail=None):
     stable = np.asarray(raw_to_stable, dtype=int)[summary.labels]
@@ -454,7 +486,7 @@ def _record(fit_index, summary, anchor, epoch, lineage_id, state_name, message, 
         anchor_separation_min=None if anchor is None else anchor.summary.separation_min, scaler_mean=summary.scaler_mean, scaler_std=summary.scaler_std,
         proposed_new_names=proposed, split_merge_candidates=tuple(candidates), reasons=tuple(reasons),
         threshold=None if th is None else dict(rule=th.rule, tau=th.tau, rho=th.rho, calibrated=th.calibrated), channels_used=tuple(channels_used), channel_detail=channel_detail,
-        fit_unstable=bool(summary.fit_unstable), anchor_fit_unstable=False if anchor is None else bool(anchor.summary.fit_unstable))
+        fit_unstable=bool(summary.fit_unstable), anchor_fit_unstable=False if anchor is None else bool(anchor.summary.fit_unstable), k_change=_k_change_record(summary, anchor))
 
 
 # EXPERT_REVIEW(identity-distance): the scale of a channel's distance (mean pairwise inter-regime distance of the anchor) used in the combined cost.
@@ -553,6 +585,8 @@ def step(state: LineageState | None, summary: FitSummary, config: AlignmentConfi
             reasons.append("margin_below_threshold")
         if detail is not None and detail.get("disagree"):
             reasons.append("channels_disagree")
+    if k_change_suspected(summary):                                      # WP9 A3: a suspected change of the number of regimes is never served as "same as before"
+        reasons.append("k_change_suspected")
     if not reasons:
         r2s = [0] * summary.K
         for i, raw in enumerate(al["perm"]):
