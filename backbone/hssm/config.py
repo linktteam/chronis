@@ -87,3 +87,14 @@ COLD_START_CERT_Z = 3.0                          # margin in HAC standard errors
 K_CHANGE_RECENT_DAYS = 45
 K_CHANGE_DELTA_UP = 0.0
 K_CHANGE_DELTA_DOWN = 40.0
+
+# WP9 B5 (tests/PREDECLARED_CRITERIA_WP9.md Part 9): monitoring primitives. `N17_PASSED` is False while the shrinkage-uncertainty criterion N17 has not passed at its unchanged floor
+# (the N17 xfail in the test-suite stays); `confidence_display_gate` returns "early_estimate" for every input while it is False. Do not set it to True without the evidence (owner decision C1).
+N17_PASSED = False
+CONFIDENCE_DISPLAY_THRESHOLD = 0.85               # owner decision C1: a percentage only at a calibrated confidence of at least 85%
+MONITOR_WINDOW_DAYS = 14                          # recent window of the predictability monitor
+MONITOR_REFERENCE_DAYS = 28                       # trailing reference window (the same user's earlier scores)
+MONITOR_DROP_Z = 3.5                              # drop in units of the standard error of the difference of the two window means (reference sd, lag-1 autocorrelation inflation; Part 9b)
+MONITOR_MIN_DROP_SD = 0.75                        # and at least this many reference standard deviations (scale-free; Part 9b replaced the 0.5 nats of Part 9)
+MONITOR_COOLDOWN_DAYS = 14                        # one event per episode
+
