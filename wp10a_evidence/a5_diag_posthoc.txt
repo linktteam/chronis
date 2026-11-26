@@ -1,0 +1,5 @@
+users 48 alarmed 19 events 19 events with a decoded regime change in window or reference 19
+median excess kurtosis-ish (kurtosis, normal=3): 8.16244399528814
+median drop sd of events 1.6488761984715263 median z 4.736996628936445
+mean score first 45 held-out days vs last 45: -10.82448273291942 -10.66479576531401
+mean training in-sample score vs held-out mean: -6.57222332560161 -10.74172008431301

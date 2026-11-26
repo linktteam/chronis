@@ -1,0 +1,48 @@
+{
+ "monitor": "MB",
+ "tallies": {
+  "M0": {
+   "none": {
+    "n": 96,
+    "k": 49,
+    "rate": 0.5104166666666666
+   },
+   "regime_shift": {
+    "n": 96,
+    "k": 44,
+    "rate": 0.4583333333333333,
+    "pre_change_events": 12,
+    "latency_median": 12
+   },
+   "sensor_change": {
+    "n": 96,
+    "k": 81,
+    "rate": 0.84375,
+    "pre_change_events": 12,
+    "latency_median": 5
+   }
+  },
+  "MB": {
+   "none": {
+    "n": 94,
+    "k": 36,
+    "rate": 0.3829787234042553
+   },
+   "regime_shift": {
+    "n": 94,
+    "k": 56,
+    "rate": 0.5957446808510638,
+    "pre_change_events": 0,
+    "latency_median": 18
+   },
+   "sensor_change": {
+    "n": 94,
+    "k": 83,
+    "rate": 0.8829787234042553,
+    "pre_change_events": 0,
+    "latency_median": 14
+   }
+  }
+ },
+ "all_levels_met_on_point_estimates": false
+}

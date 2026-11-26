@@ -1,0 +1,6 @@
+A5 EVALUATION (once): frozen monitor MB; 96 users fitted (0 failed fits excluded); withheld by the publish rule (kept): 0
+  MB: false alarm 36/94 = 38.3% (Wilson 29.1-48.4%) [NOT MET]; regime shift 56/94 = 59.6% (Wilson 49.5-68.9%, median latency 18, events before day 135: 0) [NOT MET]; sensor change 83/94 = 88.3% (Wilson 80.2-93.3%, median latency 14, events before day 135: 0) [MET]
+  M0 (the production monitor of WP9, same users, for comparison): false alarm 49/96 = 51.0% (Wilson 41.2-60.8%) [NOT MET]; regime shift 44/96 = 45.8% (Wilson 36.2-55.8%, median latency 12, events before day 135: 12) [NOT MET]; sensor change 81/96 = 84.4% (Wilson 75.8-90.3%, median latency 5, events before day 135: 12) [MET]
+
+Sensor change, WP9 result 12/12 = 100%: now 83/94 (no regression).
+All three levels met on the point estimates: False. Not all levels are met: the production primitives stay as in WP9; no monitor is used as an alarm.
