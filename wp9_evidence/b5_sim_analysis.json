@@ -1,0 +1,104 @@
+{
+ "S1": {
+  "none": {
+   "n": 12,
+   "pre_change_events": 0,
+   "detected": 5,
+   "any_event": 5,
+   "latency_median": 12,
+   "latencies": [
+    2,
+    4,
+    12,
+    19,
+    29
+   ]
+  },
+  "regime_shift": {
+   "n": 12,
+   "pre_change_events": 0,
+   "detected": 5,
+   "any_event": 5,
+   "latency_median": 4,
+   "latencies": [
+    1,
+    2,
+    4,
+    11,
+    20
+   ]
+  },
+  "sensor_change": {
+   "n": 12,
+   "pre_change_events": 0,
+   "detected": 12,
+   "any_event": 12,
+   "latency_median": 3,
+   "latencies": [
+    1,
+    2,
+    2,
+    2,
+    3,
+    3,
+    3,
+    4,
+    5,
+    5,
+    7,
+    18
+   ]
+  }
+ },
+ "S2": {
+  "none": {
+   "n": 12,
+   "pre_change_events": 2,
+   "detected": 8,
+   "any_event": 10,
+   "latency_median": 34,
+   "latencies": [
+    0,
+    2,
+    27,
+    28,
+    34,
+    34,
+    35,
+    39
+   ]
+  },
+  "regime_shift": {
+   "n": 12,
+   "pre_change_events": 2,
+   "detected": 6,
+   "any_event": 8,
+   "latency_median": 19,
+   "latencies": [
+    0,
+    2,
+    10,
+    19,
+    32,
+    34
+   ]
+  },
+  "sensor_change": {
+   "n": 12,
+   "pre_change_events": 2,
+   "detected": 8,
+   "any_event": 10,
+   "latency_median": 6,
+   "latencies": [
+    0,
+    0,
+    0,
+    3,
+    6,
+    6,
+    15,
+    15
+   ]
+  }
+ }
+}

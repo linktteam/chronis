@@ -30,10 +30,10 @@ PURE = [
     ("B16 the event carries the user id", AL, "user_id_hash=user_id_hash(user_id), **fields)", "user_id_hash=str(user_id), **fields)"),
     ("B17 a failing handler breaks the caller", AL, "        except Exception:                                                  # a broken handler", "        except KeyError:                                                   # a broken handler"),
     ("B18 the alert is logged at INFO", AL, "    logger.warning(\"CHRONIS_DEV_ALERT", "    logger.info(\"CHRONIS_DEV_ALERT"),
-    ("B19 the default BIC margin is 7", CFG, "K_ADEQUACY_BIC_MARGIN = 6.0", "K_ADEQUACY_BIC_MARGIN = 7.0"),
-    ("B20 the default separation is 1.5", CFG, "K_ADEQUACY_MIN_SEPARATION = 1.0", "K_ADEQUACY_MIN_SEPARATION = 1.5"),
+    ("B19 the default BIC margin is 1", CFG, "K_ADEQUACY_BIC_MARGIN = 0.0", "K_ADEQUACY_BIC_MARGIN = 1.0"),
+    ("B20 the default separation is 1.0", CFG, "K_ADEQUACY_MIN_SEPARATION = 1.5", "K_ADEQUACY_MIN_SEPARATION = 1.0"),
     ("B22 the largest-candidate switch is ignored", KA, "    if flag_largest and len(cands) > 1", "    if len(cands) > 1"),
-    ("B23 the largest-candidate default is off", CFG, "K_ADEQUACY_FLAG_LARGEST = True", "K_ADEQUACY_FLAG_LARGEST = False"),
+    ("B23 the largest-candidate default is on", CFG, "K_ADEQUACY_FLAG_LARGEST = False", "K_ADEQUACY_FLAG_LARGEST = True"),
     ("B21 a result without an assessment is unsure", FIT, "return bool((self.k_adequacy or {}).get(\"k_unsure\", False))", "return bool((self.k_adequacy or {}).get(\"k_unsure\", True))"),
 ]
 WIRING = [

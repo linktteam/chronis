@@ -1,0 +1,17 @@
+B5 monitor simulation: 12 users (seeds 9901..9912); fitted K = 3 on days 0..89, change at day 135, scored days 90..179
+fits withheld by the publish rule (information only, the monitor does not need a published fit): 0/12
+
+== S1 raw score vs trailing window (primary, levels apply)
+false alarm on the none streams: 5/12 = 41.7% (Wilson 19.3-68.0%)   level <= 10%: NOT MET
+regime_shift: detected 5/12 = 41.7% (Wilson 19.3-68.0%); events before day 135: 0/12; latency median 4 days (all [1, 2, 4, 11, 20])   level >= 70%: NOT MET
+sensor_change: detected 12/12 = 100.0% (Wilson 75.7-100.0%); events before day 135: 0/12; latency median 3 days (all [1, 2, 2, 2, 3, 3, 3, 4, 5, 5, 7, 18])   level >= 70%: MET
+
+== S2 gain over the single Gaussian (reported, no level)
+false alarm on the none streams: 10/12 = 83.3% (Wilson 55.2-95.3%)
+regime_shift: detected 6/12 = 50.0% (Wilson 25.4-74.6%); events before day 135: 2/12; latency median 19 days (all [0, 2, 10, 19, 32, 34])
+sensor_change: detected 8/12 = 66.7% (Wilson 39.1-86.2%); events before day 135: 2/12; latency median 6 days (all [0, 0, 0, 3, 6, 6, 15, 15])
+
+mean score before / after the change (S1), per stream, over the users:
+  none: before -9.22, after -9.28 nats per day
+  regime_shift: before -9.22, after -11.85 nats per day
+  sensor_change: before -9.22, after -27.13 nats per day
