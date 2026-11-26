@@ -67,7 +67,8 @@ def test_every_exception_class_is_in_the_exceptions_table_and_the_hierarchy_is_a
 
 def test_withheld_semantics_in_the_doc_match_every_reason_prefix_of_the_code():
     sec = _section("9.2 Withheld semantics")
-    src = inspect.getsource(hssm_fitting.HSSMResult.withheld_reason.fget)
+    # WP9 B1: the list of reasons moved into `_withheld_reasons` (so that the certification can ask for it without the not-converged reason); `withheld_reason` joins it. Both sources are read.
+    src = inspect.getsource(hssm_fitting.HSSMResult.withheld_reason.fget) + inspect.getsource(hssm_fitting.HSSMResult._withheld_reasons)
     prefixes = set(re.findall(r'reasons\.append\(f?"([a-z_]+):', src))
     assert {"fit_state_not_converged", "collapsed_regime", "degenerate_duration", "fit_degraded", "states_pass", "late_fallbacks"} <= prefixes, prefixes
     assert "fit_state is NUMERICAL_FAILURE" in src
