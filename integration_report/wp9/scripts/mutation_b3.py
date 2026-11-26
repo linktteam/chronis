@@ -43,8 +43,8 @@ WIRING = [
     ("W04 a failed assessment is reported as sure", FIT, "ad = dict(k_unsure=True, reasons=[\"assessment_failed\"]", "ad = dict(k_unsure=False, reasons=[\"assessment_failed\"]"),
     ("W05 the stability flag is not passed", FIT, "result.model.var, rs.get(\"fit_unstable\"), candidates=candidates)", "result.model.var, False, candidates=candidates)"),
 ]
-FAST = "not live_fit and not selected_k_is_the_bic and not unsure_fit_raises and not clean_fit_raises and not exception_in_the_assessment"
-LIVE = "live_fit or selected_k_is_the_bic or unsure_fit_raises or clean_fit_raises or exception_in_the_assessment"
+FAST = "not live_fit and not selected_k_is_the_bic and not unsure_fit_raises and not clean_fit_raises and not exception_in_the_assessment and not stability_flag_of_the_selected_fit"
+LIVE = "live_fit or selected_k_is_the_bic or unsure_fit_raises or clean_fit_raises or exception_in_the_assessment or stability_flag_of_the_selected_fit"
 
 if __name__ == "__main__":
     out = sys.argv[1] if len(sys.argv) > 1 else None

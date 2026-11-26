@@ -228,3 +228,13 @@ def test_a_result_without_an_assessment_is_not_unsure():
     assert HSSMResult.__dataclass_fields__["k_adequacy"].default_factory() == {}
     stub = type("S", (), {"k_adequacy": {}})()
     assert HSSMResult.k_unsure.fget(stub) is False
+
+
+def test_the_stability_flag_of_the_selected_fit_reaches_the_assessment(monkeypatch):
+    """A1 flag -> B3 signal: a fit whose multi-start consensus fails carries `restart_disagreement` in its adequacy record."""
+    import backbone.hssm.fitting as fitting
+    real = fitting.assess_consensus
+    monkeypatch.setattr(fitting, "assess_consensus", lambda recs, ari, **k: dict(real(recs, ari, **k), fit_unstable=True, fit_unstable_reason="restarts_disagree"))
+    r = _fit()
+    assert r.restart_summary["fit_unstable"] is True
+    assert KA.REASON_RESTARTS in r.k_adequacy["reasons"] and r.k_adequacy["signals"]["fit_unstable"] is True and r.k_unsure is True
