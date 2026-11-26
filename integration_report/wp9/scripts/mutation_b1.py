@@ -36,8 +36,8 @@ PURE = [
     ("C22 stability looks at the first refit", CC, "            last = m\n", "            last = last if last is not None else m\n"),
     ("C23 a fit without a prior is certifiable", CC, "if not el.get(\"used_shared_prior\") or not (el.get(\"n0\") or 0) > 0:", "if not (el.get(\"n0\") or 0) > 0:"),
     ("C24 a failed EM fit is eligible", CC, "ELIGIBLE_EM_STATES = (\"REJECTED_UPDATE\", \"MAX_ITER_REACHED\")", "ELIGIBLE_EM_STATES = (\"REJECTED_UPDATE\", \"MAX_ITER_REACHED\", \"FAILED\")"),
-    ("C25 the default margin is 1", CFG, "COLD_START_CERT_Z = 3.0 ", "COLD_START_CERT_Z = 0.5 "),
-    ("C26 the stability level is 0.5", CFG, "COLD_START_CERT_TAU = 0.25 ", "COLD_START_CERT_TAU = 0.5 "),
+    ("C25 the default margin is 0.5", CFG, "COLD_START_CERT_Z = 3.0 ", "COLD_START_CERT_Z = 0.5 "),
+    ("C26 the stability level is 0.5 (declared 0.25)", CFG, "COLD_START_CERT_TAU = 0.25 ", "COLD_START_CERT_TAU = 0.5 "),
     ("C27 an unexpected error certifies", CC, "return dict(base, reasons=[R_ERROR], error=", "return dict(base, state=STATE_CERTIFIED, reasons=[R_ERROR], error="),
 ]
 WIRING = [

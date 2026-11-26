@@ -1,0 +1,8 @@
+B2: 36 shrink5 fits, seeds 9681..9692, 4 training segments, 200 iterations, final engine
+
+spread factor 0.0: publishable 9/12 = 75% (Wilson 47-91%); EM states {'CONVERGED': 12}; withheld for {'degenerate_duration': 3}; iterations median 74 (min 39, max 129); T mean 64
+spread factor 0.5: publishable 5/12 = 42% (Wilson 19-68%); EM states {'REJECTED_UPDATE': 4, 'CONVERGED': 8}; withheld for {'fit_state_not_converged': 4, 'degenerate_duration': 3}; iterations median 93 (min 2, max 200); T mean 61
+spread factor 1.0: publishable 4/12 = 33% (Wilson 14-61%); EM states {'REJECTED_UPDATE': 8, 'CONVERGED': 4}; withheld for {'fit_state_not_converged': 8}; iterations median 22 (min 2, max 200); T mean 59
+
+f = 0 data equal the item 4 generator exactly in all 12 fits: True
+declared reading -> explained by the data design

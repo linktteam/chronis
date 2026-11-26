@@ -115,6 +115,12 @@ def test_decide_refuses_when_the_lower_bound_is_not_strictly_positive():
     assert C.decide(d2, 0.0, z=mean / se + 1e-6)["reasons"] == [C.R_GAIN]
 
 
+def test_a_lower_bound_of_exactly_zero_does_not_certify():
+    d = np.array([1.0, -1.0] * 5)                                                   # mean exactly 0.0
+    out = C.decide(d, 0.0, z=0.0)
+    assert out["lower"] == 0.0 and out["state"] == C.STATE_NOT_CERTIFIED and out["reasons"] == [C.R_GAIN]
+
+
 def test_a_larger_margin_certifies_less():
     d = np.full(30, 0.3) + RNG.normal(scale=0.5, size=30)
     verdicts = [C.decide(d, 0.0, z=z)["state"] == C.STATE_CERTIFIED for z in (1.0, 2.0, 3.0, 6.0)]
