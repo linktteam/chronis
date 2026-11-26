@@ -104,12 +104,15 @@ def draw_user(seed: int, spec: IdentitySpec) -> dict:
 
 
 def generate_identity_stream(seed: int, n_days: int = 150, spec: IdentitySpec = IdentitySpec(), drift_sd: float = 0.0, k_change: str | None = None,
-                             change_day: int = 90, feature_scale_change: dict | None = None) -> IdentityStream:
+                             change_day: int = 90, feature_scale_change: dict | None = None, regime_scale_change: dict | None = None) -> IdentityStream:
     """k_change in (None, "split", "merge"). drift_sd: total displacement over the stream of every regime mean, a vector of Euclidean norm `drift_sd` in units of the
     user's within-regime sd (half common to all regimes, half regime-specific).
     WP9 A4 (additive, default None = the stream is bit-identical to WP8's): `feature_scale_change = dict(features=(i, ...), factor=f, start=d)` multiplies the within-regime NOISE of the
     listed features by `f` from day `d` on. The regime means do not move, so the raw-unit identity of the regimes is unchanged, but the within-window scale of those features is: per-window
-    z-scoring changes the basis, the stored scaler does not. No random number is drawn for it, so a stream with the option differs from the default one only in those noise values."""
+    z-scoring changes the basis, the stored scaler does not. No random number is drawn for it, so a stream with the option differs from the default one only in those noise values.
+    WP10A A4 design D (additive, default None = bit-identical): `regime_scale_change = dict(regime=k, features=(i, ...), factor=f, start=d)` multiplies, from day `d` on and only on the days of the
+    planted regime `k`, BOTH the offset of that regime's mean from the regime-average mean and the within-regime noise of the listed features by `f` (a scale change that is correlated with a
+    regime-mean change, confined to one regime). The planted labels, the missingness and every random number are unchanged; the regimes keep their order in raw units for f > 0."""
     K, F = spec.n_regimes, len(REGISTRY)
     u = draw_user(seed, spec)
     rng = np.random.default_rng(int(seed))
@@ -151,6 +154,11 @@ def generate_identity_stream(seed: int, n_days: int = 150, spec: IdentitySpec = 
             idx = np.flatnonzero(labels == K)
             vec = (u["drift_common"] + u["drift_own"][u["split_parent"]]) / np.sqrt(2.0)
             means_t[idx] += frac[idx] * drift_sd * wsd * vec / np.linalg.norm(vec)
+    if regime_scale_change:                                                           # WP10A A4 design D: the regime's offset from the regime-average mean is scaled (noise: below)
+        centre = u["means"].mean(axis=0)
+        sel = (np.minimum(labels, K - 1) == int(regime_scale_change["regime"])) & (t >= int(regime_scale_change["start"]))
+        for f in regime_scale_change["features"]:
+            means_t[sel, int(f)] = centre[int(f)] + float(regime_scale_change["factor"]) * (means_t[sel, int(f)] - centre[int(f)])
     # AR(1) noise with the marginal sd `wsd`
     e = np.zeros((n_days, F))
     eps = rng.standard_normal((n_days, F))
@@ -158,16 +166,23 @@ def generate_identity_stream(seed: int, n_days: int = 150, spec: IdentitySpec = 
     c = np.sqrt(1.0 - spec.ar ** 2)
     for i in range(1, n_days):
         e[i] = spec.ar * e[i - 1] + c * eps[i]
+    gain = None
     if feature_scale_change:
         gain = np.ones((n_days, F))
         for f in feature_scale_change["features"]:
             gain[np.arange(n_days) >= int(feature_scale_change["start"]), int(f)] = float(feature_scale_change["factor"])
+    if regime_scale_change:
+        gain = np.ones((n_days, F)) if gain is None else gain
+        sel = (np.minimum(labels, K - 1) == int(regime_scale_change["regime"])) & (t >= int(regime_scale_change["start"]))
+        for f in regime_scale_change["features"]:
+            gain[sel, int(f)] *= float(regime_scale_change["factor"])
+    if gain is not None:
         e = e * gain
     X_full = means_t + wsd * e
     present = rng.random((n_days, F)) < u["coverage"]
     day_missing = rng.random(n_days) < spec.whole_day_missing
     X_obs = np.where(present, X_full, np.nan)
     X_obs[day_missing] = np.nan
-    truth = dict(user=u, means_t=means_t, within_sd=wsd, drift_sd=float(drift_sd), k_change=k_change, change_day=int(change_day), feature_scale_change=feature_scale_change,
+    truth = dict(user=u, means_t=means_t, within_sd=wsd, drift_sd=float(drift_sd), k_change=k_change, change_day=int(change_day), feature_scale_change=feature_scale_change, regime_scale_change=regime_scale_change,
                  planted_order=list(range(K)), K=K, K_after=(K + 1 if k_change == "split" else K - 1 if k_change == "merge" else K))
     return IdentityStream(seed=int(seed), spec=spec, registry=REGISTRY, X_full=X_full, X_obs=X_obs, labels=labels, truth=truth)

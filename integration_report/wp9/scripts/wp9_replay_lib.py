@@ -52,7 +52,7 @@ _streams: dict = {}
 
 
 def raw_window9(job: dict) -> np.ndarray:
-    key = (job["user"], job.get("stratum", "wp8"), job.get("drift", 0.0), job.get("kchange"), job.get("n_days", 150), repr(job.get("scale_change")))
+    key = (job["user"], job.get("stratum", "wp8"), job.get("drift", 0.0), job.get("kchange"), job.get("n_days", 150), repr(job.get("scale_change")), repr(job.get("regime_change")))
     if key not in _streams:
         _streams[key] = F.stream_for(job)
     return _streams[key].window(job["start"], job["end"])["raw"]
@@ -71,7 +71,7 @@ _prep_cache: dict = {}
 def prepared(rec: dict, n: int | None):
     """Everything about one stored fit that does not depend on the candidate gate: the WP8-format record, the production consensus, the raw window and the scoring info (cached)."""
     j = rec["job"]
-    key = (j["user"], j["fitseed"], j["end"], j["start"], j.get("stratum"), n, repr(j.get("scale_change")), j.get("kchange"), j.get("drift"))
+    key = (j["user"], j["fitseed"], j["end"], j["start"], j.get("stratum"), n, repr(j.get("scale_change")), repr(j.get("regime_change")), j.get("kchange"), j.get("drift"), j.get("group"))
     if key not in _prep_cache:
         r8 = wp8_record(rec, n)
         if not S.usable(r8) or not r8.get("accepted"):

@@ -48,7 +48,7 @@ def spec_for(stratum: str):
 def stream_for(job: dict):
     from data.synthetic_identity import generate_identity_stream
     return generate_identity_stream(job["user"], n_days=job.get("n_days", 150), spec=spec_for(job.get("stratum", "wp8")), drift_sd=job.get("drift", 0.0), k_change=job.get("kchange"),
-                                    feature_scale_change=job.get("scale_change"))
+                                    feature_scale_change=job.get("scale_change"), regime_scale_change=job.get("regime_change"))      # regime_change: WP10A A4 design D (default None)
 
 
 def labels_to_str(labels) -> str:
