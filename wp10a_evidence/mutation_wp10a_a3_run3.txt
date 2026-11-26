@@ -1,0 +1,41 @@
+M01 the rule-of-three bound uses n + 1: KILLED
+M02 all-wrong is not capped at 1: KILLED
+M03 the confidence is 90%: KILLED
+M04 one wrong alignment is tolerated: KILLED
+M05 the safety bound check is twice as loose: KILLED
+M06 the safety bound is 2%: KILLED
+M07 the names level is 95%: KILLED
+M08 the coverage level is 75%: KILLED
+M09 the wrong-and-unflagged level is 2%: KILLED
+M10 the first window is a case: KILLED
+M11 the names level is 95% of days: KILLED
+M12 the day agreement is exclusive: KILLED
+M13 one_missing is inverted: KILLED
+M14 (a) counts windows served by one seed: KILLED
+M15 (a) counts disagreements as agreement: KILLED
+M16 (b) counts a window as both-withhold when either withholds: KILLED
+M17 (b) counts equal serve flags as one-serves: KILLED
+M18 (b) agreement ignores both-withhold: KILLED
+M19 the strict criterion counts only windows both serve: KILLED
+M20 the strict criterion accepts one seed: KILLED
+M21 (c) counts the first fit: KILLED
+M22 (c) takes the first withheld step: KILLED
+M23 (c) censors at 60: KILLED
+M24 (c) served by day 14 is exclusive: KILLED
+M25 (c) served by day 28 is exclusive: KILLED
+M26 (c) the median takes the upper middle: KILLED
+M27 (c) the quantile rounds down: KILLED
+M28 the lowest calibration coverage is chosen: KILLED
+M29 ties go to the smaller h: KILLED
+M30 ties go to flag OFF: KILLED
+M31 the validation level is exclusive: KILLED
+M32 zero wrong is judged on the pooled set in step 1: KILLED
+M33 the candidate is validated on the calibration half: KILLED
+M34 the halves are swapped: KILLED
+M35 the fallback takes the lowest coverage: KILLED
+M36 the flag-only list is flag OFF: KILLED
+M37 the gate grid is 2.0, 2.5, 3.0: KILLED
+M38 the sharpness floor is 0.9: KILLED
+M39 flag OFF keeps the sharpness floor: KILLED
+M40 step 3 takes the lowest pooled coverage: KILLED
+40/40 killed

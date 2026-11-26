@@ -127,6 +127,33 @@ def baseline_predictive_increments(model, X: np.ndarray) -> np.ndarray:
     return np.diff(np.concatenate([[0.0], lse]))
 
 
+def baseline_forward_scores(model, X: np.ndarray):
+    """WP10A A5 (additive; `baseline_predictive_increments` is unchanged): the same forward pass, returning BOTH the per-day held-out increments and the FILTERED regime posterior
+    p(k_t | y_<=t) of every day (shape T x K, rows sum to 1), for a fitted baseline model with frozen parameters. The increments are computed by the same operations in the same order as
+    `baseline_predictive_increments` and are bit-identical to it (tested). `model` is not modified. Returns (increments, regime_posterior)."""
+    from scipy.special import logsumexp
+    X = np.asarray(X, dtype=float)
+    T, K, D = X.shape[0], model.K, model.Dmax
+    NEG = -np.inf
+    emis = model._emission_loglik(X)
+    dur = model._duration_logpmf()
+    logA = np.log(np.clip(model.A, 1e-300, None))
+    log_pi = np.log(np.clip(model.pi, 1e-300, None))
+    alpha = np.full((T, K, D), NEG)
+    alpha[0] = (log_pi[:, None] + dur) + emis[0][:, None]
+    lse = np.full(T, np.nan)
+    lse[0] = logsumexp(alpha[0])
+    for t in range(1, T):
+        cont = np.full((K, D), NEG)
+        cont[:, : D - 1] = alpha[t - 1, :, 1:D]
+        trans_in = logsumexp(alpha[t - 1, :, 0][:, None] + logA, axis=0)
+        alpha[t] = np.logaddexp(cont, trans_in[:, None] + dur) + emis[t][:, None]
+        lse[t] = logsumexp(alpha[t])
+    per_regime = logsumexp(alpha, axis=2)                                                                              # (T, K): log p(k_t = k, y_<=t)
+    post = np.exp(per_regime - lse[:, None])
+    return np.diff(np.concatenate([[0.0], lse])), post
+
+
 def _posint(x) -> bool:
     return isinstance(x, (int, np.integer)) and not isinstance(x, bool) and x >= 1
 

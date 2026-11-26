@@ -94,8 +94,8 @@ def flat(d, prefix=""):
 
 
 def compare(a, b):
-    """Differences between two child outputs restricted to the fits (not the BLAS description): the list of (path, a, b) that differ."""
-    fa, fb = dict(flat({k: v for k, v in a.items() if k not in ("blas", "env")})), dict(flat({k: v for k, v in b.items() if k not in ("blas", "env")}))
+    """Differences between two child outputs restricted to the fits (not the BLAS description, the environment or the `config` label): the list of (path, a, b) that differ."""
+    fa, fb = dict(flat({k: v for k, v in a.items() if k not in ("blas", "env", "config")})), dict(flat({k: v for k, v in b.items() if k not in ("blas", "env", "config")}))
     return [(k, fa.get(k), fb.get(k)) for k in sorted(set(fa) | set(fb)) if fa.get(k) != fb.get(k)]
 
 

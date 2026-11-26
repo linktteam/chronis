@@ -1,0 +1,19 @@
+BLAS library as reported by threadpoolctl (arch, threads) per configuration:
+  default/t1         [('SkylakeX', 1)]
+  default/t1#1       [('SkylakeX', 1)]
+  default/t3         [('SkylakeX', 2)]
+  default/t3#1       [('SkylakeX', 2)]
+  default/t4         [('SkylakeX', 2)]
+  default/t4#1       [('SkylakeX', 2)]
+  default/t8         [('SkylakeX', 2)]
+  default/t8#1       [('SkylakeX', 2)]
+  default/t16        [('SkylakeX', 2)]
+  default/t16#1      [('SkylakeX', 2)]
+
+WITHIN a kernel, across thread settings (1, 2, unset):
+  default      reference default/t1: default/t1#1: bit-identical; default/t3: bit-identical; default/t3#1: bit-identical; default/t4: bit-identical; default/t4#1: bit-identical; default/t8: bit-identical; default/t8#1: bit-identical; default/t16: bit-identical; default/t16#1: bit-identical
+
+BETWEEN kernels (threads = 1 each), fit fields that differ bitwise / largest absolute and relative difference of the stored floats / discrete outcomes that differ:
+
+Discrete outcomes (identical in every configuration unless listed above):
+  {"converged_state": "FitState.CONVERGED", "not_converged_state": "FitState.MAX_ITER_REACHED", "seed1_fallback": "False", "seed2_fallback": "True", "converged_at_bound": "{0: False, 1: False}", "converged_degraded": "False"}

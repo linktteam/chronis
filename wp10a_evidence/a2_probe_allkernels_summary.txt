@@ -1,0 +1,197 @@
+BLAS library as reported by threadpoolctl (arch, threads) per configuration:
+  default/t1         [('SkylakeX', 1)]
+  PRESCOTT/t1        [('Katmai', 1)]
+  CORE2/t1           [('Katmai', 1)]
+  NEHALEM/t1         [('Nehalem', 1)]
+  SANDYBRIDGE/t1     [('Sandybridge', 1)]
+  HASWELL/t1         [('Haswell', 1)]
+  SKYLAKEX/t1        [('SkylakeX', 1)]
+  COOPERLAKE/t1      [('SkylakeX', 1)]
+  SAPPHIRERAPIDS/t1  [('SkylakeX', 1)]
+  ZEN/t1             [('Haswell', 1)]
+  BARCELONA/t1       [('Nehalem', 1)]
+  BULLDOZER/t1       [('Sandybridge', 1)]
+  PILEDRIVER/t1      [('Sandybridge', 1)]
+  STEAMROLLER/t1     [('Sandybridge', 1)]
+  EXCAVATOR/t1       [('Sandybridge', 1)]
+  ATOM/t1            [('Nehalem', 1)]
+  DUNNINGTON/t1      [('Katmai', 1)]
+  OPTERON/t1         [('Katmai', 1)]
+
+WITHIN a kernel, across thread settings (1, 2, unset):
+  default      reference default/t1: 
+  PRESCOTT     reference PRESCOTT/t1: 
+  CORE2        reference CORE2/t1: 
+  NEHALEM      reference NEHALEM/t1: 
+  SANDYBRIDGE  reference SANDYBRIDGE/t1: 
+  HASWELL      reference HASWELL/t1: 
+  SKYLAKEX     reference SKYLAKEX/t1: 
+  COOPERLAKE   reference COOPERLAKE/t1: 
+  SAPPHIRERAPIDS reference SAPPHIRERAPIDS/t1: 
+  ZEN          reference ZEN/t1: 
+  BARCELONA    reference BARCELONA/t1: 
+  BULLDOZER    reference BULLDOZER/t1: 
+  PILEDRIVER   reference PILEDRIVER/t1: 
+  STEAMROLLER  reference STEAMROLLER/t1: 
+  EXCAVATOR    reference EXCAVATOR/t1: 
+  ATOM         reference ATOM/t1: 
+  DUNNINGTON   reference DUNNINGTON/t1: 
+  OPTERON      reference OPTERON/t1: 
+
+BETWEEN kernels (threads = 1 each), fit fields that differ bitwise / largest absolute and relative difference of the stored floats / discrete outcomes that differ:
+  default     vs PRESCOTT   : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000126 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00378; discrete outcomes that differ: none
+  default     vs CORE2      : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000126 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00378; discrete outcomes that differ: none
+  default     vs NEHALEM    : 307 of 655 fit fields differ; stored floats that differ: 279; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  default     vs SANDYBRIDGE: 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  default     vs HASWELL    : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000102 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00308; discrete outcomes that differ: none
+  default     vs SKYLAKEX   :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  default     vs COOPERLAKE :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  default     vs SAPPHIRERAPIDS:   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  default     vs ZEN        : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000102 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00308; discrete outcomes that differ: none
+  default     vs BARCELONA  : 307 of 655 fit fields differ; stored floats that differ: 279; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  default     vs BULLDOZER  : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  default     vs PILEDRIVER : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  default     vs STEAMROLLER: 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  default     vs EXCAVATOR  : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  default     vs ATOM       : 307 of 655 fit fields differ; stored floats that differ: 279; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  default     vs DUNNINGTON : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000126 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00378; discrete outcomes that differ: none
+  default     vs OPTERON    : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000126 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00378; discrete outcomes that differ: none
+  PRESCOTT    vs CORE2      :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  PRESCOTT    vs NEHALEM    : 300 of 655 fit fields differ; stored floats that differ: 272; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  PRESCOTT    vs SANDYBRIDGE: 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  PRESCOTT    vs HASWELL    : 304 of 655 fit fields differ; stored floats that differ: 276; max abs diff 0.000228 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00684; discrete outcomes that differ: none
+  PRESCOTT    vs SKYLAKEX   : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000126 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00378; discrete outcomes that differ: none
+  PRESCOTT    vs COOPERLAKE : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000126 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00378; discrete outcomes that differ: none
+  PRESCOTT    vs SAPPHIRERAPIDS: 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000126 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00378; discrete outcomes that differ: none
+  PRESCOTT    vs ZEN        : 304 of 655 fit fields differ; stored floats that differ: 276; max abs diff 0.000228 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00684; discrete outcomes that differ: none
+  PRESCOTT    vs BARCELONA  : 300 of 655 fit fields differ; stored floats that differ: 272; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  PRESCOTT    vs BULLDOZER  : 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  PRESCOTT    vs PILEDRIVER : 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  PRESCOTT    vs STEAMROLLER: 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  PRESCOTT    vs EXCAVATOR  : 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  PRESCOTT    vs ATOM       : 300 of 655 fit fields differ; stored floats that differ: 272; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  PRESCOTT    vs DUNNINGTON :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  PRESCOTT    vs OPTERON    :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  CORE2       vs NEHALEM    : 300 of 655 fit fields differ; stored floats that differ: 272; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  CORE2       vs SANDYBRIDGE: 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  CORE2       vs HASWELL    : 304 of 655 fit fields differ; stored floats that differ: 276; max abs diff 0.000228 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00684; discrete outcomes that differ: none
+  CORE2       vs SKYLAKEX   : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000126 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00378; discrete outcomes that differ: none
+  CORE2       vs COOPERLAKE : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000126 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00378; discrete outcomes that differ: none
+  CORE2       vs SAPPHIRERAPIDS: 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000126 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00378; discrete outcomes that differ: none
+  CORE2       vs ZEN        : 304 of 655 fit fields differ; stored floats that differ: 276; max abs diff 0.000228 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00684; discrete outcomes that differ: none
+  CORE2       vs BARCELONA  : 300 of 655 fit fields differ; stored floats that differ: 272; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  CORE2       vs BULLDOZER  : 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  CORE2       vs PILEDRIVER : 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  CORE2       vs STEAMROLLER: 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  CORE2       vs EXCAVATOR  : 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  CORE2       vs ATOM       : 300 of 655 fit fields differ; stored floats that differ: 272; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  CORE2       vs DUNNINGTON :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  CORE2       vs OPTERON    :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  NEHALEM     vs SANDYBRIDGE: 298 of 655 fit fields differ; stored floats that differ: 273; max abs diff 1.88e-12 (at not_converged_fixture.model.log_likelihood_history_.35.f); max rel diff 6.01e-12; discrete outcomes that differ: none
+  NEHALEM     vs HASWELL    : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000275 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00823; discrete outcomes that differ: none
+  NEHALEM     vs SKYLAKEX   : 307 of 655 fit fields differ; stored floats that differ: 279; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  NEHALEM     vs COOPERLAKE : 307 of 655 fit fields differ; stored floats that differ: 279; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  NEHALEM     vs SAPPHIRERAPIDS: 307 of 655 fit fields differ; stored floats that differ: 279; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  NEHALEM     vs ZEN        : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000275 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00823; discrete outcomes that differ: none
+  NEHALEM     vs BARCELONA  :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  NEHALEM     vs BULLDOZER  : 298 of 655 fit fields differ; stored floats that differ: 273; max abs diff 1.88e-12 (at not_converged_fixture.model.log_likelihood_history_.35.f); max rel diff 6.01e-12; discrete outcomes that differ: none
+  NEHALEM     vs PILEDRIVER : 298 of 655 fit fields differ; stored floats that differ: 273; max abs diff 1.88e-12 (at not_converged_fixture.model.log_likelihood_history_.35.f); max rel diff 6.01e-12; discrete outcomes that differ: none
+  NEHALEM     vs STEAMROLLER: 298 of 655 fit fields differ; stored floats that differ: 273; max abs diff 1.88e-12 (at not_converged_fixture.model.log_likelihood_history_.35.f); max rel diff 6.01e-12; discrete outcomes that differ: none
+  NEHALEM     vs EXCAVATOR  : 298 of 655 fit fields differ; stored floats that differ: 273; max abs diff 1.88e-12 (at not_converged_fixture.model.log_likelihood_history_.35.f); max rel diff 6.01e-12; discrete outcomes that differ: none
+  NEHALEM     vs ATOM       :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  NEHALEM     vs DUNNINGTON : 300 of 655 fit fields differ; stored floats that differ: 272; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  NEHALEM     vs OPTERON    : 300 of 655 fit fields differ; stored floats that differ: 272; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  SANDYBRIDGE vs HASWELL    : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000275 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00823; discrete outcomes that differ: none
+  SANDYBRIDGE vs SKYLAKEX   : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  SANDYBRIDGE vs COOPERLAKE : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  SANDYBRIDGE vs SAPPHIRERAPIDS: 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  SANDYBRIDGE vs ZEN        : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000275 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00823; discrete outcomes that differ: none
+  SANDYBRIDGE vs BARCELONA  : 298 of 655 fit fields differ; stored floats that differ: 273; max abs diff 1.88e-12 (at not_converged_fixture.model.log_likelihood_history_.35.f); max rel diff 6.01e-12; discrete outcomes that differ: none
+  SANDYBRIDGE vs BULLDOZER  :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  SANDYBRIDGE vs PILEDRIVER :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  SANDYBRIDGE vs STEAMROLLER:   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  SANDYBRIDGE vs EXCAVATOR  :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  SANDYBRIDGE vs ATOM       : 298 of 655 fit fields differ; stored floats that differ: 273; max abs diff 1.88e-12 (at not_converged_fixture.model.log_likelihood_history_.35.f); max rel diff 6.01e-12; discrete outcomes that differ: none
+  SANDYBRIDGE vs DUNNINGTON : 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  SANDYBRIDGE vs OPTERON    : 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  HASWELL     vs SKYLAKEX   : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000102 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00308; discrete outcomes that differ: none
+  HASWELL     vs COOPERLAKE : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000102 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00308; discrete outcomes that differ: none
+  HASWELL     vs SAPPHIRERAPIDS: 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000102 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00308; discrete outcomes that differ: none
+  HASWELL     vs ZEN        :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  HASWELL     vs BARCELONA  : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000275 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00823; discrete outcomes that differ: none
+  HASWELL     vs BULLDOZER  : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000275 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00823; discrete outcomes that differ: none
+  HASWELL     vs PILEDRIVER : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000275 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00823; discrete outcomes that differ: none
+  HASWELL     vs STEAMROLLER: 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000275 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00823; discrete outcomes that differ: none
+  HASWELL     vs EXCAVATOR  : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000275 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00823; discrete outcomes that differ: none
+  HASWELL     vs ATOM       : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000275 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00823; discrete outcomes that differ: none
+  HASWELL     vs DUNNINGTON : 304 of 655 fit fields differ; stored floats that differ: 276; max abs diff 0.000228 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00684; discrete outcomes that differ: none
+  HASWELL     vs OPTERON    : 304 of 655 fit fields differ; stored floats that differ: 276; max abs diff 0.000228 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00684; discrete outcomes that differ: none
+  SKYLAKEX    vs COOPERLAKE :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  SKYLAKEX    vs SAPPHIRERAPIDS:   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  SKYLAKEX    vs ZEN        : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000102 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00308; discrete outcomes that differ: none
+  SKYLAKEX    vs BARCELONA  : 307 of 655 fit fields differ; stored floats that differ: 279; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  SKYLAKEX    vs BULLDOZER  : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  SKYLAKEX    vs PILEDRIVER : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  SKYLAKEX    vs STEAMROLLER: 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  SKYLAKEX    vs EXCAVATOR  : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  SKYLAKEX    vs ATOM       : 307 of 655 fit fields differ; stored floats that differ: 279; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  SKYLAKEX    vs DUNNINGTON : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000126 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00378; discrete outcomes that differ: none
+  SKYLAKEX    vs OPTERON    : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000126 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00378; discrete outcomes that differ: none
+  COOPERLAKE  vs SAPPHIRERAPIDS:   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  COOPERLAKE  vs ZEN        : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000102 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00308; discrete outcomes that differ: none
+  COOPERLAKE  vs BARCELONA  : 307 of 655 fit fields differ; stored floats that differ: 279; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  COOPERLAKE  vs BULLDOZER  : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  COOPERLAKE  vs PILEDRIVER : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  COOPERLAKE  vs STEAMROLLER: 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  COOPERLAKE  vs EXCAVATOR  : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  COOPERLAKE  vs ATOM       : 307 of 655 fit fields differ; stored floats that differ: 279; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  COOPERLAKE  vs DUNNINGTON : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000126 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00378; discrete outcomes that differ: none
+  COOPERLAKE  vs OPTERON    : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000126 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00378; discrete outcomes that differ: none
+  SAPPHIRERAPIDS vs ZEN        : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000102 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00308; discrete outcomes that differ: none
+  SAPPHIRERAPIDS vs BARCELONA  : 307 of 655 fit fields differ; stored floats that differ: 279; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  SAPPHIRERAPIDS vs BULLDOZER  : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  SAPPHIRERAPIDS vs PILEDRIVER : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  SAPPHIRERAPIDS vs STEAMROLLER: 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  SAPPHIRERAPIDS vs EXCAVATOR  : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  SAPPHIRERAPIDS vs ATOM       : 307 of 655 fit fields differ; stored floats that differ: 279; max abs diff 0.000172 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00517; discrete outcomes that differ: none
+  SAPPHIRERAPIDS vs DUNNINGTON : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000126 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00378; discrete outcomes that differ: none
+  SAPPHIRERAPIDS vs OPTERON    : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000126 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00378; discrete outcomes that differ: none
+  ZEN         vs BARCELONA  : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000275 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00823; discrete outcomes that differ: none
+  ZEN         vs BULLDOZER  : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000275 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00823; discrete outcomes that differ: none
+  ZEN         vs PILEDRIVER : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000275 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00823; discrete outcomes that differ: none
+  ZEN         vs STEAMROLLER: 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000275 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00823; discrete outcomes that differ: none
+  ZEN         vs EXCAVATOR  : 305 of 655 fit fields differ; stored floats that differ: 277; max abs diff 0.000275 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00823; discrete outcomes that differ: none
+  ZEN         vs ATOM       : 308 of 655 fit fields differ; stored floats that differ: 280; max abs diff 0.000275 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00823; discrete outcomes that differ: none
+  ZEN         vs DUNNINGTON : 304 of 655 fit fields differ; stored floats that differ: 276; max abs diff 0.000228 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00684; discrete outcomes that differ: none
+  ZEN         vs OPTERON    : 304 of 655 fit fields differ; stored floats that differ: 276; max abs diff 0.000228 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.00684; discrete outcomes that differ: none
+  BARCELONA   vs BULLDOZER  : 298 of 655 fit fields differ; stored floats that differ: 273; max abs diff 1.88e-12 (at not_converged_fixture.model.log_likelihood_history_.35.f); max rel diff 6.01e-12; discrete outcomes that differ: none
+  BARCELONA   vs PILEDRIVER : 298 of 655 fit fields differ; stored floats that differ: 273; max abs diff 1.88e-12 (at not_converged_fixture.model.log_likelihood_history_.35.f); max rel diff 6.01e-12; discrete outcomes that differ: none
+  BARCELONA   vs STEAMROLLER: 298 of 655 fit fields differ; stored floats that differ: 273; max abs diff 1.88e-12 (at not_converged_fixture.model.log_likelihood_history_.35.f); max rel diff 6.01e-12; discrete outcomes that differ: none
+  BARCELONA   vs EXCAVATOR  : 298 of 655 fit fields differ; stored floats that differ: 273; max abs diff 1.88e-12 (at not_converged_fixture.model.log_likelihood_history_.35.f); max rel diff 6.01e-12; discrete outcomes that differ: none
+  BARCELONA   vs ATOM       :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  BARCELONA   vs DUNNINGTON : 300 of 655 fit fields differ; stored floats that differ: 272; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  BARCELONA   vs OPTERON    : 300 of 655 fit fields differ; stored floats that differ: 272; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  BULLDOZER   vs PILEDRIVER :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  BULLDOZER   vs STEAMROLLER:   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  BULLDOZER   vs EXCAVATOR  :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  BULLDOZER   vs ATOM       : 298 of 655 fit fields differ; stored floats that differ: 273; max abs diff 1.88e-12 (at not_converged_fixture.model.log_likelihood_history_.35.f); max rel diff 6.01e-12; discrete outcomes that differ: none
+  BULLDOZER   vs DUNNINGTON : 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  BULLDOZER   vs OPTERON    : 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  PILEDRIVER  vs STEAMROLLER:   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  PILEDRIVER  vs EXCAVATOR  :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  PILEDRIVER  vs ATOM       : 298 of 655 fit fields differ; stored floats that differ: 273; max abs diff 1.88e-12 (at not_converged_fixture.model.log_likelihood_history_.35.f); max rel diff 6.01e-12; discrete outcomes that differ: none
+  PILEDRIVER  vs DUNNINGTON : 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  PILEDRIVER  vs OPTERON    : 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  STEAMROLLER vs EXCAVATOR  :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+  STEAMROLLER vs ATOM       : 298 of 655 fit fields differ; stored floats that differ: 273; max abs diff 1.88e-12 (at not_converged_fixture.model.log_likelihood_history_.35.f); max rel diff 6.01e-12; discrete outcomes that differ: none
+  STEAMROLLER vs DUNNINGTON : 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  STEAMROLLER vs OPTERON    : 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  EXCAVATOR   vs ATOM       : 298 of 655 fit fields differ; stored floats that differ: 273; max abs diff 1.88e-12 (at not_converged_fixture.model.log_likelihood_history_.35.f); max rel diff 6.01e-12; discrete outcomes that differ: none
+  EXCAVATOR   vs DUNNINGTON : 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  EXCAVATOR   vs OPTERON    : 303 of 655 fit fields differ; stored floats that differ: 275; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  ATOM        vs DUNNINGTON : 300 of 655 fit fields differ; stored floats that differ: 272; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  ATOM        vs OPTERON    : 300 of 655 fit fields differ; stored floats that differ: 272; max abs diff 4.66e-05 (at not_converged_fixture.model.dur_sigma.head.1); max rel diff 0.0014; discrete outcomes that differ: none
+  DUNNINGTON  vs OPTERON    :   0 of 655 fit fields differ; stored floats that differ: 0; max abs diff 0 (at -); max rel diff 0; discrete outcomes that differ: none
+
+Discrete outcomes (identical in every configuration unless listed above):
+  {"converged_state": "FitState.CONVERGED", "not_converged_state": "FitState.MAX_ITER_REACHED", "seed1_fallback": "False", "seed2_fallback": "True", "converged_at_bound": "{0: False, 1: False}", "converged_degraded": "False"}

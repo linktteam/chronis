@@ -1,0 +1,21 @@
+[default     threads=1     rep 0] BLAS [('openblas', 'SkylakeX', 1), ('openblas', 'SkylakeX', 1)] outcomes {'converged_state': 'FitState.CONVERGED', 'not_converged_state': 'FitState.MAX_ITER_REACHED', 'seed1_fallback': 'False', 'seed2_fallback': 'True', 'converged_at_bound': '{0: False, 1: False}', 'converged_degraded': 'False'}
+[default     threads=1     rep 1] BLAS [('openblas', 'SkylakeX', 1), ('openblas', 'SkylakeX', 1)] outcomes {'converged_state': 'FitState.CONVERGED', 'not_converged_state': 'FitState.MAX_ITER_REACHED', 'seed1_fallback': 'False', 'seed2_fallback': 'True', 'converged_at_bound': '{0: False, 1: False}', 'converged_degraded': 'False'}
+[default     threads=3     rep 0] BLAS [('openblas', 'SkylakeX', 2), ('openblas', 'SkylakeX', 2)] outcomes {'converged_state': 'FitState.CONVERGED', 'not_converged_state': 'FitState.MAX_ITER_REACHED', 'seed1_fallback': 'False', 'seed2_fallback': 'True', 'converged_at_bound': '{0: False, 1: False}', 'converged_degraded': 'False'}
+[default     threads=3     rep 1] BLAS [('openblas', 'SkylakeX', 2), ('openblas', 'SkylakeX', 2)] outcomes {'converged_state': 'FitState.CONVERGED', 'not_converged_state': 'FitState.MAX_ITER_REACHED', 'seed1_fallback': 'False', 'seed2_fallback': 'True', 'converged_at_bound': '{0: False, 1: False}', 'converged_degraded': 'False'}
+[default     threads=4     rep 0] BLAS [('openblas', 'SkylakeX', 2), ('openblas', 'SkylakeX', 2)] outcomes {'converged_state': 'FitState.CONVERGED', 'not_converged_state': 'FitState.MAX_ITER_REACHED', 'seed1_fallback': 'False', 'seed2_fallback': 'True', 'converged_at_bound': '{0: False, 1: False}', 'converged_degraded': 'False'}
+[default     threads=4     rep 1] BLAS [('openblas', 'SkylakeX', 2), ('openblas', 'SkylakeX', 2)] outcomes {'converged_state': 'FitState.CONVERGED', 'not_converged_state': 'FitState.MAX_ITER_REACHED', 'seed1_fallback': 'False', 'seed2_fallback': 'True', 'converged_at_bound': '{0: False, 1: False}', 'converged_degraded': 'False'}
+[default     threads=8     rep 0] BLAS [('openblas', 'SkylakeX', 2), ('openblas', 'SkylakeX', 2)] outcomes {'converged_state': 'FitState.CONVERGED', 'not_converged_state': 'FitState.MAX_ITER_REACHED', 'seed1_fallback': 'False', 'seed2_fallback': 'True', 'converged_at_bound': '{0: False, 1: False}', 'converged_degraded': 'False'}
+[default     threads=8     rep 1] BLAS [('openblas', 'SkylakeX', 2), ('openblas', 'SkylakeX', 2)] outcomes {'converged_state': 'FitState.CONVERGED', 'not_converged_state': 'FitState.MAX_ITER_REACHED', 'seed1_fallback': 'False', 'seed2_fallback': 'True', 'converged_at_bound': '{0: False, 1: False}', 'converged_degraded': 'False'}
+[default     threads=16    rep 0] BLAS [('openblas', 'SkylakeX', 2), ('openblas', 'SkylakeX', 2)] outcomes {'converged_state': 'FitState.CONVERGED', 'not_converged_state': 'FitState.MAX_ITER_REACHED', 'seed1_fallback': 'False', 'seed2_fallback': 'True', 'converged_at_bound': '{0: False, 1: False}', 'converged_degraded': 'False'}
+[default     threads=16    rep 1] BLAS [('openblas', 'SkylakeX', 2), ('openblas', 'SkylakeX', 2)] outcomes {'converged_state': 'FitState.CONVERGED', 'not_converged_state': 'FitState.MAX_ITER_REACHED', 'seed1_fallback': 'False', 'seed2_fallback': 'True', 'converged_at_bound': '{0: False, 1: False}', 'converged_degraded': 'False'}
+
+comparison with the first configuration ({'kernel': 'default', 'threads': '1', 'rep': 0}):
+  {'kernel': 'default', 'threads': '1', 'rep': 1}: 1 fields differ in ['config']
+  {'kernel': 'default', 'threads': '3', 'rep': 0}: 1 fields differ in ['config']
+  {'kernel': 'default', 'threads': '3', 'rep': 1}: 2 fields differ in ['config']
+  {'kernel': 'default', 'threads': '4', 'rep': 0}: 1 fields differ in ['config']
+  {'kernel': 'default', 'threads': '4', 'rep': 1}: 2 fields differ in ['config']
+  {'kernel': 'default', 'threads': '8', 'rep': 0}: 1 fields differ in ['config']
+  {'kernel': 'default', 'threads': '8', 'rep': 1}: 2 fields differ in ['config']
+  {'kernel': 'default', 'threads': '16', 'rep': 0}: 1 fields differ in ['config']
+  {'kernel': 'default', 'threads': '16', 'rep': 1}: 2 fields differ in ['config']

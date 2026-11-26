@@ -102,12 +102,46 @@ def test_flag_is_read_when_asked_not_frozen_at_construction(converged):
 
 
 # ------------------------------------------------------------------------------------------------------------------- 2. optimizer_success
-def test_dual_optimizer_success_is_false_when_the_duration_optimiser_fell_back_and_true_otherwise():
-    ok = _fit(_series([20] * 5, seed=1))                    # public path, seed with no duration fallback
-    bad = _fit(_series([20] * 5, seed=2))                   # same design, a seed where the duration optimiser fell back
+def _forced_duration_optimizer(real, success, first_call_only):
+    """Wrap scipy's `minimize` as the dual model sees it: run the real optimiser, then set its `success` flag. The model's own except-path (a result that is not a success raises, the previous iterate is kept, the
+    fallback flags are set) is the code under test; only the optimiser's verdict is injected, so the outcome no longer depends on where a Nelder-Mead run happens to stop."""
+    state = {"calls": 0}
+
+    def forced(*a, **k):
+        res = real(*a, **k)
+        state["calls"] += 1
+        if not first_call_only or state["calls"] == 1:
+            res.success = success
+        return res
+    forced.state = state
+    return forced
+
+
+def test_dual_optimizer_success_is_false_when_the_duration_optimiser_fell_back_and_true_otherwise(monkeypatch):
+    # WP10A A2 (finding F2): this test used to rely on two data seeds, one where the duration optimiser (Nelder-Mead, default iteration cap) happened to converge on every EM iteration and one where it did not. Where
+    # a Nelder-Mead run stops depends on the last bits of the E-step, which differ between CPU kernels (tests/test_wp10a_a2_cross_kernel.py): the outcome is therefore injected here (both cases, same public path)
+    # and the natural fits are checked for the invariant only (next test). The F2 failure itself was NOT reproduced (WP10A_REPORT.md); that this is the test that failed is an inference.
+    from backbone.hssm import dual_model
+    real = dual_model.minimize
+    ok_wrap = _forced_duration_optimizer(real, True, False)
+    monkeypatch.setattr(dual_model, "minimize", ok_wrap)
+    ok = _fit(_series([20] * 5, seed=1))                    # public path; every duration update reported as a success
+    bad_wrap = _forced_duration_optimizer(real, False, True)
+    monkeypatch.setattr(dual_model, "minimize", bad_wrap)
+    bad = _fit(_series([20] * 5, seed=2))                   # public path; the first duration update reported as a failure, the rest real
+    assert ok_wrap.state["calls"] > 0 and bad_wrap.state["calls"] > 1, "the injected optimiser was not used (or only once)"
     assert ok.model.duration_fallback_used_ is False and ok.optimizer_success is True
     assert bad.model.duration_fallback_used_ is True and bad.optimizer_success is False
     assert ok.duration_optimizer_success is True and bad.duration_optimizer_success is False
+
+
+@pytest.mark.parametrize("seed", [1, 2])
+def test_dual_optimizer_success_is_the_negation_of_the_fallback_flag_whatever_the_optimiser_did(seed):
+    r = _fit(_series([20] * 5, seed=seed))                  # natural fit: whether the optimiser fell back is allowed to depend on the CPU; what the result REPORTS is not
+    fell_back = r.model.duration_fallback_used_
+    assert isinstance(fell_back, (bool, np.bool_))
+    assert r.optimizer_success is (not fell_back)
+    assert (r.duration_optimizer_success is False) if fell_back else (r.duration_optimizer_success is True)
 
 
 # ------------------------------------------------------------------------------------------------------------------- 3. duration identity
