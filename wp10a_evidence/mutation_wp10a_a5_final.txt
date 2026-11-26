@@ -1,0 +1,53 @@
+N01 the block length is 5: KILLED
+N02 1000 draws: KILLED
+N03 drop_z 3.0: KILLED
+N04 a regime needs 3 days: KILLED
+N05 the bootstrap seed is 1: KILLED
+N06 the reference has one block too many: KILLED
+N07 the block mean divides by block + 1: KILLED
+N08 the smaller standard error wins: KILLED
+N09 the autocorrelation is capped at 0.9: KILLED
+N10 the event needs the drop or the z: KILLED
+N11 the cooldown is exclusive: KILLED
+N12 41 scores are enough: KILLED
+N13 the day after a transition is kept: KILLED
+N14 a transition is no change of regime: KILLED
+N15 the row before is not dropped again: KILLED
+N16 the decoded regime is the least probable: KILLED
+N17 a regime needs more than 5 days: KILLED
+N18 the regime sd has ddof 0: KILLED
+N19 the residual multiplies by the sd: KILLED
+N20 a zero sd gives inf: KILLED
+N21 MB keeps only the transition days: KILLED
+N22 MC fixes its means on the held-out days: KILLED
+N23 MA is not dispatched: KILLED
+N24 MB is not given the row before: KILLED
+A01 the false-alarm level is 20%: KILLED
+A02 the detection level is 60%: KILLED
+A03 the change day is 130: KILLED
+A04 the last day is 170: KILLED
+A05 training ends at day 89: KILLED
+A06 the order is reversed: KILLED
+A07 a false alarm of exactly 10% is not eligible: KILLED
+A08 a detection of exactly 70% is not eligible: KILLED
+A09 eligibility needs one detection only: KILLED
+A10 the false-alarm shortfall is inverted: KILLED
+A11 the highest false alarm is chosen: KILLED
+A12 ties go to the lower regime-shift detection: KILLED
+A13 ties go to the last candidate: KILLED
+A14 the largest shortfall is chosen: KILLED
+A15 the fallback ties go to the last candidate: KILLED
+A16 the alarmed users are those without an event: KILLED
+A17 an event on day 135 is not a detection: KILLED
+A18 an event on day 134 is not a pre-change event: KILLED
+A19 the latency is the shortest: KILLED
+A20 missing days keep their score: KILLED
+A21 the row before is the first held-out row: KILLED
+A22 the evaluation accepts development users: KILLED
+A23 an unknown monitor is accepted: KILLED
+A24 event days are relative to the held-out series: KILLED
+A25 the evaluation runs without the freeze file: KILLED
+P01 the regime posterior sums over the wrong axis: KILLED
+P02 the posterior is not normalised: KILLED
+P03 the posterior is returned reversed: KILLED
+52/52 killed
