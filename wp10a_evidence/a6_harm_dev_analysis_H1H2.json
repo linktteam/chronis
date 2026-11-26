@@ -1,0 +1,31 @@
+{
+ "candidates": {
+  "H1": {
+   "n": 36,
+   "mean_diff_to_personal": 7.524513503626612,
+   "n_in_mean": 36,
+   "left_out": 0,
+   "unusable_pairs": 0,
+   "worse_than_gauss": 11,
+   "worse_and_eligible": 3,
+   "rule_a": false,
+   "rule_b": true,
+   "rule_c": false,
+   "verified": false
+  },
+  "H2": {
+   "n": 36,
+   "mean_diff_to_personal": 6.013496478086685,
+   "n_in_mean": 36,
+   "left_out": 0,
+   "unusable_pairs": 0,
+   "worse_than_gauss": 18,
+   "worse_and_eligible": 5,
+   "rule_a": false,
+   "rule_b": true,
+   "rule_c": true,
+   "verified": false
+  }
+ },
+ "chosen": null
+}
