@@ -14,3 +14,11 @@ B13 the restart signal is removed: KILLED
 B14 the user hash is 8 digits: KILLED
 B15 personal fields are accepted: KILLED
 B16 the event carries the user id: KILLED
+B17 a failing handler breaks the caller: KILLED
+B18 the alert is logged at INFO: KILLED
+B19 the default BIC margin is 1: KILLED
+B20 the default separation is 1.0: KILLED
+B22 the largest-candidate switch is ignored: KILLED
+B23 the largest-candidate default is on: KILLED
+B21 a result without an assessment is unsure: KILLED
+21/23 killed
