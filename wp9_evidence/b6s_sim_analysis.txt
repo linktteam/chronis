@@ -1,0 +1,15 @@
+B6 re-certification simulation (supplementary arm S): 12 users (seeds 9801..9812; hard 9801..9806, medium 9807..9812), production fit_hssm, candidates (5,) forced, SUPPLEMENTARY, added after the declared arm was vacuous, 10 restarts, 100 iterations
+fits withheld at day 30 (the first prefix with >= 30 present days): 6/12
+  user 9802 (hard): withheld for ['collapsed_regime: a regime holds 1.00 effective days (minimu']
+  user 9803 (hard): withheld for ['collapsed_regime: a regime holds 2.00 effective days (minimu']
+  user 9806 (hard): withheld for ['collapsed_regime: a regime holds 1.00 effective days (minimu']
+  user 9809 (medium): withheld for ['collapsed_regime: a regime holds 2.00 effective days (minimu']
+  user 9810 (medium): withheld for ['collapsed_regime: a regime holds 1.00 effective days (minimu']
+  user 9811 (medium): withheld for ['collapsed_regime: a regime holds 1.00 effective days (minimu']
+publishable by day 60 after re-certification: 6/6
+publishable by day 90 after re-certification: 6/6
+fresh fit on the same matrix agrees with the re-certification: 6/6
+published at day 30: 6/12; fresh window fits (own z-scoring) published at day 60: 11/12, at day 90: 12/12
+withhold reasons among the fresh fits at days 60 and 90: {'collapsed_regime': 1}
+
+NO-RELAXATION CHECK (hard level): outputs with a published state 35; violations (publishable by the module but refused by an independent recomputation, a result handed out with a withheld state, rules_relaxed true) 0 (+ 0 with rules_relaxed true) -> MET (0 violations)

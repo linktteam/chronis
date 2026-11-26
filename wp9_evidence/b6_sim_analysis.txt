@@ -1,4 +1,4 @@
-B6 re-certification simulation: 12 users (seeds 9801..9812; hard 9801..9806, medium 9807..9812), production fit_hssm, candidates (2, 3, 4), 10 restarts, 100 iterations
+B6 re-certification simulation (declared arm): 12 users (seeds 9801..9812; hard 9801..9806, medium 9807..9812), production fit_hssm, candidates (2, 3, 4), 10 restarts, 100 iterations
 fits withheld at day 30 (the first prefix with >= 30 present days): 0/12 -> TOO FEW TO READ (declared: fewer than 4)
 published at day 30: 12/12; fresh window fits (own z-scoring) published at day 60: 12/12, at day 90: 12/12
 withhold reasons among the fresh fits at days 60 and 90: none

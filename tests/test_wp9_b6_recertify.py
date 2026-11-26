@@ -21,6 +21,7 @@ class FakeFit:
 
     def __call__(self, matrix, **kw):
         self.calls.append((np.asarray(matrix).shape, kw))
+        self.matrices = getattr(self, "matrices", []) + [np.array(matrix)]
         reasons = self.withheld_for(len(matrix))
         return SimpleNamespace(insights_withheld=bool(reasons), _withheld_reasons=lambda: list(reasons), n=len(matrix))
 
@@ -39,6 +40,7 @@ def test_a_result_that_is_not_withheld_is_publishable_and_carries_the_result():
     out = R.recertify(X(30), X(30, seed=1), metadata=meta(), fit_fn=fit)
     assert out["state"] == "PUBLISHABLE" and out["reasons"] == [] and out["rules_relaxed"] is False and out["n_rows"] == 60 and out["result"].n == 60
     assert fit.calls[0][0] == (60, 3) and fit.calls[0][1] == SETTINGS
+    assert np.array_equal(fit.matrices[0], np.vstack([X(30), X(30, seed=1)]))                      # stored rows first, new rows after (time order)
 
 
 def test_a_withheld_result_stays_withheld_with_its_reasons_and_no_result_is_returned():
