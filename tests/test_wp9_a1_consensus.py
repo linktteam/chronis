@@ -217,6 +217,14 @@ def test_a_stable_anchor_does_not_move_on_an_unverified_step():
     assert r2.continuity_state == ALIGNED and st2.anchor.fit_index == 2
 
 
+def test_a_stable_anchor_does_not_move_when_a_stable_fit_is_unverified_for_another_reason():
+    m = _means(3)
+    strict = AlignmentConfig(min_separation=1e6, ladder=CFG.ladder)                            # the identifiability gate refuses every fit: the step is unverified without any flag
+    _, st = step(None, _summary(m, seed=1), strict, REGISTRY, lineage_id="t")
+    r, st1 = step(st, _summary(m, seed=2), strict, REGISTRY)
+    assert r.continuity_state == CONTINUITY_UNVERIFIED and not r.fit_unstable and not r.anchor_fit_unstable and st1.anchor is st.anchor
+
+
 def test_the_replacement_of_an_unstable_anchor_needs_a_matching_of_same_K_fits():
     a = _summary(_means(3, K=3), seed=1, fit_unstable=True)
     n = _summary(_means(3, K=4), seed=2)

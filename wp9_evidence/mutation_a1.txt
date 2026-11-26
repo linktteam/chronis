@@ -21,5 +21,9 @@ A21 the record drops the flags: KILLED
 A22 a summary without a flag counts as flagged: KILLED
 A23 make_summary drops the flag: KILLED
 A24 summarize_fit drops the flag: KILLED
+A26 an unstable anchor is never replaced: KILLED
+A27 an unstable anchor is replaced by an unstable fit: KILLED
+A28 every unverified step moves the anchor: KILLED
+A29 the replacing anchor carries the identity names instead of the best guess: KILLED
 A25 the healthy count includes collapsed restarts: KILLED
-24/24 killed
+28/28 killed
