@@ -97,7 +97,7 @@ def test_an_infinite_bic_of_a_failed_candidate_is_ignored():
 def test_the_largest_candidate_is_flagged_only_when_there_is_something_to_compare():
     top = ad(selected_k=5, bic_by_k={2: 150.0, 3: 140.0, 4: 130.0, 5: 100.0}, mu=np.array([[0.0, 0], [4, 4], [8, 0], [0, 8], [8, 8]]), var=np.ones((5, 2)))
     assert KA.REASON_UPPER in top["reasons"]
-    single = KA.assess_k_adequacy(3, {3: 100.0}, MU, VAR, False)
+    single = KA.assess_k_adequacy(3, {3: 100.0}, MU, VAR, False, flag_largest=True)               # the signal switched ON, one candidate: still nothing to compare
     assert single["reasons"] == [] and single["signals"]["runner_up_k"] is None and single["signals"]["runner_up_bic_gap"] is None
     assert KA.REASON_UPPER not in ad(candidates=[2, 3, 4, 5])["reasons"]
 
