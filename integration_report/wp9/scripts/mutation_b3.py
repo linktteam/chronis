@@ -32,6 +32,8 @@ PURE = [
     ("B18 the alert is logged at INFO", AL, "    logger.warning(\"CHRONIS_DEV_ALERT", "    logger.info(\"CHRONIS_DEV_ALERT"),
     ("B19 the default BIC margin is 7", CFG, "K_ADEQUACY_BIC_MARGIN = 6.0", "K_ADEQUACY_BIC_MARGIN = 7.0"),
     ("B20 the default separation is 1.5", CFG, "K_ADEQUACY_MIN_SEPARATION = 1.0", "K_ADEQUACY_MIN_SEPARATION = 1.5"),
+    ("B22 the largest-candidate switch is ignored", KA, "    if flag_largest and len(cands) > 1", "    if len(cands) > 1"),
+    ("B23 the largest-candidate default is off", CFG, "K_ADEQUACY_FLAG_LARGEST = True", "K_ADEQUACY_FLAG_LARGEST = False"),
     ("B21 a result without an assessment is unsure", FIT, "return bool((self.k_adequacy or {}).get(\"k_unsure\", False))", "return bool((self.k_adequacy or {}).get(\"k_unsure\", True))"),
 ]
 WIRING = [

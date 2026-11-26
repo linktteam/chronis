@@ -65,7 +65,7 @@ def test_a_clean_fit_is_not_unsure_and_the_best_guess_is_shown():
     out = ad()
     assert out["k_unsure"] is False and out["reasons"] == [] and out["selected_k"] == 3 and out["best_guess_shown"] is True
     assert out["signals"]["runner_up_k"] == 2 and out["signals"]["runner_up_bic_gap"] == pytest.approx(20.0) and out["signals"]["candidates"] == [2, 3, 4, 5]
-    assert out["thresholds"] == dict(min_separation=1.0, bic_margin=6.0)
+    assert out["thresholds"] == dict(min_separation=1.0, bic_margin=6.0, flag_largest=True)
 
 
 def test_overlapping_regimes_are_flagged_and_the_level_is_exclusive():
@@ -93,6 +93,15 @@ def test_the_largest_candidate_is_flagged_only_when_there_is_something_to_compar
     single = KA.assess_k_adequacy(3, {3: 100.0}, MU, VAR, False)
     assert single["reasons"] == [] and single["signals"]["runner_up_k"] is None and single["signals"]["runner_up_bic_gap"] is None
     assert KA.REASON_UPPER not in ad(candidates=[2, 3, 4, 5])["reasons"]
+
+
+def test_the_largest_candidate_signal_can_be_switched_off_and_the_default_is_on():
+    from backbone.hssm.config import K_ADEQUACY_FLAG_LARGEST
+    assert K_ADEQUACY_FLAG_LARGEST is True
+    kw = dict(selected_k=5, bic_by_k={2: 150.0, 3: 140.0, 4: 130.0, 5: 100.0}, mu=np.array([[0.0, 0], [4, 4], [8, 0], [0, 8], [8, 8]]), var=np.ones((5, 2)))
+    off = ad(flag_largest=False, **kw)
+    assert KA.REASON_UPPER not in off["reasons"] and off["k_unsure"] is False and off["thresholds"]["flag_largest"] is False
+    assert KA.REASON_UPPER in ad(**kw)["reasons"] and ad(**kw)["thresholds"]["flag_largest"] is True
 
 
 def test_restart_disagreement_and_a_missing_stability_assessment_are_flagged():

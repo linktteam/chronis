@@ -64,3 +64,4 @@ FIT_CONSENSUS_TAU = 0.99
 # Never changes which K is selected.
 K_ADEQUACY_MIN_SEPARATION = 1.0
 K_ADEQUACY_BIC_MARGIN = 6.0
+K_ADEQUACY_FLAG_LARGEST = True                  # signal (3): selected K is the largest candidate (K + 1 untried)

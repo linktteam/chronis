@@ -16,7 +16,7 @@ from typing import Mapping, Sequence
 
 import numpy as np
 
-from .config import K_ADEQUACY_BIC_MARGIN, K_ADEQUACY_MIN_SEPARATION
+from .config import K_ADEQUACY_BIC_MARGIN, K_ADEQUACY_FLAG_LARGEST, K_ADEQUACY_MIN_SEPARATION
 
 REASON_OVERLAP = "regimes_overlap"
 REASON_NOT_BEST = "k_not_clearly_best"
@@ -43,7 +43,7 @@ def pairwise_separation(mu: np.ndarray, var: np.ndarray) -> tuple[float, tuple[i
 
 
 def assess_k_adequacy(selected_k: int, bic_by_k: Mapping[int, float], mu, var, fit_unstable: bool | None, min_separation: float = K_ADEQUACY_MIN_SEPARATION,
-                      bic_margin: float = K_ADEQUACY_BIC_MARGIN, candidates: Sequence[int] | None = None) -> dict:
+                      bic_margin: float = K_ADEQUACY_BIC_MARGIN, candidates: Sequence[int] | None = None, flag_largest: bool = K_ADEQUACY_FLAG_LARGEST) -> dict:
     """The adequacy record of one selected fit. `fit_unstable` None (not assessed) counts as a restart disagreement (fail closed)."""
     cands = sorted(int(k) for k in (candidates if candidates is not None else bic_by_k))
     finite = {int(k): float(b) for k, b in bic_by_k.items() if math.isfinite(float(b))}
@@ -55,11 +55,11 @@ def assess_k_adequacy(selected_k: int, bic_by_k: Mapping[int, float], mu, var, f
     runner_up = min(others.items(), key=lambda kv: kv[1]) if others else None
     if runner_up is not None and runner_up[1] < bic_margin:
         reasons.append(REASON_NOT_BEST)
-    if len(cands) > 1 and int(selected_k) == cands[-1]:
+    if flag_largest and len(cands) > 1 and int(selected_k) == cands[-1]:
         reasons.append(REASON_UPPER)
     if fit_unstable is None or fit_unstable:
         reasons.append(REASON_RESTARTS)
     return dict(k_unsure=bool(reasons), reasons=reasons, selected_k=int(selected_k), best_guess_shown=True,
                 signals=dict(min_separation_sd=None if not math.isfinite(sep) else float(sep), closest_pair=None if pair is None else list(pair), runner_up_k=None if runner_up is None else int(runner_up[0]),
                              runner_up_bic_gap=None if runner_up is None else float(runner_up[1]), fit_unstable=fit_unstable, candidates=cands),
-                thresholds=dict(min_separation=float(min_separation), bic_margin=float(bic_margin)))
+                thresholds=dict(min_separation=float(min_separation), bic_margin=float(bic_margin), flag_largest=bool(flag_largest)))
