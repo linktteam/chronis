@@ -65,6 +65,15 @@ def test_a_constant_reference_gives_no_event_and_autocorrelation_makes_the_test_
     assert n_iid >= n_ar
 
 
+def test_the_z_level_is_inclusive_and_the_event_day_is_the_original_index_after_leading_gaps():
+    s = series(120, drop_at=70, drop=2.0, seed=2)
+    ev = M.predictability_monitor(s)["events"][0]
+    assert M.predictability_monitor(s, drop_z=ev["z"])["events"][0]["day"] == ev["day"]                      # z equal to the level is an event
+    assert M.predictability_monitor(s, drop_z=ev["z"] + 1e-9)["events"] == [] or M.predictability_monitor(s, drop_z=ev["z"] + 1e-9)["events"][0]["day"] > ev["day"]
+    gap = np.r_[np.full(10, np.nan), s]                                                                       # ten leading days without a score: the same events, ten days later
+    assert [e["day"] for e in M.predictability_monitor(gap)["events"]] == [e["day"] + 10 for e in M.predictability_monitor(s)["events"]]
+
+
 def test_one_event_per_episode_and_a_new_one_after_the_cooldown():
     s = np.r_[np.full(50, -3.0), np.full(30, -6.0), np.full(40, -3.0), np.full(30, -6.0)] + np.random.default_rng(1).normal(0, 0.3, 150)
     days = [e["day"] for e in M.predictability_monitor(s)["events"]]
@@ -169,6 +178,19 @@ def test_the_increments_sum_to_the_log_likelihood_and_the_model_is_untouched():
     assert m.log_likelihood_ == ll and all(np.array_equal(a, b) for a, b in zip(before, (m.A, m.pi, m.mu, m.var)))
     # a prefix gives the same increments (causality: the score of a day does not use later days)
     assert np.allclose(M.baseline_predictive_increments(m, X[:40]), inc[:40])
+
+
+def test_the_initial_distribution_of_the_model_is_used_for_the_first_day():
+    import copy
+    m, X = _fitted(2)
+    m = copy.deepcopy(m)
+    m.pi = np.array([0.3, 0.7])                                                                              # the fitted pi is one-hot; a spread one makes the first day depend on it
+    m._forward_backward(X[:1])
+    inc = M.baseline_predictive_increments(m, X[:1])
+    assert inc[0] == pytest.approx(m.log_likelihood_, abs=1e-9)
+    m.pi = np.array([0.7, 0.3])
+    m._forward_backward(X[:1])
+    assert M.baseline_predictive_increments(m, X[:1])[0] == pytest.approx(m.log_likelihood_, abs=1e-9)
 
 
 def test_a_day_the_model_does_not_expect_scores_lower_and_a_missing_day_scores_zero():
