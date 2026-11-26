@@ -1,0 +1,12 @@
+A6 HARMFUL-PRIOR CONTROL, DEVELOPMENT (WP9 B1 development users 9631..9642, 3 lengths; the personal and Gaussian scores are the stored WP9 ones)
+
+H1: 36 fits (of 36); (a) mean(fit - personal) = +7.525 nats/step over 36 fits (0 left out as non-finite) -> NO (needs <= -0.25); (b) fits below the single Gaussian 11 -> ok (needs >= 6); (c) of those eligible for the certificate 3 -> NO (needs >= 4); unusable pairs 0; VERIFIED HARMFUL: False
+   for the record: eligible 12/36, certified 0, published after the certificate 1
+
+H2: 36 fits (of 36); (a) mean(fit - personal) = +6.013 nats/step over 36 fits (0 left out as non-finite) -> NO (needs <= -0.25); (b) fits below the single Gaussian 18 -> ok (needs >= 6); (c) of those eligible for the certificate 5 -> ok (needs >= 4); unusable pairs 0; VERIFIED HARMFUL: False
+   for the record: eligible 14/36, certified 0, published after the certificate 0
+
+H3: 36 fits (of 36); (a) mean(fit - personal) = -2.977 nats/step over 36 fits (0 left out as non-finite) -> ok (needs <= -0.25); (b) fits below the single Gaussian 32 -> ok (needs >= 6); (c) of those eligible for the certificate 7 -> ok (needs >= 4); unusable pairs 0; VERIFIED HARMFUL: True
+   for the record: eligible 9/36, certified 0, published after the certificate 0
+
+FROZEN BY THE DECLARED RULE: H3

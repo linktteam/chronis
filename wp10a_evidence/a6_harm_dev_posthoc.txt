@@ -1,0 +1,17 @@
+A6 HARMFUL-PRIOR CONTROL, POST HOC DIAGNOSTIC (development users 9631..9642; written after the H1 and H2 readouts were seen; no criterion is changed by it)
+fit - personal is in nats per step of the held-out days; 'personal below gauss' counts the pairs where the WP9 personal fit itself scored below the single Gaussian
+
+H1 (36 fits)
+  length  30: n 12; fit - personal: mean  +17.981, median  +1.342; fit below personal  2; fit below the single Gaussian  7; personal below the Gaussian 11
+  length  60: n 12; fit - personal: mean   +4.948, median  +1.926; fit below personal  4; fit below the single Gaussian  4; personal below the Gaussian  7
+  length 120: n 12; fit - personal: mean   -0.355, median  -0.273; fit below personal  8; fit below the single Gaussian  0; personal below the Gaussian  2
+
+H2 (36 fits)
+  length  30: n 12; fit - personal: mean  +14.189, median  -1.137; fit below personal  7; fit below the single Gaussian 11; personal below the Gaussian 11
+  length  60: n 12; fit - personal: mean   +4.626, median  +1.172; fit below personal  5; fit below the single Gaussian  5; personal below the Gaussian  7
+  length 120: n 12; fit - personal: mean   -0.775, median  -0.900; fit below personal 10; fit below the single Gaussian  2; personal below the Gaussian  2
+
+H3 (36 fits)
+  length  30: n 12; fit - personal: mean  -11.793, median -18.726; fit below personal 10; fit below the single Gaussian 12; personal below the Gaussian 11
+  length  60: n 12; fit - personal: mean   +3.990, median  +0.163; fit below personal  6; fit below the single Gaussian 12; personal below the Gaussian  7
+  length 120: n 12; fit - personal: mean   -1.126, median  -1.224; fit below personal 11; fit below the single Gaussian  8; personal below the Gaussian  2

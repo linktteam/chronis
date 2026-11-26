@@ -1,0 +1,6 @@
+{"candidate": "H3"}
+WP10A A6 part 2 design freeze, dated 2026-11-27, written after the development readout (WP9 B1 development users 9631..9642, 3 lengths, 36 fits per candidate) and before any evaluation seed (10771..10794) is generated.
+Frozen by the declared rule of tests/PREDECLARED_CRITERIA_WP10A.md Part 6 section 18 (the first candidate in the order H1, H2, H3 that is verified harmful): H3, the true prior with every intercept d_obs + 16.0.
+H1 (+4): rule (a) NO (mean fit - personal +7.525), rule (c) NO (3 eligible below the Gaussian, needs 4). H2 (+8): rule (a) NO (+6.013). H3 (+16): (a) -2.977 nats/step (needs <= -0.25), (b) 32 of 36 below the single Gaussian (needs 6), (c) 7 eligible among them (needs 4): VERIFIED.
+Reading (not a criterion): rule (a) is a mean over all three lengths and the WP9 personal fits on 30- and 60-day streams are themselves below the single Gaussian in 11 of 12 and 7 of 12 cases, so a weak wrong prior (H1, H2) beats them; only the large shift H3 is worse than the personal fit on average. H3 is a grossly wrong prior (4 true regime separations); this is a blunt control.
+Files: wp10a_evidence/a6_harm_dev_fits.jsonl, a6_harm_dev_analysis.txt/.json, a6_harm_dev_posthoc.txt (post hoc, no criterion changed by it). The first line is read by a6_harm_run.py (key candidate).
