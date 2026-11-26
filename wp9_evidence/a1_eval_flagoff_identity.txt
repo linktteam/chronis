@@ -1,0 +1,18 @@
+A1 seed-to-seed agreement with the consensus flag ON (sharpness floor 0.95) versus OFF (no stability flag), frozen gate h = 2.5, evaluation users 9401..9448; REPORTED, nothing was chosen from it
+strict case = a 14-day window where at least one seed ends ALIGNED; 'same' = both ALIGNED with >= 99% of days named identically; 'different' = both ALIGNED, names differ; 'one seed' = the other seed says 'cannot confirm'
+first 10 restarts, flag ON , pooled: strict cases 136; same names 92 (67.6%); both served with DIFFERENT names 2; one seed only 42
+first 10 restarts, flag ON , hard  : strict cases 13; same names 6 (46.2%); both served with DIFFERENT names 0; one seed only 7
+first 10 restarts, flag ON , medium: strict cases 54; same names 39 (72.2%); both served with DIFFERENT names 1; one seed only 14
+first 10 restarts, flag ON , easy  : strict cases 69; same names 47 (68.1%); both served with DIFFERENT names 1; one seed only 21
+first 10 restarts, flag OFF, pooled: strict cases 190; same names 150 (78.9%); both served with DIFFERENT names 27; one seed only 13
+first 10 restarts, flag OFF, hard  : strict cases 39; same names 24 (61.5%); both served with DIFFERENT names 4; one seed only 11
+first 10 restarts, flag OFF, medium: strict cases 71; same names 53 (74.6%); both served with DIFFERENT names 16; one seed only 2
+first 10 restarts, flag OFF, easy  : strict cases 80; same names 73 (91.2%); both served with DIFFERENT names 7; one seed only 0
+first 20 restarts, flag ON , pooled: strict cases 155; same names 128 (82.6%); both served with DIFFERENT names 1; one seed only 26
+first 20 restarts, flag ON , hard  : strict cases 21; same names 12 (57.1%); both served with DIFFERENT names 0; one seed only 9
+first 20 restarts, flag ON , medium: strict cases 58; same names 49 (84.5%); both served with DIFFERENT names 0; one seed only 9
+first 20 restarts, flag ON , easy  : strict cases 76; same names 67 (88.2%); both served with DIFFERENT names 1; one seed only 8
+first 20 restarts, flag OFF, pooled: strict cases 190; same names 162 (85.3%); both served with DIFFERENT names 13; one seed only 15
+first 20 restarts, flag OFF, hard  : strict cases 39; same names 19 (48.7%); both served with DIFFERENT names 5; one seed only 15
+first 20 restarts, flag OFF, medium: strict cases 71; same names 65 (91.5%); both served with DIFFERENT names 6; one seed only 0
+first 20 restarts, flag OFF, easy  : strict cases 80; same names 78 (97.5%); both served with DIFFERENT names 2; one seed only 0

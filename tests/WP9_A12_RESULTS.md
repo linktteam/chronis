@@ -44,7 +44,16 @@ Of the 136 strict cases (10 restarts), 92 were served by both seeds with the sam
 
 At 20 restarts: flag on h = 2.5 58.1% / 0; flag off h = 2.5 73.8% / 0; flag off h = 2.0 88.0% / 14 wrong.
 
-FLAGOFF_IDENTITY_PLACEHOLDER
+**Seed-to-seed agreement, flag on versus off (RUN, `wp9_evidence/a1_eval_flagoff_identity.txt`, frozen gate h = 2.5, strict cases = 14-day windows where at least one of two fit seeds ends ALIGNED):**
+
+| 10 restarts | strict cases | same names (both serve) | both serve, **different names** | one seed only serves |
+|---|---|---|---|---|
+| flag ON (s = 0.95) | 136 | 92 (67.6%) | **2** | 42 |
+| flag OFF | 190 | 150 (78.9%) | **27** (14.2%) | 13 |
+| flag ON, 20 restarts | 155 | 128 (82.6%) | 1 | 26 |
+| flag OFF, 20 restarts | 190 | 162 (85.3%) | 13 (6.8%) | 15 |
+
+So the flag trades cases where two runs of the same user would give different names (27 of 190 without it, 2 of 136 with it) for cases where one run says "cannot confirm" (13 without it, 42 with it). The flag-off agreement of 78.9% is also below the 95% level; **neither configuration meets A1-1**. By stratum (10 restarts, flag off): easy 73/80 = 91.2%, medium 53/71 = 74.6%, hard 24/39 = 61.5% same names.
 
 ## The 80% / 1% question, stated plainly
 - **On the pooled mix of this study (a third hard, a third medium, a third easy), 80% coverage and at most 1% wrong-and-unflagged are not achieved together at the frozen design.** Coverage is 49.5% (10 restarts) with 0 wrong-and-unflagged. With the consensus flag on, no gate value reaches 80% (the highest, at h = 0, is 51.2%, and at 20 restarts 63.2% with 2 wrong).
@@ -53,7 +62,11 @@ FLAGOFF_IDENTITY_PLACEHOLDER
 - The 80% target is therefore a statement about the share of identifiable people; **whether 80% of real users are easy or medium is UNKNOWN** and cannot be settled by synthetic data. The hard stratum is the reason the pooled number is low, and it is low by design: a fit that cannot tell its regimes apart must not claim continuity.
 
 ## Open owner decision (new; not decided by me)
-The A1 consensus flag costs about 28 coverage points at the frozen gate (49.5% on versus 77.1% off, both 0/432 wrong-and-unflagged on these users) and does not by itself deliver the 95% identical-lineage level (67.6% / 82.6%). Options for the owner: (1) keep the flag on (safest: fewer claims, 0 flagged-and-served); (2) switch it off and accept that the seed-to-seed agreement of the *offer* is not measured and that a gate this low (2.5) has 0 wrong on 432 alignments in this study but a Wilson upper bound of 0.9%; (3) more restarts (20 restarts: 58.1% / 82.6%, twice the EM time); (4) a different consensus rule (WP10). I did not change the default (the declared rule chose flag on, and the evaluation is not used to choose).
+The A1 consensus flag costs about 28 coverage points at the frozen gate (49.5% on versus 77.1% off, both 0 of 432 wrong-and-unflagged against the planted truth on these users) and does not by itself deliver the 95% identical-lineage level (67.6% / 82.6%). What it buys, measured on the same fits: with it, two runs of the same user gave different names in 2 of 136 served-by-at-least-one cases; without it, in 27 of 190. Options for the owner:
+1. keep the flag on (the default I leave in place: the declared rule chose it, and the evaluation is not used to choose);
+2. switch it off: about 28 points more coverage on this mix, but seed-dependent names for roughly one served case in seven (10 restarts);
+3. more restarts (20 restarts, flag on: 58.1% coverage, 82.6% identical lineage, twice the EM time);
+4. a different consensus rule or a gate between 2.0 and 2.5 tested on new users (WP10).
 
 ## What this does not show
 - The identical-lineage level and the coverage level are judged on 48 synthetic users (16 per stratum); intervals are wide per stratum, and the stratum mix is an assumption.
