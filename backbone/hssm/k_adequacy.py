@@ -3,7 +3,7 @@
 WP7-R found that BIC picked the planted K in 20 of 24 easy and 8 of 24 hard datasets and never said when it was probably wrong. `assess_k_adequacy` collects three signals of the fit that was
 selected (design and thresholds: tests/PREDECLARED_CRITERIA_WP9.md, B3 section):
   * `regimes_overlap`: the smallest pairwise distance between regime means, in pooled within-regime standard deviations per feature (root mean square over the features of the standardized
-    difference, `pairwise_separation`), is below `min_separation`. Two regimes that close are not distinguishable, so the count is not trustworthy.
+    difference, `pairwise_separation`), is below `min_overlap_sd`. Two regimes that close are not distinguishable, so the count is not trustworthy.
   * `k_not_clearly_best`: another candidate K has a BIC within `bic_margin` points of the selected one (the evidence for the selected K over the runner-up is weak; a likelihood-gain test of K+1
     against its BIC penalty says the same thing in BIC points), or the selected K is the largest candidate (K+1 was not tried).
   * `restart_disagreement`: the multi-start consensus of the selected fit failed (`fit_stability`, FIT_UNSTABLE).
@@ -42,14 +42,14 @@ def pairwise_separation(mu: np.ndarray, var: np.ndarray) -> tuple[float, tuple[i
     return best, pair
 
 
-def assess_k_adequacy(selected_k: int, bic_by_k: Mapping[int, float], mu, var, fit_unstable: bool | None, min_separation: float = K_ADEQUACY_MIN_SEPARATION,
+def assess_k_adequacy(selected_k: int, bic_by_k: Mapping[int, float], mu, var, fit_unstable: bool | None, min_overlap_sd: float = K_ADEQUACY_MIN_SEPARATION,
                       bic_margin: float = K_ADEQUACY_BIC_MARGIN, candidates: Sequence[int] | None = None, flag_largest: bool = K_ADEQUACY_FLAG_LARGEST) -> dict:
     """The adequacy record of one selected fit. `fit_unstable` None (not assessed) counts as a restart disagreement (fail closed)."""
     cands = sorted(int(k) for k in (candidates if candidates is not None else bic_by_k))
     finite = {int(k): float(b) for k, b in bic_by_k.items() if math.isfinite(float(b))}
     sep, pair = pairwise_separation(mu, var)
     reasons: list[str] = []
-    if math.isfinite(sep) and sep < min_separation:
+    if math.isfinite(sep) and sep < min_overlap_sd:
         reasons.append(REASON_OVERLAP)
     others = {k: b - finite[int(selected_k)] for k, b in finite.items() if k != int(selected_k)} if int(selected_k) in finite else {}
     runner_up = min(others.items(), key=lambda kv: kv[1]) if others else None
@@ -62,4 +62,4 @@ def assess_k_adequacy(selected_k: int, bic_by_k: Mapping[int, float], mu, var, f
     return dict(k_unsure=bool(reasons), reasons=reasons, selected_k=int(selected_k), best_guess_shown=True,
                 signals=dict(min_separation_sd=None if not math.isfinite(sep) else float(sep), closest_pair=None if pair is None else list(pair), runner_up_k=None if runner_up is None else int(runner_up[0]),
                              runner_up_bic_gap=None if runner_up is None else float(runner_up[1]), fit_unstable=fit_unstable, candidates=cands),
-                thresholds=dict(min_separation=float(min_separation), bic_margin=float(bic_margin), flag_largest=bool(flag_largest)))
+                thresholds=dict(min_overlap_sd=float(min_overlap_sd), bic_margin=float(bic_margin), flag_largest=bool(flag_largest)))

@@ -31,7 +31,7 @@ def load(path):
 
 def unsure(rec, d0, delta, sig3):
     bic = {int(k): v for k, v in rec["bic_by_k"].items()}
-    return assess_k_adequacy(rec["selected_k"], bic, rec["mu"], rec["var"], rec.get("fit_unstable"), min_separation=d0, bic_margin=float(delta), candidates=CANDIDATES,
+    return assess_k_adequacy(rec["selected_k"], bic, rec["mu"], rec["var"], rec.get("fit_unstable"), min_overlap_sd=d0, bic_margin=float(delta), candidates=CANDIDATES,
                              flag_largest=sig3)
 
 

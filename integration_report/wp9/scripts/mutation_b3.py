@@ -15,7 +15,7 @@ PURE = [
     ("B01 the separation sums over features instead of averaging", KA, "/ ((var[i] + var[j]) / 2.0)).mean()))", "/ ((var[i] + var[j]) / 2.0)).sum()))"),
     ("B02 the closest pair is never found", KA, "            if d < best:", "            if d > best:"),
     ("B03 the variance of one regime only", KA, "/ ((var[i] + var[j]) / 2.0)", "/ var[i]"),
-    ("B04 the overlap level is inclusive", KA, "if math.isfinite(sep) and sep < min_separation:", "if math.isfinite(sep) and sep <= min_separation:"),
+    ("B04 the overlap level is inclusive", KA, "if math.isfinite(sep) and sep < min_overlap_sd:", "if math.isfinite(sep) and sep <= min_overlap_sd:"),
     ("B05 the BIC margin is inclusive", KA, "if runner_up is not None and runner_up[1] < bic_margin:", "if runner_up is not None and runner_up[1] <= bic_margin:"),
     ("B06 the runner-up is the farthest candidate", KA, "runner_up = min(others.items(), key=lambda kv: kv[1])", "runner_up = max(others.items(), key=lambda kv: kv[1])"),
     ("B07 the largest-candidate reason is removed", KA, "if len(cands) > 1 and int(selected_k) == cands[-1]:", "if False:"),

@@ -445,7 +445,6 @@ def _correspondence(anchor_vec: np.ndarray, new_vec: np.ndarray, proposed_raw_to
                  for i in range(anchor_vec.shape[0]))
 
 
-# EXPERT_REVIEW(identity-distance): writes the identifiability signal of the fit into the record next to the margins and the state.
 def _k_change_record(summary: FitSummary, anchor: Anchor | None) -> dict | None:
     """The K-change record of the summary as stored in the lineage record (WP9 A3): a copy, with the OLD regimes of every overlap candidate also given in the anchor's STABLE ids
     (`old_stable_regime` / `old_stable_regimes`; the raw ids of the anchor stay under their own keys). None when the summary carries no assessment."""
@@ -473,6 +472,7 @@ def k_change_suspected(summary: FitSummary) -> bool:
     return bool(isinstance(kc, dict) and kc.get("suspected") is True)
 
 
+# EXPERT_REVIEW(identity-distance): writes the identifiability signal of the fit into the record next to the margins and the state.
 def _record(fit_index, summary, anchor, epoch, lineage_id, state_name, message, raw_to_stable, rung, verified, al, th, reasons, proposed, candidates, user_choice=None,
             channels_used=("physical",), channel_detail=None):
     stable = np.asarray(raw_to_stable, dtype=int)[summary.labels]

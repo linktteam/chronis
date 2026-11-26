@@ -65,14 +65,14 @@ def test_a_clean_fit_is_not_unsure_and_the_best_guess_is_shown():
     out = ad()
     assert out["k_unsure"] is False and out["reasons"] == [] and out["selected_k"] == 3 and out["best_guess_shown"] is True
     assert out["signals"]["runner_up_k"] == 2 and out["signals"]["runner_up_bic_gap"] == pytest.approx(20.0) and out["signals"]["candidates"] == [2, 3, 4, 5]
-    assert out["thresholds"] == dict(min_separation=1.0, bic_margin=6.0, flag_largest=True)
+    assert out["thresholds"] == dict(min_overlap_sd=1.0, bic_margin=6.0, flag_largest=True)
 
 
 def test_overlapping_regimes_are_flagged_and_the_level_is_exclusive():
     close = np.array([[0.0, 0.0], [1.0, 1.0], [8.0, 0.0]])                                              # closest pair: rms difference exactly 1.0
     assert KA.REASON_OVERLAP not in ad(mu=close)["reasons"]                                              # equal to d0: not flagged
-    assert KA.REASON_OVERLAP in ad(mu=close, min_separation=1.0000001)["reasons"]
-    assert ad(mu=close, min_separation=1.0000001)["k_unsure"] is True
+    assert KA.REASON_OVERLAP in ad(mu=close, min_overlap_sd=1.0000001)["reasons"]
+    assert ad(mu=close, min_overlap_sd=1.0000001)["k_unsure"] is True
 
 
 def test_a_runner_up_within_the_bic_margin_is_flagged_and_the_margin_is_exclusive():
