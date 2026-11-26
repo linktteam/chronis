@@ -11,7 +11,7 @@ C10 stability ignores the scale of the features: KILLED
 C11 a lower bound of exactly zero certifies: KILLED
 C12 the margin is ignored: KILLED
 C13 stability at the level is refused: KILLED
-C14 non-finite increments pass: SURVIVED
+C14 non-finite increments pass: KILLED
 C15 a converged fit goes on to be certified: KILLED
 C16 other withhold reasons are overridden: KILLED
 C17 a degraded refit is accepted: KILLED
@@ -20,3 +20,9 @@ C19 the refit sees the held-out block: KILLED
 C20 the Gaussian sees the held-out block: KILLED
 C21 the gain has the wrong sign: KILLED
 C22 stability looks at the first refit: KILLED
+C23 a fit without a prior is certifiable: KILLED
+C24 a failed EM fit is eligible: KILLED
+C25 the default margin is 0.5: KILLED
+C26 the stability level is 0.5 (declared 0.25): KILLED
+C27 an unexpected error certifies: KILLED
+27/27 killed

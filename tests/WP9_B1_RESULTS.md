@@ -57,7 +57,7 @@ Shrink5 fits withheld at 30 steps: 17 of 24; of these, publishable at 60 steps: 
 Real users and real priors; the generator's centre is the prior's centre (favourable); K = 2, F = 4. A certified fit means "predicted better than a single Gaussian out of sample on these rolling origins", not "the regimes are right". With 9 certified `shrink5` fits and 27 in all, the precision of 27/27 has a lower Wilson bound of 88%.
 
 ## Mutation checks (RUN on the final head)
-MUTATION_B1_PLACEHOLDER
+`mutation_b1.py` -> `wp9_evidence/mutation_b1.txt` (pure mutants of `cold_start_cert.py` and the config) **27 of 27 killed**, and `mutation_b1.txt.wiring` (the wiring in `fitting.py`) **9 of 9 killed**. The first re-run on the final head killed 26 of 27: C14 (non-finite increments reach the statistic) survived, because the later non-finite check on the standard error still refused the fit; a test now pins that no statistic is reported from non-finite numbers, and the re-run killed all 27.
 
 ## Artifacts
 `wp9_evidence/b1_dev_fits.jsonl` (288), `b1_dev_analysis.txt/.json`, `b1_eval_fits.jsonl` (576), `b1_eval_analysis.txt/.json`, `b2_fits.jsonl`, `b2_analysis.txt/.json`, `mutation_b1.txt`; scripts `integration_report/wp9/scripts/b1_run.py`, `b1_analyze.py`, `b2_*`, `mutation_b1.py`; tests `tests/test_wp9_b1_cert.py`, `tests/test_wp9_b1_analyze.py`.
