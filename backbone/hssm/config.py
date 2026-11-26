@@ -63,12 +63,13 @@ FIT_CONSENSUS_TAU = 0.99
 # coverage: it flagged 3 of 960 development fits and changed no alignment count (`wp9_evidence/a2_dev_analysis.txt`). 0 switches it off.
 FIT_MIN_POSTERIOR_SHARPNESS = 0.95
 
-# WP9 B3 (tests/PREDECLARED_CRITERIA_WP9.md, B3 section): thresholds of the `k_adequacy` tag. Starting values (not yet calibrated: the declared development rule sets them before the evaluation):
-# regimes closer than 1 pooled within-regime sd per feature (root mean square over features) overlap strongly; a BIC gap under 6 points is "weak" evidence in the usual reading.
-# Never changes which K is selected.
-K_ADEQUACY_MIN_SEPARATION = 1.0
-K_ADEQUACY_BIC_MARGIN = 6.0
-K_ADEQUACY_FLAG_LARGEST = True                  # signal (3): selected K is the largest candidate (K + 1 untried)
+# WP9 B3 (tests/PREDECLARED_CRITERIA_WP9.md Part 4): thresholds of the `k_adequacy` tag, set by the declared development rule on seeds 9531..9554 (`wp9_evidence/b3_dev_analysis.txt`, frozen in tests/DESIGN_FREEZE_WP9_B3.txt):
+# regimes closer than 1.5 pooled within-regime sd per feature (root mean square over features) overlap strongly; delta = 0 means that signal (2) "K not clearly best" never fires (the selected K has the lowest BIC, so
+# the gap to the runner-up is never negative: at d0 = 1.5 a larger delta added no detection on development); signal (3) "selected K is the largest candidate" is off (it added no detection on development). Development numbers: detection 15/19 wrong-K fits, false alarm 0/20 on right-K easy fits,
+# 9/29 on all right-K fits. Never changes which K is selected.
+K_ADEQUACY_MIN_SEPARATION = 1.5
+K_ADEQUACY_BIC_MARGIN = 0.0
+K_ADEQUACY_FLAG_LARGEST = False                 # signal (3): selected K is the largest candidate (K + 1 untried)
 
 # WP9 B1 (tests/PREDECLARED_CRITERIA_WP9.md section 16): certification of prior-anchored fits (opt-in, `fit_hssm(certify_prior_anchored=True)`).
 # `COLD_START_CERT_Z` is a PROVISIONAL value (3.0 = the N18 margin); the declared development rule sets it before the evaluation.

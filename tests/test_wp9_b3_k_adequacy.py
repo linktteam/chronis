@@ -52,13 +52,20 @@ BIC = {2: 120.0, 3: 100.0, 4: 130.0, 5: 150.0}
 
 
 def ad(**kw):
-    args = dict(selected_k=3, bic_by_k=BIC, mu=MU, var=VAR, fit_unstable=False)
+    # the mechanics are tested at the PROVISIONAL starting values (1.0, 6.0, signal (3) on); the frozen defaults are pinned separately (test_the_defaults_are_the_frozen_values)
+    args = dict(selected_k=3, bic_by_k=BIC, mu=MU, var=VAR, fit_unstable=False, min_overlap_sd=1.0, bic_margin=6.0, flag_largest=True)
     args.update(kw)
     return KA.assess_k_adequacy(**args)
 
 
-def test_the_defaults_are_the_starting_values_of_the_declaration():
-    assert K_ADEQUACY_MIN_SEPARATION == 1.0 and K_ADEQUACY_BIC_MARGIN == 6.0
+def test_the_defaults_are_the_frozen_values():
+    import json
+    from pathlib import Path
+    frozen = json.loads((Path(__file__).resolve().parents[1] / "tests" / "DESIGN_FREEZE_WP9_B3.txt").read_text().splitlines()[0])
+    from backbone.hssm.config import K_ADEQUACY_FLAG_LARGEST
+    assert (K_ADEQUACY_MIN_SEPARATION, K_ADEQUACY_BIC_MARGIN, K_ADEQUACY_FLAG_LARGEST) == (frozen["d0"], frozen["delta"], frozen["flag_largest"]) == (1.5, 0.0, False)
+    out = KA.assess_k_adequacy(selected_k=3, bic_by_k=BIC, mu=MU, var=VAR, fit_unstable=False)             # no threshold argument: the frozen defaults apply
+    assert out["thresholds"] == dict(min_overlap_sd=1.5, bic_margin=0.0, flag_largest=False)
 
 
 def test_a_clean_fit_is_not_unsure_and_the_best_guess_is_shown():
@@ -95,9 +102,7 @@ def test_the_largest_candidate_is_flagged_only_when_there_is_something_to_compar
     assert KA.REASON_UPPER not in ad(candidates=[2, 3, 4, 5])["reasons"]
 
 
-def test_the_largest_candidate_signal_can_be_switched_off_and_the_default_is_on():
-    from backbone.hssm.config import K_ADEQUACY_FLAG_LARGEST
-    assert K_ADEQUACY_FLAG_LARGEST is True
+def test_the_largest_candidate_signal_can_be_switched_on_and_off():                 # the frozen default is off (test_the_defaults_are_the_frozen_values)
     kw = dict(selected_k=5, bic_by_k={2: 150.0, 3: 140.0, 4: 130.0, 5: 100.0}, mu=np.array([[0.0, 0], [4, 4], [8, 0], [0, 8], [8, 8]]), var=np.ones((5, 2)))
     off = ad(flag_largest=False, **kw)
     assert KA.REASON_UPPER not in off["reasons"] and off["k_unsure"] is False and off["thresholds"]["flag_largest"] is False
