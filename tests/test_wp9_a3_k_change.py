@@ -63,6 +63,12 @@ def test_a_wider_regime_takes_a_row_between_the_means_by_density_not_by_distance
     assert KC.assign_rows(np.array([[0.1]]), means, var).tolist() == [0]
 
 
+def test_a_narrow_regime_keeps_a_row_near_its_mean_against_a_much_wider_one():
+    means = np.array([[0.0], [4.0]]); var = np.array([[0.25], [100.0]])
+    # at x = 0.9: the squared distance to regime 1 is far smaller in z terms, but the normalising log variance of the wide regime makes the narrow regime the more likely
+    assert KC.assign_rows(np.array([[0.9]]), means, var).tolist() == [0]
+
+
 def test_overlap_shares_are_row_shares_per_new_regime():
     parent = np.array([0, 0, 0, 1, 1, 2, -1, -1])
     new = np.array([0, 0, 0, 0, 1, 1, 1, 1])
@@ -159,7 +165,8 @@ def test_no_reference_fit_no_signal():
 
 
 def test_non_finite_bic_values_are_unavailable():
-    assert not KC.decide({3: float("nan"), 4: 100.0}, 3, 0.0, 0.0)["suspected"]
+    d0 = KC.decide({3: float("nan"), 4: 100.0}, 3, 0.0, 0.0)
+    assert not d0["suspected"] and d0["reason"] == "reference_fit_unavailable" and d0["margin"] is None
     d = KC.decide({3: 300.0, 4: float("nan"), 2: float("inf")}, 3, 0.0, 0.0)
     assert not d["suspected"] and d["k_best"] == 3
 
@@ -464,6 +471,20 @@ def test_fit_recent_window_prefers_the_true_k_by_bic_on_well_separated_data():
     b = {K: KC.fit_recent_window(X, K, seed=5, n_init=3, max_iter=40, allow_fast_test_fit=True) for K in (2, 3, 4)}
     assert all(v is not None for v in b.values())
     assert b[3]["bic"] < b[2]["bic"] and b[3]["bic"] < b[4]["bic"]
+
+
+def test_fit_recent_window_reports_a_withheld_fit_as_not_accepted_and_the_bic_of_the_requested_k(monkeypatch):
+    from types import SimpleNamespace
+    from backbone.hssm import fitting
+
+    def fake(**kw):
+        n = len(kw["matrix"])
+        return SimpleNamespace(p_t_posterior=np.tile([1.0, 0.0], (n, 1)), bic_by_k={2: 100.0, 3: 50.0}, model=SimpleNamespace(mu=np.zeros((2, kw["matrix"].shape[1]))), insights_withheld=True)
+    monkeypatch.setattr(fitting, "fit_hssm", fake)
+    r = KC.fit_recent_window(_blobs(0, [[0.0, 0.0], [5.0, 5.0]], 10), 2, seed=0)
+    assert r["accepted"] is False and r["bic"] == 100.0
+    monkeypatch.setattr(fitting, "fit_hssm", lambda **kw: SimpleNamespace(p_t_posterior=np.tile([1.0, 0.0], (len(kw["matrix"]), 1)), bic_by_k={2: 100.0}, model=SimpleNamespace(mu=np.zeros((2, 2))), insights_withheld=False))
+    assert KC.fit_recent_window(_blobs(0, [[0.0, 0.0], [5.0, 5.0]], 10), 2, seed=0)["accepted"] is True
 
 
 def test_production_fit_needs_the_full_ten_restarts():
