@@ -137,6 +137,7 @@ def test_decide_is_fail_closed_on_non_finite_or_missing_numbers():
     for bad in (None, np.array([]), np.array([1.0, 2.0]), np.append(GOOD, np.nan), np.append(GOOD, np.inf)):
         out = C.decide(bad, 0.0)
         assert out["state"] == C.STATE_NOT_CERTIFIED and C.R_NONFINITE in out["reasons"]
+        assert out["mean_gain"] is None and out["se"] is None and out["lower"] is None        # no statistic is reported from numbers that are not all finite (kills the mutant that lets them reach the mean)
     for bad in (None, float("nan"), float("inf")):
         out = C.decide(GOOD, bad)
         assert out["state"] == C.STATE_NOT_CERTIFIED and C.R_NONFINITE in out["reasons"]
