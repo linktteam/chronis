@@ -74,7 +74,9 @@ The A1 consensus flag costs about 28 coverage points at the frozen gate (49.5% o
 - `FIT_UNSTABLE` was tuned for stability of the partition, not for correctness: a fit that is stable and wrong is not caught by it (0 such cases among served in this study).
 
 ## Mutation checks (RUN on the final head)
-MUTATION_PLACEHOLDER
+- A1 consensus function and its use in `fitting` and `lineage` (`mutation_a1.py`, `wp9_evidence/mutation_a1.txt`): **28 of 28 killed** (target: at least 15, all killed). The first re-run on the final head applied only 25 because three text patterns no longer matched after the A3 change to the same lines (`k_change=` argument); the three patterns were repaired without changing what they mutate, and the re-run applied and killed all 28.
+- A2 scoring and selection rule (`mutation_a12_scoring.py`, `wp9_evidence/mutation_a12_scoring.txt`): **26 of 26 killed**.
+- A3 (`mutation_a3.py`, `wp9_evidence/mutation_a3.txt`): **34 of 34 killed** (one pattern had to be repaired the same way).
 
 ## Artifacts
 `wp9_evidence/a12_eval_fits.jsonl` (768 fits), `a2_eval_analysis.txt`, `a2_eval_curve_n10.json`, `a2_eval_curve_n20.json`, `a2_eval_flagoff.txt`, `a1_eval_identity_split.txt`, `a1_eval_flagoff_identity.txt`, `a1_battery_fast.txt`, `a1_battery_full.txt`, `a2_dev_analysis.txt`, `a2_dev_curve.json`; scripts in `integration_report/wp9/scripts/` (`a12_run.py`, `a12_analyze.py`, `a12_eval_flagoff.py`, `a12_eval_identity_split.py`, `a12_eval_flagoff_identity.py`); tests `tests/test_wp9_a1_*.py`, `tests/test_wp9_a2_sharpness.py`, `tests/test_wp9_a12_analyze.py`.
