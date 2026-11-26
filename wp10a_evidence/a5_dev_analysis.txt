@@ -1,0 +1,7 @@
+A5 DEVELOPMENT: 48 users fitted (0 failed fits excluded); fits withheld by the publish rule (kept): 0
+  M0: false alarm 19/48 = 39.6% (Wilson 27.0-53.7%) [NOT MET]; regime shift 21/48 = 43.8% (Wilson 30.7-57.7%, median latency 21, events before day 135: 3) [NOT MET]; sensor change 41/48 = 85.4% (Wilson 72.8-92.8%, median latency 5, events before day 135: 3) [MET]
+  MA: false alarm 18/48 = 37.5% (Wilson 25.2-51.6%) [NOT MET]; regime shift 21/48 = 43.8% (Wilson 30.7-57.7%, median latency 21, events before day 135: 2) [NOT MET]; sensor change 41/48 = 85.4% (Wilson 72.8-92.8%, median latency 5, events before day 135: 2) [MET]
+  MB: false alarm 15/48 = 31.2% (Wilson 19.9-45.3%) [NOT MET]; regime shift 21/48 = 43.8% (Wilson 30.7-57.7%, median latency 25, events before day 135: 0) [NOT MET]; sensor change 44/47 = 93.6% (Wilson 82.8-97.8%, median latency 14, events before day 135: 0) [MET]
+  MC: false alarm 17/48 = 35.4% (Wilson 23.4-49.6%) [NOT MET]; regime shift 21/48 = 43.8% (Wilson 30.7-57.7%, median latency 22, events before day 135: 3) [NOT MET]; sensor change 42/48 = 87.5% (Wilson 75.3-94.1%, median latency 6, events before day 135: 3) [MET]
+
+CHOSEN BY THE FROZEN RULE: MB (NONE ELIGIBLE: the smallest total shortfall); shortfalls: MA 0.537, MB 0.475, MC 0.517

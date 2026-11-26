@@ -1,0 +1,107 @@
+{
+ "chosen": "MB",
+ "how": "NONE ELIGIBLE: the smallest total shortfall",
+ "summary": {
+  "MA": {
+   "fa": 0.375,
+   "det_shift": 0.4375,
+   "det_sensor": 0.8541666666666666
+  },
+  "MB": {
+   "fa": 0.3125,
+   "det_shift": 0.4375,
+   "det_sensor": 0.9361702127659575
+  },
+  "MC": {
+   "fa": 0.3541666666666667,
+   "det_shift": 0.4375,
+   "det_sensor": 0.875
+  }
+ },
+ "tallies": {
+  "M0": {
+   "none": {
+    "n": 48,
+    "k": 19,
+    "rate": 0.3958333333333333
+   },
+   "regime_shift": {
+    "n": 48,
+    "k": 21,
+    "rate": 0.4375,
+    "pre_change_events": 3,
+    "latency_median": 21
+   },
+   "sensor_change": {
+    "n": 48,
+    "k": 41,
+    "rate": 0.8541666666666666,
+    "pre_change_events": 3,
+    "latency_median": 5
+   }
+  },
+  "MA": {
+   "none": {
+    "n": 48,
+    "k": 18,
+    "rate": 0.375
+   },
+   "regime_shift": {
+    "n": 48,
+    "k": 21,
+    "rate": 0.4375,
+    "pre_change_events": 2,
+    "latency_median": 21
+   },
+   "sensor_change": {
+    "n": 48,
+    "k": 41,
+    "rate": 0.8541666666666666,
+    "pre_change_events": 2,
+    "latency_median": 5
+   }
+  },
+  "MB": {
+   "none": {
+    "n": 48,
+    "k": 15,
+    "rate": 0.3125
+   },
+   "regime_shift": {
+    "n": 48,
+    "k": 21,
+    "rate": 0.4375,
+    "pre_change_events": 0,
+    "latency_median": 25
+   },
+   "sensor_change": {
+    "n": 47,
+    "k": 44,
+    "rate": 0.9361702127659575,
+    "pre_change_events": 0,
+    "latency_median": 14
+   }
+  },
+  "MC": {
+   "none": {
+    "n": 48,
+    "k": 17,
+    "rate": 0.3541666666666667
+   },
+   "regime_shift": {
+    "n": 48,
+    "k": 21,
+    "rate": 0.4375,
+    "pre_change_events": 3,
+    "latency_median": 22
+   },
+   "sensor_change": {
+    "n": 48,
+    "k": 42,
+    "rate": 0.875,
+    "pre_change_events": 3,
+    "latency_median": 6
+   }
+  }
+ }
+}

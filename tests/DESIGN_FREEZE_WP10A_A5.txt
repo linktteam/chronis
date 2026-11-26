@@ -1,0 +1,8 @@
+{"monitor": "MB"}
+WP10A A5: the monitor frozen for the evaluation by the declared development rule (tests/PREDECLARED_CRITERIA_WP10A.md Part 4 section 11), 2026-11-26.
+Development run: wp10a_evidence/a5_dev_analysis.txt (48 users, seeds 10401..10448). No candidate was eligible (none met all three levels on the point estimates):
+  false alarm  M0 19/48, MA 18/48, MB 15/48, MC 17/48 (level <= 10%)
+  regime shift detection 21/48 for all four (level >= 70%)
+  sensor change detection M0 41/48, MA 41/48, MB 44/47, MC 42/48 (level >= 70%)
+The declared fallback chose the smallest total shortfall: MB (0.475; MA 0.537, MC 0.517).
+Evaluation: 96 users, seeds 10451..10546, run once (a5_run.py --range eval, then a5_analyze.py eval).
