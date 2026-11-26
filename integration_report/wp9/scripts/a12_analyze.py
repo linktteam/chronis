@@ -23,6 +23,7 @@ B_T = [90, 104, 118, 132, 146, 150]
 H_GRID = (0.0, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0)
 S_GRID = (0.0, 0.85, 0.90, 0.95)
 STRATA = ("hard", "medium", "easy")
+TARGET_IDENTICAL_LINEAGE, TARGET_COVERAGE, TARGET_WRONG_UNFLAGGED = 0.95, 0.80, 0.01          # the declared A1 / A2 levels (tests/PREDECLARED_CRITERIA_WP9.md); never changed after a result
 OUT: list = []
 
 
@@ -136,6 +137,29 @@ def verdict_line(name, k, n, thr, kind):
 
 
 # ------------------------------------------------------------------------------------------------------------------------------ development
+def choose(curve: dict, cands: list):
+    """The frozen selection rule of section 8 on a curve {(u, h, s): {'pooled'|'cal'|'val': tally}} (consensus flag on): (1) among the candidates with zero wrong-and-unflagged on the
+    calibration half take the highest calibration coverage (ties: larger h, then larger s); (2) accept it when the validation half's wrong-and-unflagged share is at most 1% (point estimate);
+    (3) otherwise the same on the pooled set; if no candidate has zero there either, the one with the fewest wrong-and-unflagged (then the highest pooled coverage). Returns (candidate, how)."""
+    key = lambda c, half: (curve[(True,) + c][half]["served"] / max(curve[(True,) + c][half]["refits"], 1), c[0], c[1])
+    zero_cal = [c for c in cands if curve[(True,) + c]["cal"]["wrong_unflagged"] == 0]
+    chosen, how = None, ""
+    if zero_cal:
+        c = max(zero_cal, key=lambda c: key(c, "cal"))
+        v = curve[(True,) + c]["val"]
+        if v["alignments"] and v["wrong_unflagged"] / v["alignments"] <= 0.01:
+            chosen, how = c, "step 1-2: highest calibration coverage among candidates with zero wrong-and-unflagged on the calibration half; validation half wrong-and-unflagged <= 1%"
+        else:
+            P(f"step 2 failed for {c}: validation {v['wrong_unflagged']}/{v['alignments']}")
+    if chosen is None:
+        zero_all = [c for c in cands if curve[(True,) + c]["pooled"]["wrong_unflagged"] == 0]
+        if zero_all:
+            chosen = max(zero_all, key=lambda c: key(c, "pooled")); how = "step 3: highest pooled coverage among candidates with zero wrong-and-unflagged on the pooled development set"
+        else:
+            chosen = min(cands, key=lambda c: (curve[(True,) + c]["pooled"]["wrong_unflagged"], -key(c, "pooled")[0])); how = "no candidate has zero wrong-and-unflagged: the one with the fewest"
+    return chosen, how
+
+
 def dev(records, out_json):
     a, b = split_chains(records)
     strata = stratum_users(a)
@@ -156,22 +180,7 @@ def dev(records, out_json):
     P(f"\ngate-eligible alignments (accepted fits with the anchor's K): {n_elig} (required >= 400: {'yes' if n_elig >= 400 else 'NO'})")
     # ---- selection rule of section 8
     cands = [(h, s) for h in H_GRID for s in S_GRID]
-    key = lambda c, half: (curve[(True,) + c][half]["served"] / max(curve[(True,) + c][half]["refits"], 1), c[0], c[1])
-    zero_cal = [c for c in cands if curve[(True,) + c]["cal"]["wrong_unflagged"] == 0]
-    chosen, how = None, ""
-    if zero_cal:
-        c = max(zero_cal, key=lambda c: key(c, "cal"))
-        v = curve[(True,) + c]["val"]
-        if v["alignments"] and v["wrong_unflagged"] / v["alignments"] <= 0.01:
-            chosen, how = c, "step 1-2: highest calibration coverage among candidates with zero wrong-and-unflagged on the calibration half; validation half wrong-and-unflagged <= 1%"
-        else:
-            P(f"step 2 failed for {c}: validation {v['wrong_unflagged']}/{v['alignments']}")
-    if chosen is None:
-        zero_all = [c for c in cands if curve[(True,) + c]["pooled"]["wrong_unflagged"] == 0]
-        if zero_all:
-            chosen = max(zero_all, key=lambda c: key(c, "pooled")); how = "step 3: highest pooled coverage among candidates with zero wrong-and-unflagged on the pooled development set"
-        else:
-            chosen = min(cands, key=lambda c: (curve[(True,) + c]["pooled"]["wrong_unflagged"], -key(c, "pooled")[0])); how = "no candidate has zero wrong-and-unflagged: the one with the fewest"
+    chosen, how = choose(curve, cands)
     ch = curve[(True,) + chosen]
     P(f"\nCHOSEN (frozen rule of section 8): h = {chosen[0]}, s = {chosen[1]}, consensus flag on. {how}")
     P(f"   pooled {fmt(ch['pooled'])}; calibration {fmt(ch['cal'])}; validation {fmt(ch['val'])}")
@@ -214,12 +223,12 @@ def evaluate(records, out_json, gate: dict, ns=(10, 20)):
             fl = fit_level_agreement(a, b, n, users)
             out[name] = dict(tally=t, ident=il, fit_level=fl)
             P(f"-- {name}: accepted refits {t['refits']}, alignments {t['alignments']}")
-            P("   " + verdict_line("A1 criterion 1 identical lineage among served (strict; target >= 95%)", il["strict_identical"], il["strict_cases"], 0.95, ">="))
+            P("   " + verdict_line("A1 criterion 1 identical lineage among served (strict; target >= 95%)", il["strict_identical"], il["strict_cases"], TARGET_IDENTICAL_LINEAGE, ">="))
             P(f"   WP8 definition (windows fed by >= 1 seed): {S.rate(il['wp8_identical'], il['wp8_cases'])}; windows with exactly one seed flagged {il['exactly_one_seed_flagged']}; first fits (both unflagged) with the same names {il['first_fits_agree']}/{il['first_fits_both_unflagged']}")
             P(f"   A1 criterion 2 ALIGNED steps involving a flagged fit or anchor: {il['aligned_with_flagged_fit_or_anchor']} of {il['aligned_steps']} (target 0)")
             P(f"   A1 criterion 3 served share (accepted refits ending ALIGNED; reported): {S.rate(t['served'], t['refits'])}; fit level: both seeds unflagged {fl['both_unflagged']}/{fl['pairs']} windows, same partition {S.rate(fl['same_partition'], fl['both_unflagged'])}")
-            P("   " + verdict_line("A2 coverage (target >= 80%)", t["served"], t["refits"], 0.80, ">="))
-            P("   " + verdict_line("A2 wrong-and-unflagged among all alignments (target <= 1%)", t["wrong_unflagged"], t["alignments"], 0.01, "<="))
+            P("   " + verdict_line("A2 coverage (target >= 80%)", t["served"], t["refits"], TARGET_COVERAGE, ">="))
+            P("   " + verdict_line("A2 wrong-and-unflagged among all alignments (target <= 1%)", t["wrong_unflagged"], t["alignments"], TARGET_WRONG_UNFLAGGED, "<="))
             P(f"   correct among served: {S.rate(t['served_correct'], t['served'])}; flagged and would have been right {t['flagged_would_be_right']}, wrong {t['flagged_would_be_wrong']}")
         json.dump(out, open(out_json.replace(".json", f"_n{n}.json"), "w"), indent=1)
         # the curve of the evaluation set, reported (never used to choose anything)
