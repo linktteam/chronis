@@ -1,0 +1,13 @@
+F01 reverse the sort order: KILLED
+F02 sort key over the wrong axis (canonicalize_labels): KILLED
+F03 one array is no longer permuted: KILLED
+F04 a default value changes: KILLED
+F05 a behaviour-neutral rewrite of the audit attribute: KILLED
+F06 the signature changes: KILLED
+F07 the alias no longer calls the function: KILLED
+F08 wrong axis (activity_levels): KILLED
+F09 the return annotation changes: KILLED
+F10 a behaviour-neutral rename of a local variable: KILLED
+F11 the permutation of A uses only one axis: KILLED
+F12 a statement is added: KILLED
+12/12 killed

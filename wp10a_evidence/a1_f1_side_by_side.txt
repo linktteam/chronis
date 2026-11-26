@@ -1,0 +1,32 @@
+WP10A A1 (F1) side by side, RUN 2026-11-26T14:53:58Z on Python 3.12.3 (repo pins) and Python 3.13.18
+
+== 1. OLD test (as committed in WP9: ast.dump pins), Python 3.12, code UNCHANGED ==
+E         Differing items:
+E         {'activity_levels': '3bea210e5cdea61f'} != {'activity_levels': 'f521af2aaf83ea9d'}
+E         {'canonicalize_regime_order': '614824d923fa4689'} != {'canonicalize_regime_order': 'c11dd3be1bd0c373'}
+E         {'canonicalize_labels': '5a58d992a4ed3370'} != {'canonicalize_labels': '78c5ab74b05af982'}
+1 failed, 14 passed in 0.76s
+
+== 2. NEW test, Python 3.12, code unchanged ==
+26 passed, 1 skipped in 0.05s
+== 2b. NEW test, Python 3.13, code unchanged (the legacy ast.dump pins also run here) ==
+27 passed in 0.04s
+
+== 3. RED RUN: NEW fingerprint test alone, Python 3.12, planted change F01 (reverse the sort order) in a throw-away copy ==
+>       assert _digests_of(inspect.getsource(ls)) == PINNED
+E       AssertionError: assert {'canonicaliz...3374b1647aba'} == {'canonicaliz...3374b1647aba'}
+E         Differing items:
+E         {'canonicalize_labels': 'cbe03da7a99a6cb4'} != {'canonicalize_labels': '5240d304f550fad1'}
+1 failed in 0.66s
+
+== 3b. RED RUN: planted change F10, a behaviour-NEUTRAL rewrite (order = np.argsort(activity.copy())), Python 3.12 ==
+>       assert _digests_of(inspect.getsource(ls)) == PINNED
+E       AssertionError: assert {'canonicaliz...3374b1647aba'} == {'canonicaliz...3374b1647aba'}
+E         Differing items:
+E         {'canonicalize_labels': '0c62bebe971d8f9b'} != {'canonicalize_labels': '5240d304f550fad1'}
+1 failed in 0.66s
+   the numeric behaviour tests of the same file on this neutral rewrite (they stay green: the fingerprint is not redundant with them):
+14 passed, 13 deselected in 0.63s
+
+== 4. mutation set (12 planted changes, the single fingerprint test must fail): wp10a_evidence/mutation_wp10a_a1.txt ==
+12/12 killed
