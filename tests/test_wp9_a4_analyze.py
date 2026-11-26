@@ -68,3 +68,37 @@ def test_the_run_script_shares_the_windows_that_contain_no_changed_day():
     assert all(j["start"] == j["end"] - 45 and j["K"] == 3 and j["stratum"] == "easy" for j in jobs)
     assert {j["group"] for j in jobs if j["end"] > 60} == {"A4-A", "A4-B", "A4-C", "A4-none"}
     assert all((j["scale_change"] is None) == (j["group"] == "A4-none") for j in jobs if j["end"] > 60)
+
+
+def test_the_levels_are_exactly_at_the_declared_boundaries():
+    # 500 alignments, 100 served of which 95 right: correct among served exactly 0.95, wrong-and-unflagged exactly 1.0% (5 / 500)
+    m = A.metrics(rows(95, 5, 400))
+    assert m["correct_rate"] == 0.95 and m["wu_rate"] == 0.01
+    assert A.raw_works(m) is True                                                    # >= 95% and <= 1% are inclusive
+    assert A.z_fails(m) is False                                                     # < 95% and > 1% are exclusive: exactly at the level is not a failure
+    assert A.raw_works(A.metrics(rows(40, 0, 0))) is True                            # exactly 40 alignments is enough
+    assert A.raw_works(A.metrics(rows(39, 0, 0))) is False
+
+
+def test_a_designs_chain_holds_the_shared_windows_and_its_own_only():
+    recs = [dict(job=dict(group=g, user=u, end=e)) for g, u, e in (("A4-shared", 1, 45), ("A4-shared", 1, 60), ("A4-A", 1, 75), ("A4-B", 1, 75), ("A4-none", 1, 75), ("A4-A", 2, 75))]
+    ch = A.chains(recs, "A")
+    assert sorted(ch) == [1, 2] and [r["job"]["end"] for r in ch[1]] == [45, 60, 75] and [r["job"]["group"] for r in ch[1]] == ["A4-shared", "A4-shared", "A4-A"]
+    assert [r["job"]["group"] for r in A.chains(recs, "B")[1]] == ["A4-shared", "A4-shared", "A4-B"]
+
+
+def test_the_development_rule_takes_the_first_qualifying_design_and_a_design_needs_both_conditions(tmp_path, monkeypatch):
+    # A and B: the raw method works and the control fails (both qualify); C: the raw method works and the control does not fail (does not qualify)
+    good, bad = rows(150, 0, 0), rows(40, 10, 0)
+    table = {("A", False): good, ("A", True): bad, ("B", False): good, ("B", True): bad, ("C", False): good, ("C", True): good}
+    monkeypatch.setattr(A.W, "load_records", lambda fits: [dict(job=dict(group=f"A4-{d}")) for d in "ABC"])
+    monkeypatch.setattr(A, "run_method", lambda recs, design, z, cfg: table[(design, z)])
+    A.main("dev", "unused.jsonl", str(tmp_path / "o.txt"), str(tmp_path / "o.json"))
+    import json
+    res = json.load(open(tmp_path / "o.json"))
+    assert res["A"]["qualifies"] is True and res["B"]["qualifies"] is True and res["C"]["qualifies"] is False and res["chosen"] == "A"
+    # the control that never fails: nothing qualifies, nothing is chosen
+    table.update({("A", True): good, ("B", True): good})
+    A.main("dev", "unused.jsonl", str(tmp_path / "o2.txt"), str(tmp_path / "o2.json"))
+    res2 = json.load(open(tmp_path / "o2.json"))
+    assert res2["chosen"] is None and "NONE QUALIFIES" in (tmp_path / "o2.txt").read_text()

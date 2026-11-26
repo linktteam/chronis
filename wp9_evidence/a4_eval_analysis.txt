@@ -1,0 +1,15 @@
+A4 eval: 224 fits; AlignmentConfig defaults min_separation 2.5
+
+design A
+  R (stored scaler): alignments 112, served 34 (coverage 30%), correct among served 34/34 = 100.0%, wrong-and-unflagged 0/112 = 0.0%
+  Z (own z-space)  : alignments 112, served 33 (coverage 29%), correct among served 33/33 = 100.0%, wrong-and-unflagged 0/112 = 0.0%
+  paired on 112 common alignments: Z wrong and R right 0, R wrong and Z right 0
+  R works (>= 40 alignments, >= 95% correct, <= 1% wrong-unflagged): True; Z fails as required: False
+
+design none
+  R (stored scaler): alignments 112, served 16 (coverage 14%), correct among served 16/16 = 100.0%, wrong-and-unflagged 0/112 = 0.0%
+  Z (own z-space)  : alignments 112, served 16 (coverage 14%), correct among served 16/16 = 100.0%, wrong-and-unflagged 0/112 = 0.0%
+  paired on 112 common alignments: Z wrong and R right 0, R wrong and Z right 0
+  R works (>= 40 alignments, >= 95% correct, <= 1% wrong-unflagged): True; Z fails as required: False
+
+EVALUATION design A: stream works for the stored scaler: True; the z-space control is INERT (reported as inert, not as passed)
