@@ -1,0 +1,59 @@
+AM01 the target is 11: KILLED
+AM02 the non-vacuity level is 7: KILLED
+AM03 the target needs one more: KILLED
+AM04 the user that reaches the target is also extra: KILLED
+AM05 the users are not sorted by seed: KILLED
+AM06 a day-30 publication needs no independent agreement: KILLED
+AM07 a relaxed record is only a violation when True: KILLED
+AM08 a published state without a result is accepted: KILLED
+AM09 a missing result_withheld is accepted: KILLED
+AM10 a result with a withheld state is accepted: KILLED
+AM11 the probes are also required of published users: KILLED
+AM12 a probe is accepted whatever its state: KILLED
+AM13 a probe may return a result: KILLED
+AM14 the fresh fit must disagree: KILLED
+AM15 a missing alteration passes the control: KILLED
+AM16 the unaltered snapshot may be refused: KILLED
+AM17 day 90 needs both states: KILLED
+AM18 H1 needs more than eight: KILLED
+AM19 H2 allows one violation: KILLED
+AM20 H3 is met when nothing was checked: KILLED
+AM21 H4 is met without a control: KILLED
+AM22 the day-90 rate counts day 60: KILLED
+AM23 the reasons of the still withheld are those that published: KILLED
+AM24 failed users are kept: KILLED
+AM25 the non-vacuity verdict text is inverted: KILLED
+AM26 the first probe name changes: KILLED
+RM01 the chunk is 8: KILLED
+RM02 the run target is 10: KILLED
+RM03 the W1 seeds start at 10600: KILLED
+RM04 W1 forces K = 4: KILLED
+RM05 the W1 strata are swapped: KILLED
+RM06 the W2 separation is 0.3 to 0.7: KILLED
+RM07 a failed user counts as withheld: KILLED
+RM08 the stopping rule needs one more: KILLED
+RM09 the collapsed alteration sets nothing: KILLED
+RM10 the fallback alteration sets zero: KILLED
+RM11 the non-converged alteration keeps the state: KILLED
+RM12 the snapshot shares the result's objects: KILLED
+RM13 the n_initializations probe is the production value: KILLED
+RM14 the probes are not recorded: KILLED
+RM15 a published user is recertified: KILLED
+RM16 the control is not taken from a recertified result: KILLED
+RM17 the cold-start gate counts 29 days: KILLED
+RM18 the forced candidates are not passed: KILLED
+RM19 the fit seed is zero: KILLED
+RM20 the stopping rule is checked after the chunk is queued: KILLED
+RM21 finished users are run again: KILLED
+RM22 the fresh fit uses the new rows only: KILLED
+RM23 the stored rows are not extended: SURVIVED
+IM01 the check ignores a collapsed regime: KILLED
+IM02 the check ignores a degenerate duration: KILLED
+IM03 the check ignores a degraded fit: KILLED
+IM04 the check ignores the state-pass fallbacks: KILLED
+IM05 the check ignores the late fallbacks: KILLED
+IM06 the check accepts a numerical failure: KILLED
+IM07 the check ignores the underlying state of a contested fit: KILLED
+IM08 a contested fit without a recorded state is not converged: KILLED
+IM09 the summary inverts the withheld flag: KILLED
+57/58 killed

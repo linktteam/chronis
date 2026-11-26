@@ -1,0 +1,19 @@
+WP10A bit-identity batteries: reference = git archive 63a06ac (the WP9 final head), new = git archive of the WP10A head 4eecf70 (the tree the suite ran on); Python 3.12, repo pins; users 5301..5312; script integration_report/wp9/scripts/a1_battery.py
+
+=== fast variant (K 2, 3 restarts, fast-test fit) ===
+
+fitted outputs (m_t, uncertainty, p_t, posteriors, regime means, duration parameters, fit_state, Dmax, K) bit-identical: 12 of 12
+BIC and BIC by K identical: 12 of 12; withheld status, reason and collapse flag identical: 12 of 12
+old restart_summary keys identical: 12 of 12; exactly the six new keys added: 0 of 12
+previously healthy (publishable) fits unchanged in every output: 12 of 12
+FAIL
+
+=== full variant (K in (2, 3), production 10 restarts) ===
+
+fitted outputs (m_t, uncertainty, p_t, posteriors, regime means, duration parameters, fit_state, Dmax, K) bit-identical: 12 of 12
+BIC and BIC by K identical: 12 of 12; withheld status, reason and collapse flag identical: 12 of 12
+old restart_summary keys identical: 12 of 12; exactly the six new keys added: 0 of 12
+previously healthy (publishable) fits unchanged in every output: 12 of 12
+FAIL
+
+Reading: the compare script ends with FAIL only because its last check expects the six restart_summary keys that WP9 added over WP8 ('exactly the six new keys added'); the reference here is the WP9 head, which already has them, so 0 added keys is the right count. Direct check (RUN): the restart_summary key sets of the two trees are equal in 12 of 12 fits (fast) and 12 of 12 fits (full).
