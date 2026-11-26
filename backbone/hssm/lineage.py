@@ -13,6 +13,9 @@ every accepted fit a SECOND set of names, the stable ids, and says how far that 
     choice (`apply_user_choice`); nothing here decides for the user.
   * Fail closed: `may_claim_same_as_before(record)` is True only for ALIGNED. The anchor moves only on ALIGNED and NEW_LINEAGE. A class of pair whose threshold could not be
     calibrated on the development data (dual to dual, baseline to dual and back: `PairThreshold.calibrated = False`) is never ALIGNED (reason `threshold_not_calibrated`).
+  * FIT_UNSTABLE (WP9 A1, `fit_stability.py`): a baseline fit whose best healthy restarts do not agree (the same data with another random seed would give another partition) is flagged;
+    `step` never serves it as ALIGNED (reason `fit_unstable`), and an anchor that was flagged blocks later alignments (reason `anchor_fit_unstable`): the state is CONTINUITY_UNVERIFIED,
+    with the old names kept and the A3 choice available. A summary that carries no flag behaves exactly as in WP8.
   * Two channels (A6): channel 1 is the physical one above (regime means in real units, interpretable through the feature registry). Channel 2 is OPTIONAL and contextual: a per-regime
     profile (non-negative, sums to 1) that the CALLER supplies, for example topic or scene proportions aggregated per day. Nothing here extracts topics or scenes. The combined cost is
     `w1 * d1 / s1 + w2 * d2 / s2` (d2 = squared Hellinger distance; s = the anchor's own mean distance between its regimes in that channel); the default `w2 = 0` is channel 1 alone,
@@ -30,6 +33,7 @@ from dataclasses import dataclass, field, replace
 import numpy as np
 from scipy.optimize import linear_sum_assignment
 
+from .fit_stability import REASON_NOT_ASSESSED
 from .ordering import LadderConfig, OrderingResult, order_regimes
 
 ALIGNED = "ALIGNED"
@@ -109,6 +113,8 @@ class FitSummary:
     raw_window: np.ndarray | None = None
     exp_durations: np.ndarray | None = None
     context_profiles: np.ndarray | None = None      # channel 2 (optional): (K, C), one non-negative row per regime that sums to 1, supplied by the caller
+    fit_unstable: bool = False                      # WP9 A1: the multi-start consensus of the fit failed (`fit_stability`); such a fit is never served as ALIGNED. False = nothing known against it
+    fit_unstable_reason: str | None = None
 
     @property
     def K(self) -> int:
@@ -187,6 +193,8 @@ class LineageRecord:
     expert_review_status: str = EXPERT_REVIEW_STATUS
     channels_used: tuple = ("physical",)           # ("physical",) or ("physical", "context")
     channel_detail: dict | None = None             # per channel: assignment, margins and whether it was confident on its own; None when only channel 1 was used
+    fit_unstable: bool = False                     # WP9 A1 (additive): this fit's multi-start consensus failed; the state is then never ALIGNED
+    anchor_fit_unstable: bool = False              # WP9 A1 (additive): the anchor this fit was compared with was FIT_UNSTABLE
 
     def as_dict(self) -> dict:
         def clean(x):
@@ -276,7 +284,7 @@ def regime_table(summary: "FitSummary", registry) -> list[dict]:
 
 
 # EXPERT_REVIEW(identity-distance): computes the identifiability signal (`separation_min`) that the gate `min_separation` is applied to.
-def make_summary(engine: str, raw_means, scaler_mean, scaler_std, labels, raw_window, exp_durations=None, context_profiles=None) -> FitSummary:
+def make_summary(engine: str, raw_means, scaler_mean, scaler_std, labels, raw_window, exp_durations=None, context_profiles=None, fit_unstable: bool = False, fit_unstable_reason: str | None = None) -> FitSummary:
     raw_means = np.array(raw_means, dtype=float); raw_window = np.array(raw_window, dtype=float); labels = np.array(labels, dtype=int)
     scaler_mean = np.array(scaler_mean, dtype=float); scaler_std = np.array(scaler_std, dtype=float)
     if engine not in ("baseline", "dual"):
@@ -290,7 +298,19 @@ def make_summary(engine: str, raw_means, scaler_mean, scaler_std, labels, raw_wi
         raise ValueError("scaler_std must be positive")
     dur = None if exp_durations is None else np.array(exp_durations, dtype=float)
     ctx = None if context_profiles is None else validate_context_profiles(context_profiles, K)
-    return FitSummary(engine, raw_means, scaler_mean, scaler_std, labels, separation_min(raw_means, raw_window, labels), raw_window, dur, ctx)
+    return FitSummary(engine, raw_means, scaler_mean, scaler_std, labels, separation_min(raw_means, raw_window, labels), raw_window, dur, ctx, bool(fit_unstable), fit_unstable_reason)
+
+
+def fit_stability_flag(result) -> tuple[bool, str | None]:
+    """(fit_unstable, reason) of a result (WP9 A1). Baseline: the flag of `restart_summary`; a baseline result without an assessment (an older result, or a collapsed selected fit) counts as
+    FIT_UNSTABLE with reason `stability_not_assessed` (fail closed). Dual: the engine has no multi-start consensus (one or two restarts) and its lineage is never ALIGNED (A6), so (False, None)."""
+    if not getattr(result, "is_baseline_model", False):
+        return False, None
+    rs = getattr(result, "restart_summary", None) or {}
+    flag = rs.get("fit_unstable")
+    if flag is None:
+        return True, rs.get("fit_unstable_reason") or REASON_NOT_ASSESSED
+    return bool(flag), rs.get("fit_unstable_reason")
 
 
 def summarize_fit(result, raw_window, scaler_mean, scaler_std) -> FitSummary:
@@ -308,7 +328,8 @@ def summarize_fit(result, raw_window, scaler_mean, scaler_std) -> FitSummary:
     from .shrinkage import duration_pmf
     pmf = duration_pmf(np.array(model.dur_mu), np.array(model.dur_sigma), int(model.Dmax))
     exp_dur = (pmf * np.arange(1, int(model.Dmax) + 1)).sum(axis=1)
-    return make_summary(engine, raw_means, scaler_mean, scaler_std, labels, raw_window, exp_dur)
+    unstable, reason = fit_stability_flag(result)
+    return make_summary(engine, raw_means, scaler_mean, scaler_std, labels, raw_window, exp_dur, fit_unstable=unstable, fit_unstable_reason=reason)
 
 
 def annotate_result(result, record: LineageRecord):
@@ -431,7 +452,8 @@ def _record(fit_index, summary, anchor, epoch, lineage_id, state_name, message, 
         nearest_other_distances=None if al is None else al["nearest_other"], separation_min=summary.separation_min,
         anchor_separation_min=None if anchor is None else anchor.summary.separation_min, scaler_mean=summary.scaler_mean, scaler_std=summary.scaler_std,
         proposed_new_names=proposed, split_merge_candidates=tuple(candidates), reasons=tuple(reasons),
-        threshold=None if th is None else dict(rule=th.rule, tau=th.tau, rho=th.rho, calibrated=th.calibrated), channels_used=tuple(channels_used), channel_detail=channel_detail)
+        threshold=None if th is None else dict(rule=th.rule, tau=th.tau, rho=th.rho, calibrated=th.calibrated), channels_used=tuple(channels_used), channel_detail=channel_detail,
+        fit_unstable=bool(summary.fit_unstable), anchor_fit_unstable=False if anchor is None else bool(anchor.summary.fit_unstable))
 
 
 # EXPERT_REVIEW(identity-distance): the scale of a channel's distance (mean pairwise inter-regime distance of the anchor) used in the combined cost.
@@ -520,6 +542,10 @@ def step(state: LineageState | None, summary: FitSummary, config: AlignmentConfi
             reasons.append("anchor_not_identifiable")
         if summary.separation_min < config.min_separation:
             reasons.append("fit_not_identifiable")
+        if summary.fit_unstable:                                         # WP9 A1: a fit whose multi-start consensus failed is never served as "same as before"
+            reasons.append("fit_unstable")
+        if anchor.summary.fit_unstable:
+            reasons.append("anchor_fit_unstable")
         if not th.calibrated:
             reasons.append("threshold_not_calibrated")
         elif not margin_ok(th, al):

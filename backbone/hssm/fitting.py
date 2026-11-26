@@ -22,6 +22,7 @@ from backbone.hssm.dual_model import DualTimescaleHSSM
 from backbone.hssm.label_switching import canonicalize_labels
 from backbone.hssm.config import DEFAULT_FIT_CONFIG, HSSMFitConfig, DEFAULT_COLD_START_CONFIG, ColdStartConfig, SHARED_PRIOR_DEFAULT_N0, MAX_TIMESTAMP_SPAN_DAYS
 from backbone.hssm.config import BASELINE_VARIANCE_FLOOR, COLLAPSE_MIN_EFFECTIVE_DAYS, RESTART_EPSILON_NATS, RESTART_SAME_ARI
+from backbone.hssm.fit_stability import assess_consensus, not_assessed
 from backbone.hssm.gating import ColdStartError, count_present_sessions
 
 if TYPE_CHECKING:     # the prototype module is imported lazily, only when a shared prior is passed: the default path never loads it
@@ -109,6 +110,7 @@ def _restart_summary(run_log: list[dict], converged_records: list[dict], selecte
             aris.append(adjusted_rand_index(selected["labels"], r["labels"]))
             others_ll.append(r["ll"])
     distinct = [ll for ari, ll in zip(aris, others_ll) if ari < RESTART_SAME_ARI]
+    consensus = not_assessed() if selected["collapsed"] else assess_consensus(converged_records, adjusted_rand_index)       # WP9 A1: additive keys, descriptive metadata
     return {
         "n_restarts": len(run_log),
         "n_converged": len(converged_records),
@@ -123,6 +125,7 @@ def _restart_summary(run_log: list[dict], converged_records: list[dict], selecte
         "n_other_same_solution": sum(1 for a in aris if a >= RESTART_SAME_ARI),
         "same_solution_ari": float(RESTART_SAME_ARI),
         "gap_to_next_distinct": float(sel_ll - max(distinct)) if distinct else None,
+        **consensus,
     }
 
 

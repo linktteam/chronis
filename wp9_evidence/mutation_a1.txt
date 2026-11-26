@@ -1,0 +1,25 @@
+A01 m = 2 instead of 3: KILLED
+A02 tau 0.9 instead of 0.99: KILLED
+A03 tau 0.999 instead of 0.99: KILLED
+A04 the level is exclusive at tau: KILLED
+A05 the largest pairwise ARI instead of the smallest: KILLED
+A06 the worst restarts by log-likelihood are taken: KILLED
+A07 ties go to the higher restart index: KILLED
+A08 collapsed restarts are not excluded: KILLED
+A09 the too-few rule is removed: KILLED
+A10 the reasons are swapped: KILLED
+A11 only the agreement with the best restart is compared: KILLED
+A13 a fit that cannot be assessed is reported stable: KILLED
+A14 the consensus keys are left out of the restart summary: KILLED
+A15 a collapsed selected fit is assessed as if healthy: KILLED
+A16 the consensus compares with a constant ARI: KILLED
+A17 the lineage ignores the flag of the new fit: KILLED
+A18 the lineage ignores the flag of the anchor: KILLED
+A19 a baseline result without an assessment is trusted: KILLED
+A20 the dual engine is flagged: KILLED
+A21 the record drops the flags: KILLED
+A22 a summary without a flag counts as flagged: KILLED
+A23 make_summary drops the flag: KILLED
+A24 summarize_fit drops the flag: KILLED
+A25 the healthy count includes collapsed restarts: KILLED
+24/24 killed

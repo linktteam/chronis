@@ -135,7 +135,7 @@ def test_dual_canonicalization_by_permute_regimes_is_undone_by_the_alignment(see
 
 
 def test_an_engine_switch_from_a_real_baseline_fit_to_a_dual_model_aligns_across_engines(baseline_fits):
-    (r, w), _ = baseline_fits
+    _, (r, w) = baseline_fits                                              # WP9 A1: the 120-day fit; the 90-day fit of this user is FIT_UNSTABLE (best restarts disagree, min ARI 0.78) and is never an ALIGNED anchor
     a = summarize_fit(r, w["raw"], w["scaler_mean"], w["scaler_std"])
     z = np.array(r.model.mu)
     perm = [1, 2, 0]

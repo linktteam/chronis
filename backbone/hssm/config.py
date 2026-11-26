@@ -53,3 +53,8 @@ DUAL_DURATION_MU_MIN = -5.0
 DUAL_DURATION_MU_MAX_DMAX_FACTOR = 10.0
 DUAL_DURATION_SIGMA_MAX = 3.0
 DUAL_DURATION_BOUND_TOL = 1e-3          # absolute tolerance (in mu and in sigma) for the `duration_at_bound_` flag (clarification 5.5b)
+
+# WP9 A1 (tests/PREDECLARED_CRITERIA_WP9.md section 6): multi-start consensus. A baseline fit is FIT_UNSTABLE when fewer than FIT_CONSENSUS_M healthy restarts exist or when the
+# best FIT_CONSENSUS_M healthy restarts (by log-likelihood) do not all agree at adjusted Rand index FIT_CONSENSUS_TAU (0.99 is the level this package calls "the same partition").
+FIT_CONSENSUS_M = 3
+FIT_CONSENSUS_TAU = 0.99
