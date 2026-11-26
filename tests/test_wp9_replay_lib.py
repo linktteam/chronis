@@ -153,3 +153,17 @@ def test_the_calibration_half_is_the_even_user_numbers():
 def test_the_candidate_grid_is_the_declared_one():
     assert A.H_GRID == (0.0, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0) and A.S_GRID == (0.0, 0.85, 0.90, 0.95) and A.B_T == [90, 104, 118, 132, 146, 150]
     assert A.G_T == [90, 97, 104, 111, 118, 125, 132, 139, 146, 150]
+
+
+def test_the_prepared_cache_keeps_fits_of_different_scale_change_streams_apart(monkeypatch):
+    import wp9_replay_lib as RL
+    calls = []
+    monkeypatch.setattr(RL, "wp8_record", lambda rec, n=None, restart=None: (calls.append(rec["job"].get("scale_change")) or dict(ok=False)))
+    monkeypatch.setattr(RL.S, "usable", lambda r: False)
+    RL._prep_cache.clear()
+    base = dict(user=1, fitseed=1, end=75, start=30, stratum="easy")
+    RL.prepared(dict(job=dict(base, scale_change=None)), 10)
+    RL.prepared(dict(job=dict(base, scale_change=dict(features=(5,), factor=0.1, start=60))), 10)
+    RL.prepared(dict(job=dict(base, scale_change=None)), 10)                              # a repeat is served from the cache
+    assert calls == [None, dict(features=(5,), factor=0.1, start=60)]
+    RL._prep_cache.clear()

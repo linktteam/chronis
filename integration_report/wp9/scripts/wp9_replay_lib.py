@@ -71,7 +71,7 @@ _prep_cache: dict = {}
 def prepared(rec: dict, n: int | None):
     """Everything about one stored fit that does not depend on the candidate gate: the WP8-format record, the production consensus, the raw window and the scoring info (cached)."""
     j = rec["job"]
-    key = (j["user"], j["fitseed"], j["end"], j["start"], j.get("stratum"), n)
+    key = (j["user"], j["fitseed"], j["end"], j["start"], j.get("stratum"), n, repr(j.get("scale_change")), j.get("kchange"), j.get("drift"))
     if key not in _prep_cache:
         r8 = wp8_record(rec, n)
         if not S.usable(r8) or not r8.get("accepted"):
