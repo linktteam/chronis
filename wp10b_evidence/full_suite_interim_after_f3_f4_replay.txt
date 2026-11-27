@@ -1,0 +1,5 @@
+# interim full suite (3.12.3, repo pins), head ec99fc9 + working tree, run while the background queue was running (RUN)
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_wp8_item4_label_convention.py:79: the WP8 pins are sha256 of ast.dump text, which is valid for the ast.dump format of Python 3.13 only (WP10A A1, finding F1)
+1811 passed, 1 skipped, 5 xfailed, 183 warnings in 1599.78s (0:26:39)
