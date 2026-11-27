@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import copy
 import os
+import time
 import traceback
 import warnings
 from dataclasses import dataclass, field
@@ -133,6 +134,17 @@ class DualTimescaleHSSM:
     # the same starting point with the box active. A fit that ends inside the box is never touched. Switch for tests and studies.
     DURATION_BOX_REFIT: bool = True
 
+    # WP10B B2 (opt-in, every default switches the feature OFF and leaves every fit bit-identical; design and levels: tests/PREDECLARED_CRITERIA_WP10B.md Part 4). Class switches for studies,
+    # like DURATION_BOX_REFIT above; no public function signature changes.
+    #  * DURATION_PRIOR_SEGMENTS: weak MAP prior on the durations. Each regime's expected duration counts get this many pseudo-segments spread as a log-normal(median DURATION_PRIOR_MEDIAN,
+    #    sigma DURATION_PRIOR_SIGMA) pmf on the lattice before the weighted log-normal fit of the M-step. 0.0 = off.
+    #  * MAX_FIT_SECONDS: wall-clock cap of one EM run (None = off). When it is exceeded after an iteration the loop stops like an exhausted iteration budget (the window-gain rule at the
+    #    cap then decides CONVERGED or MAX_ITER_REACHED) and `wall_clock_stop_` is True. A run that is stopped by the clock depends on the machine's speed: it is a guard, not a reproducible setting.
+    DURATION_PRIOR_SEGMENTS: float = 0.0
+    DURATION_PRIOR_MEDIAN: float = 10.0
+    DURATION_PRIOR_SIGMA: float = 1.0
+    MAX_FIT_SECONDS: Optional[float] = None
+
     def __init__(
         self,
         n_regimes: int = 3,
@@ -200,6 +212,8 @@ class DualTimescaleHSSM:
         self.duration_box_refit_: Optional[dict[str, Any]] = None
         self._duration_box_active: bool = False        # True only inside the second run of a refit
         self._em_iteration: int = 0
+        # WP10B B2: True iff the last EM run was stopped by MAX_FIT_SECONDS (bookkeeping only)
+        self.wall_clock_stop_: bool = False
 
         # --- Numerical-health bookkeeping (ledger A7 and N21). Bookkeeping only: nothing
         # here feeds back into inference, and none of it is part of the parameter snapshot,
@@ -702,6 +716,8 @@ class DualTimescaleHSSM:
                 self.duration_optimizer_success_[k] = False
                 self.duration_fallback_used_ = True
                 continue
+            if self.DURATION_PRIOR_SEGMENTS > 0.0:      # WP10B B2 (opt-in): pseudo-segments of a weak log-normal duration prior; never entered while the switch is 0.0
+                N_j_d = N_j_d + float(self.DURATION_PRIOR_SEGMENTS) * self._duration_prior_pmf(d_grid)
 
             def neg_expected_ll(params, N_j_d=N_j_d, d_grid=d_grid):
                 mu, log_sigma = params
@@ -737,6 +753,16 @@ class DualTimescaleHSSM:
 
         self.pi = np.clip(bwd.regime_posterior_smoothed[0], 1e-4, None)
         self.pi = self.pi / self.pi.sum()
+
+    def _duration_prior_pmf(self, d_grid: np.ndarray) -> np.ndarray:
+        """The pmf of the weak duration prior (WP10B B2) on the lattice `d_grid`: log-normal(median DURATION_PRIOR_MEDIAN, sigma DURATION_PRIOR_SIGMA), truncated and renormalised like every other duration pmf here."""
+        pdf = lognorm.pdf(d_grid, s=float(self.DURATION_PRIOR_SIGMA), scale=float(self.DURATION_PRIOR_MEDIAN))
+        pdf = np.clip(pdf, 1e-300, None)
+        return pdf / pdf.sum()
+
+    def _now(self) -> float:
+        """The clock of the wall-clock cap (a method so that tests can replace it)."""
+        return time.monotonic()
 
     def _boxed_duration_update(self, k: int, N_j_d: np.ndarray, d_grid: np.ndarray, neg_expected_ll) -> tuple[float, float]:
         """Redo the duration update of regime k inside the duration box (WP6 item 3 part 2, D1).
@@ -965,6 +991,8 @@ class DualTimescaleHSSM:
         self.window_gain_at_cap_ = None
         self.duration_box_applied_ = []
         self._em_iteration = 0
+        self.wall_clock_stop_ = False
+        t_start = self._now() if self.MAX_FIT_SECONDS is not None else None
 
         if timestamps is not None:
             self.duration_unit = "calendar_days"
@@ -1048,6 +1076,9 @@ class DualTimescaleHSSM:
                 self.n_iter_ = it
                 self._is_fitted = True
                 return self
+            if t_start is not None and self._now() - t_start > float(self.MAX_FIT_SECONDS):       # WP10B B2 (opt-in): the wall-clock cap ends the run like an exhausted budget
+                self.wall_clock_stop_ = True
+                break
 
         if self.fit_state_ == FitState.RUNNING:
             # The iteration limit was reached without the |ll - prev| < tol rule firing (WP6 item 3 part 2, C2). The fit is certified CONVERGED

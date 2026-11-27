@@ -1,0 +1,21 @@
+CONTROL (unmutated, 14 named tests, same run): PASSED: all named tests pass unmutated
+P1 the guard for an empty regime counts the prior: CAUGHT
+P2 the prior weight is doubled: CAUGHT
+P3 the prior pmf is not normalised: CAUGHT
+P4 the prior median is read from the sigma: CAUGHT
+P5 the prior sigma is read from the median: CAUGHT
+P6 the prior pmf is on a shifted lattice: CAUGHT
+P7 the prior is on by default: CAUGHT
+P8 the prior also changes the transition update: CAUGHT
+C1 the cap is on by default: CAUGHT
+C2 the cap is not strict: CAUGHT
+C3 the elapsed time is the clock reading: CAUGHT
+C4 the stop flag is not set: CAUGHT
+C5 the stop returns before the end-of-budget rule: CAUGHT
+C6 the flag is not reset at the start of a fit: CAUGHT
+C7 the clock is read even when the cap is off (state leaks into the start time): CAUGHT
+B1 the comparison is approximate: CAUGHT
+B2 the log-likelihood history is not compared: CAUGHT
+B3 only the last record decides: CAUGHT
+B4 the wall time is compared: CAUGHT
+19/19 caught
