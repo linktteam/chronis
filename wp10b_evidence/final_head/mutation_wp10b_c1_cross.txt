@@ -1,0 +1,16 @@
+CONTROL (unmutated, 11 named tests, same run): PASSED: all named tests pass unmutated
+X1 labels are compared without renaming: CAUGHT
+X2 exact equality always reported: CAUGHT
+X3 a different NaN pattern is not infinite: CAUGHT
+X4 the mean difference replaces the largest: CAUGHT
+X5 a different regime set counts as no difference: CAUGHT
+X6 the stability flag is not a discrete output: CAUGHT
+X7 the withheld reason is not a discrete output: CAUGHT
+X8 duration parameters are not part of bit identity: CAUGHT
+X9 the BIC difference is signed: CAUGHT
+X10 every lineage step that ran counts as aligned: CAUGHT
+X11 the lowest agreement is replaced by the highest: CAUGHT
+X12 the may-claim count ignores the claim: CAUGHT
+X13 the self-alignment is the other configuration's: CAUGHT
+X14 booleans count as numeric differences: CAUGHT
+14/14 caught

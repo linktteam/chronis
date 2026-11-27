@@ -1,0 +1,38 @@
+CONTROL (unmutated, 20 named tests, same run): PASSED: all named tests pass unmutated
+Y1 harmful means a loss of the strict kind: CAUGHT
+Y2 good means a gain of the strict kind: CAUGHT
+Y3 the strict margin is 1 se: CAUGHT
+Y4 the strict harmful side has the wrong sign: CAUGHT
+Y5 two days are enough for a truth: CAUGHT
+Y6 the exact bound is the Wald bound: CAUGHT
+Y7 the bound is two-sided 95%: CAUGHT
+Y8 the Wilson interval has no continuity term: CAUGHT
+Y9 a violation with many fits is still met: CAUGHT
+Y10 thirteen harmful fits are enough: CAUGHT
+Y11 the useful-share level is 40%: CAUGHT
+Y12 the share verdict ignores the sample size: CAUGHT
+Y13 MET is judged on the point estimate: CAUGHT
+Y14 ineligible fits are counted as asked: CAUGHT
+Y15 certified is counted over every fit, not the harmful ones: CAUGHT
+Y16 the good share counts harmful fits: CAUGHT
+Y17 the blind count includes ineligible fits: CAUGHT
+Y18 the blind count reads the certificate: CAUGHT
+Y19 the extension is wanted at fourteen: CAUGHT
+Y20 the paired margin uses two standard errors: CAUGHT
+Y21 the paired standard error uses ddof 0: CAUGHT
+Y22 a failed fit counts as published: CAUGHT
+Y23 only certified fits count as published: CAUGHT
+Y24 the publish rule ignores the baseline margin: CAUGHT
+Y25 the publish rule ignores the published share: CAUGHT
+Y26 the strict rule accepts the point estimate: CAUGHT
+Y27 the published level is 50%: CAUGHT
+Y28 hard users are in the B4 set: CAUGHT
+Y29 the baseline margin counts every certified fit: CAUGHT
+Y30 a fit that was not asked counts as asked (default of the eligible field): CAUGHT
+Y31 the ranges overlap (eval users start at the ext range): CAUGHT
+Y32 a stratum block of 12 is 13: CAUGHT
+Y33 the guard accepts a file without the B3 part: CAUGHT
+Y34 the driver reruns finished jobs: CAUGHT
+Y35 the breaker refit is the real engine: CAUGHT
+Y36 the certificate is not forced on the breakers: CAUGHT
+36/36 caught

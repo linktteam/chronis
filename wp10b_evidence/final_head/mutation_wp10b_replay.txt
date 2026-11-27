@@ -1,0 +1,22 @@
+CONTROL (unmutated, 13 named tests, same run): PASSED: all named tests pass unmutated
+R01 a wrong alignment is treated as safe: CAUGHT
+R02 the bound threshold is inverted: CAUGHT
+R03 the exact bound formula is wrong: CAUGHT
+R04 the restart states are not compared: CAUGHT
+R05 the selected restart is not compared: CAUGHT
+R06 a failed fit against a good one is not a difference: CAUGHT
+R07 the iteration count is not part of the discrete view: CAUGHT
+R08 the users are not round-robin over the strata: CAUGHT
+R09 the users-per-stratum bound is removed: CAUGHT
+R10 the operating-point guard is removed: CAUGHT
+R11 the first user of a stratum is shifted: CAUGHT
+R12 the totals do not add the wrong count: CAUGHT
+R13 the job carries the seed-B fit seed: CAUGHT
+R14 a missing step is not a state difference: CAUGHT
+R15 a resumed run refits finished fits: CAUGHT
+R16 the log-likelihood difference is absolute: CAUGHT
+R17 the replay reuses the cached new fit for the stored replay: CAUGHT
+R18 the state comparison ignores correctness and the served flag: CAUGHT
+R19 a partial run is not marked: CAUGHT
+R20 a finished fit is not written to the fits file: CAUGHT
+20/20 caught

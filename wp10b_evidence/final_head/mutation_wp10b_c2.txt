@@ -1,0 +1,29 @@
+CONTROL (unmutated, 20 named tests, same run): PASSED: all named tests pass unmutated
+G01 the gate is exclusive: CAUGHT
+G02 the gate level is 2.0: CAUGHT
+G03 two days make a regime evaluable: CAUGHT
+G04 only one regime needs enough days: CAUGHT
+G05 a feature without observations is tolerated: CAUGHT
+G06 the oracle uses the fitted-style pooled means of the whole window: CAUGHT
+G07 the oracle uses the wrong labels (all zero): CAUGHT
+G08 the generator-means arm uses the sample means: CAUGHT
+G09 production separation uses the true labels: CAUGHT
+G10 the sharpness floor is 0.90: CAUGHT
+G11 the consensus flag is ignored: CAUGHT
+G12 sharpness equal to the floor is flagged: CAUGHT
+G13 non-evaluable windows are counted in the user table: CAUGHT
+G14 an unusable production fit counts as passing: CAUGHT
+G15 the gate share ignores the flag: CAUGHT
+G16 the bootstrap resamples pooled rows instead of users: CAUGHT
+G17 the bootstrap is not seeded: CAUGHT
+G18 the paired gap uses independent resamples: CAUGHT
+G19 the not-servable level is 0.60: CAUGHT
+G20 the gap level is 0.10: CAUGHT
+G21 the lower end of the gap interval is not required: CAUGHT
+G22 the lower end may be zero: CAUGHT
+G23 'demonstrated' needs only the point estimate: CAUGHT
+G24 the not-servable rule is inclusive: CAUGHT
+G25 the Wilson interval uses z = 1.645: CAUGHT
+G26 the median and the quartiles are swapped in the report format: CAUGHT
+G27 a failed fit is treated as evaluable and passing: CAUGHT
+27/27 caught

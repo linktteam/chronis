@@ -1,0 +1,24 @@
+CONTROL (unmutated, 13 named tests, same run): PASSED: all named tests pass unmutated
+Y1 the sign test excludes the observed count: CAUGHT
+Y2 an empty sign test gives p = 0: CAUGHT
+Y3 the standard error uses ddof 0: CAUGHT
+Y4 the lower bound uses 1.96: CAUGHT
+Y5 a gain with harm is called HELPED: CAUGHT
+Y6 the sign level is 0.5: CAUGHT
+Y7 losses are not counted: CAUGHT
+Y8 a failed variant fit counts as publishable: CAUGHT
+Y9 the harm margin is -0.20: CAUGHT
+Y10 the harm level is exclusive: CAUGHT
+Y11 the held-out difference is reference minus variant: CAUGHT
+Y12 non-finite variant scores are not skipped: CAUGHT
+Y13 a non-finite lower bound counts as harmless: CAUGHT
+Y14 the time ratio uses means: CAUGHT
+Y15 the clock stops are not counted: CAUGHT
+Y16 a changed converged fit is counted when it stays converged: CAUGHT
+Y17 the SQUAREM count level is exclusive: CAUGHT
+Y18 the SQUAREM time level is 2: CAUGHT
+Y19 the hard stratum ends one user early: CAUGHT
+Y20 the ALL variant leaves the prior out: CAUGHT
+Y21 the class flags are not restored: CAUGHT
+Y22 the _flags key is passed to fit_hssm: CAUGHT
+22/22 caught

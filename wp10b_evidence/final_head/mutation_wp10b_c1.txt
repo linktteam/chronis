@@ -1,0 +1,28 @@
+CONTROL (unmutated, 13 named tests, same run): PASSED: all named tests pass unmutated
+D01 M1 shifts by 7: CAUGHT
+D02 M2 shifts by 10: CAUGHT
+D03 M3 exchanges only the intercepts: CAUGHT
+D04 M3 exchanges nothing: CAUGHT
+D05 the norm is the L1 norm: CAUGHT
+D06 the H3 reference shift is 8: CAUGHT
+D07 an unknown candidate falls through silently: CAUGHT
+E01 rule (b) needs five: CAUGHT
+E02 rule (c) needs three: CAUGHT
+E03 a fit equal to the Gaussian is worse: CAUGHT
+E04 a non-finite fit is not worse: CAUGHT
+E05 rule (b) is strict: CAUGHT
+E06 the most severe candidate is frozen: CAUGHT
+E07 an unverified candidate can be chosen: CAUGHT
+E08 the blind count includes arm T: CAUGHT
+E09 the blind count reads the certification field: CAUGHT
+E10 the blind count ignores eligibility: CAUGHT
+E11 the extension is allowed at twelve: CAUGHT
+E12 the required number is ten: CAUGHT
+E13 one certified fit is tolerated: CAUGHT
+E14 MET needs more than twelve: CAUGHT
+E15 all-certified is not capped at one: CAUGHT
+E16 the bound is two-sided 90%: CAUGHT
+E17 E1 counts all arm-M fits that are eligible, worse or not: CAUGHT
+E18 certified means not certified: CAUGHT
+E19 the Gaussian of the wrong pair is used: CAUGHT
+26/26 caught

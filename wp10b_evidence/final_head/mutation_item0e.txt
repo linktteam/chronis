@@ -1,0 +1,8 @@
+E01 capability is the constant True again: KILLED
+E02 capability is the constant False: KILLED
+E03 unfitted model counts as certified: KILLED
+E04 fit state ignored: KILLED
+E05 degraded fit ignored: KILLED
+E06 duration at a wall ignored: KILLED
+E07 only some regimes checked for the wall (all instead of any): KILLED
+E08 MAX_ITER_REACHED accepted as converged: KILLED

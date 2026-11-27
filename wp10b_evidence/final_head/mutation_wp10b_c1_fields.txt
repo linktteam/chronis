@@ -1,0 +1,10 @@
+CONTROL (unmutated, 4 named tests, same run): PASSED: all named tests pass unmutated
+C01 flag fields are not recognised as flags: CAUGHT
+C02 array float values are not recognised as floats: CAUGHT
+C03 a difference needs three distinct values: CAUGHT
+C04 array hashes are classified as discrete: CAUGHT
+C05 only seed 1 is analysed: CAUGHT
+C06 the relative difference is the absolute one: CAUGHT
+C07 discrete differences are never listed: CAUGHT
+C08 flag values are taken from the first kernel only: CAUGHT
+8/8 caught
