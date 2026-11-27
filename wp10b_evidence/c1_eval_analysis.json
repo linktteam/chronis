@@ -1,0 +1,28 @@
+{
+ "M": 120,
+ "usable": 120,
+ "worse": 47,
+ "eligible_and_worse": 13,
+ "certified": 0,
+ "upper": 0.20581666518655062,
+ "E1": "MET",
+ "T": 120,
+ "T_eligible": 31,
+ "T_certified": 13,
+ "E0": true,
+ "E3_published_and_worse": 0,
+ "by_length": {
+  "30": [
+   10,
+   0
+  ],
+  "60": [
+   3,
+   0
+  ],
+  "120": [
+   0,
+   0
+  ]
+ }
+}

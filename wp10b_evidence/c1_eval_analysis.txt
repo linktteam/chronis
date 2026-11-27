@@ -1,0 +1,5 @@
+C1(2) MILD HARMFUL-PRIOR CONTROL, EVALUATION (once; seeds 11021..11060, 40 users, 3 lengths)
+arm M (the frozen mild prior): 120 fits (120 with a usable Gaussian); worse than the single Gaussian on the held-out days: 47; of those eligible for the certificate: 13 (required: at least 12)
+E1 certified among the 13 eligible harmful fits: 0 (exact one-sided 95% upper bound on the certification rate 21%) -> MET; by length (eligible harmful, certified): {30: (10, 0), 60: (3, 0), 120: (0, 0)}
+E0 arm T (the true prior): 120 fits, eligible 31, certified 13 -> informative
+E3 (reported): arm-M fits that score below the single Gaussian and are published after the certificate: 0 of 47
