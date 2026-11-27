@@ -1,0 +1,43 @@
+{
+ "candidates": {
+  "M1": {
+   "n": 36,
+   "unusable_pairs": 0,
+   "worse_than_gauss": 20,
+   "worse_and_eligible": 6,
+   "mean_gap_to_gauss": -1.935446079684224,
+   "rule_b": true,
+   "rule_c": true,
+   "verified": true,
+   "norm": 22.627416997969522
+  },
+  "M2": {
+   "n": 36,
+   "unusable_pairs": 0,
+   "worse_than_gauss": 24,
+   "worse_and_eligible": 8,
+   "mean_gap_to_gauss": -5.341438239006878,
+   "rule_b": true,
+   "rule_c": true,
+   "verified": true,
+   "norm": 33.94112549695428
+  },
+  "M3": {
+   "n": 36,
+   "unusable_pairs": 0,
+   "worse_than_gauss": 3,
+   "worse_and_eligible": 1,
+   "mean_gap_to_gauss": 1.1048383307072387,
+   "rule_b": false,
+   "rule_c": false,
+   "verified": false,
+   "norm": 1.728750668880501
+  }
+ },
+ "chosen": "M1",
+ "norms": {
+  "M1": 22.627416997969522,
+  "M2": 33.94112549695428,
+  "M3": 1.728750668880501
+ }
+}

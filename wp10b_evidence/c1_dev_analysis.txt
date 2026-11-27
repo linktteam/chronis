@@ -1,0 +1,13 @@
+C1(2) MILD HARMFUL-PRIOR CONTROL, DEVELOPMENT (seeds 11001..11012, 3 lengths; single-Gaussian scores from the same run; rule (a) of WP10A dropped, see section 4.1)
+norm of the d_obs change: M1 22.63, M2 33.94, M3 1.73 (H3, every intercept + 16: 45.25)
+
+M1: 36 fits (of 36); (b) fits below the single Gaussian 20 -> ok (needs >= 6); (c) of those eligible for the certificate 6 -> ok (needs >= 4); unusable pairs 0; mean(fit - single Gaussian) -1.935 nats/step (record only); VERIFIED HARMFUL (mild): True
+   for the record: eligible 14/36, certified 3, published after the certificate 3
+
+M2: 36 fits (of 36); (b) fits below the single Gaussian 24 -> ok (needs >= 6); (c) of those eligible for the certificate 8 -> ok (needs >= 4); unusable pairs 0; mean(fit - single Gaussian) -5.341 nats/step (record only); VERIFIED HARMFUL (mild): True
+   for the record: eligible 13/36, certified 2, published after the certificate 2
+
+M3: 36 fits (of 36); (b) fits below the single Gaussian 3 -> NO (needs >= 6); (c) of those eligible for the certificate 1 -> NO (needs >= 4); unusable pairs 0; mean(fit - single Gaussian) +1.105 nats/step (record only); VERIFIED HARMFUL (mild): False
+   for the record: eligible 15/36, certified 6, published after the certificate 18
+
+FROZEN BY THE DECLARED RULE: M1

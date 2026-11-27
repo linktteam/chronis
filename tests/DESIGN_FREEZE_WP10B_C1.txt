@@ -1,0 +1,9 @@
+{"candidate": "M1"}
+WP10B C1(2) design freeze, written 2026-11-27 AFTER the development run and BEFORE the evaluation. Nothing below changes a rule of tests/PREDECLARED_CRITERIA_WP10B.md section 4 (Parts 1 and 1b).
+Development (seeds 11001..11012 x 3 lengths = 36 fits per candidate; 3.12, repo pins; `wp10b_evidence/c1_dev_analysis.txt`):
+  M1 (every intercept + 8, norm 22.63): fits below the single Gaussian 20 of 36 (needs >= 6), of those eligible for the certificate 6 (needs >= 4): VERIFIED HARMFUL (mild).
+  M2 (every intercept + 12, norm 33.94): 24 of 36 below, 8 eligible: VERIFIED HARMFUL (mild).
+  M3 (regime-swapped observation model, norm 1.73): 3 of 36 below (needs >= 6), 1 eligible (needs >= 4): NOT verified.
+Rule applied (section 4.4): the mildest verified candidate is frozen, i.e. the smallest norm of the d_obs change: M1.
+What I have seen of the development run beyond the validity counts (record only, not used for any choice): eligible / certified / published after the certificate per candidate: M1 14 / 3 / 3, M2 13 / 2 / 2, M3 15 / 6 / 18. These are development numbers; they are not the evaluation and no claim rests on them. They do show that on the development users the certificate certified some harmful-prior fits, so a result E1 NOT MET is a live possibility and is reported as such if it happens.
+Evaluation (unchanged): seeds 11021..11060 x 3 lengths = 120 fits per arm, arms M (= M1) and T (true prior); required >= 12 eligible harmful fits (blind count), one extension 11061..11080 only if fewer; E1 MET only with 0 certified among n >= 12; E1 with at least one certified is NOT MET whatever n. Analysed once.
