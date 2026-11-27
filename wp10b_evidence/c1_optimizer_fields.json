@@ -1,0 +1,132 @@
+{
+ "kernels": [
+  "default",
+  "PRESCOTT",
+  "CORE2",
+  "NEHALEM",
+  "SANDYBRIDGE",
+  "HASWELL",
+  "SKYLAKEX",
+  "COOPERLAKE",
+  "SAPPHIRERAPIDS",
+  "ZEN",
+  "BARCELONA",
+  "BULLDOZER",
+  "PILEDRIVER",
+  "STEAMROLLER",
+  "EXCAVATOR",
+  "ATOM",
+  "DUNNINGTON",
+  "OPTERON"
+ ],
+ "labels": {
+  "optimizer_success_seed1": {
+   "by_kind": {
+    "array_hash_or_shape": 49,
+    "discrete": 20,
+    "flag": 3,
+    "float": 97
+   },
+   "differing_by_kind": {
+    "array_hash_or_shape": 6,
+    "float": 75
+   },
+   "differing_model_attributes": [
+    "A_fast",
+    "C_obs",
+    "Q_fast",
+    "R_obs",
+    "b_fast",
+    "d_obs",
+    "log_likelihood_",
+    "log_likelihood_history_",
+    "window_gain_at_cap_"
+   ],
+   "discrete_examples": [
+    "model.Dmax",
+    "model._em_iteration",
+    "model._n_observations",
+    "model.fit_state_"
+   ],
+   "discrete_subfields": 20,
+   "discrete_subfields_that_differ": [],
+   "flag_values": {
+    "duration_fallback_used": [
+     "False"
+    ],
+    "duration_optimizer_success": [
+     "True"
+    ],
+    "optimizer_success": [
+     "True"
+    ]
+   },
+   "max_rel_diff_of_differing_floats": {
+    "A_fast": 1.4006046578675733e-12,
+    "C_obs": 3.2781263949477188e-12,
+    "Q_fast": 5.490918877552176e-13,
+    "R_obs": 1.9688021519722808e-13,
+    "b_fast": 1.4450427229459888e-13,
+    "d_obs": 7.730878565298974e-14,
+    "log_likelihood_": 2.9933757242888345e-15,
+    "log_likelihood_history_": 6.202772150874251e-15,
+    "window_gain_at_cap_": 4.3345537471412893e-13
+   },
+   "n_subfields": 169
+  },
+  "optimizer_success_seed2": {
+   "by_kind": {
+    "array_hash_or_shape": 49,
+    "discrete": 20,
+    "flag": 3,
+    "float": 97
+   },
+   "differing_by_kind": {
+    "array_hash_or_shape": 6,
+    "float": 75
+   },
+   "differing_model_attributes": [
+    "A_fast",
+    "C_obs",
+    "Q_fast",
+    "R_obs",
+    "b_fast",
+    "d_obs",
+    "log_likelihood_",
+    "log_likelihood_history_",
+    "window_gain_at_cap_"
+   ],
+   "discrete_examples": [
+    "model.Dmax",
+    "model._em_iteration",
+    "model._n_observations",
+    "model.fit_state_"
+   ],
+   "discrete_subfields": 20,
+   "discrete_subfields_that_differ": [],
+   "flag_values": {
+    "duration_fallback_used": [
+     "True"
+    ],
+    "duration_optimizer_success": [
+     "False"
+    ],
+    "optimizer_success": [
+     "False"
+    ]
+   },
+   "max_rel_diff_of_differing_floats": {
+    "A_fast": 4.45659363184065e-13,
+    "C_obs": 1.6422578721402865e-13,
+    "Q_fast": 1.4316869877747132e-13,
+    "R_obs": 6.31733192171758e-14,
+    "b_fast": 1.2881664476201579e-11,
+    "d_obs": 6.908767269043207e-14,
+    "log_likelihood_": 1.2061064927785681e-15,
+    "log_likelihood_history_": 2.1833446831463068e-14,
+    "window_gain_at_cap_": 4.2470060598266586e-13
+   },
+   "n_subfields": 169
+  }
+ }
+}

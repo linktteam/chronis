@@ -2,7 +2,8 @@
 Same users as the WP8 Item 8 battery (population users 5301..5312), two variants: `fast` = the WP8 variant (K 2, 3 restarts, fast-test fit) and `full` = K in (2, 3), the production 10 restarts.
 usage: python3 a1_battery.py fit --tree TREE --variant fast|full --out FILE.pkl [--workers 2]
        python3 a1_battery.py compare REF.pkl NEW.pkl
-`compare` checks that every fitted output, the BIC, the status fields and every OLD key of `restart_summary` are bit-identical, and that the new tree only ADDS keys to `restart_summary`."""
+`compare` checks that every fitted output, the BIC, the status fields and every OLD key of `restart_summary` are bit-identical, and that the new tree only ADDS keys to `restart_summary` (none, the six WP9 keys, or keys named by
+--allow-new; WP10B fix of the last check, which printed FAIL against any reference that already had the six keys)."""
 import argparse, contextlib, io, logging, multiprocessing as mp, pickle, sys, time, warnings
 import numpy as np
 
@@ -42,7 +43,10 @@ def cmd_fit(a):
         print(r["seed"], r["fit_state"], "withheld" if r["insights_withheld"] else "publishable", r["K"], r["seconds"], "s")
 
 
-def compare_records(ref, new):
+def compare_records(ref, new, allowed_new=()):
+    """`allowed_new`: restart_summary keys the new tree may add (WP10B: the check used to demand exactly the six WP9 keys, which fails against any reference that already has them). Accepted: nothing added, exactly the six WP9 keys
+    added (a WP8 reference), or only keys named in `allowed_new`. A key REMOVED from the old restart_summary is never accepted."""
+    allowed_new = set(allowed_new)
     assert [r["seed"] for r in ref] == [r["seed"] for r in new]
     n_fit = n_bic = n_status = n_old_keys = n_added_only = n_healthy = 0
     rows = []
@@ -52,7 +56,8 @@ def compare_records(ref, new):
         bic_same = r["BIC"] == n["BIC"] and r["bic_by_k"] == n["bic_by_k"]
         status_same = (r["insights_withheld"], r["withheld_reason"], r["fit_collapsed"]) == (n["insights_withheld"], n["withheld_reason"], n["fit_collapsed"])
         old_keys_same = all(k in n["restart_summary"] and (r["restart_summary"][k] == n["restart_summary"][k]) for k in r["restart_summary"])
-        added_only = set(n["restart_summary"]) - set(r["restart_summary"]) == NEW_KEYS
+        added = set(n["restart_summary"]) - set(r["restart_summary"])
+        added_only = old_keys_same and (added == NEW_KEYS or added <= allowed_new)                  # nothing added: the empty set is a subset of any allowed set
         n_fit += fit_same; n_bic += bic_same; n_status += status_same; n_old_keys += old_keys_same; n_added_only += added_only
         healthy = not r["insights_withheld"]
         n_healthy += bool(healthy and fit_same and bic_same and status_same)
@@ -64,13 +69,13 @@ def compare_records(ref, new):
 
 def cmd_compare(a):
     ref, new = (pickle.load(open(p, "rb")) for p in (a.ref, a.new))
-    c = compare_records(ref, new)
+    c = compare_records(ref, new, tuple(k for k in a.allow_new.split(",") if k))
     print("seed  fit_state            ref_status   fitted outputs identical  BIC identical  status identical  old restart_summary keys identical  only new keys added  fit_unstable (new tree)")
     for row in c["rows"]:
         print(f"{row[0]}  {row[1]:20s} {row[2]:11s}  {str(row[3]):24s}  {str(row[4]):13s}  {str(row[5]):16s}  {str(row[6]):35s}  {str(row[7]):19s}  {row[8]}")
     print(f"\nfitted outputs (m_t, uncertainty, p_t, posteriors, regime means, duration parameters, fit_state, Dmax, K) bit-identical: {c['fit']} of {c['n']}")
     print(f"BIC and BIC by K identical: {c['bic']} of {c['n']}; withheld status, reason and collapse flag identical: {c['status']} of {c['n']}")
-    print(f"old restart_summary keys identical: {c['old_keys']} of {c['n']}; exactly the six new keys added: {c['added_only']} of {c['n']}")
+    print(f"old restart_summary keys identical: {c['old_keys']} of {c['n']}; no key removed and only allowed keys added (none, the six WP9 keys, or --allow-new): {c['added_only']} of {c['n']}")
     print(f"previously healthy (publishable) fits unchanged in every output: {c['healthy_identical']} of {c['n_previously_healthy']}")
     print("PASS" if c["ok"] else "FAIL")
     sys.exit(0 if c["ok"] else 1)
@@ -79,7 +84,7 @@ def cmd_compare(a):
 def main():
     ap = argparse.ArgumentParser(); sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("fit"); p.add_argument("--tree", required=True); p.add_argument("--variant", choices=("fast", "full"), required=True); p.add_argument("--out", required=True); p.add_argument("--workers", type=int, default=2); p.set_defaults(f=cmd_fit)
-    p = sub.add_parser("compare"); p.add_argument("ref"); p.add_argument("new"); p.set_defaults(f=cmd_compare)
+    p = sub.add_parser("compare"); p.add_argument("ref"); p.add_argument("new"); p.add_argument("--allow-new", default="", help="comma-separated restart_summary keys the new tree may add"); p.set_defaults(f=cmd_compare)
     a = ap.parse_args(); a.f(a)
 
 

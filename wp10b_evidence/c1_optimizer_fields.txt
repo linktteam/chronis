@@ -1,0 +1,13 @@
+WP10B C1(1): sub-fields of optimizer_success_seed1/2 across 18 OpenBLAS kernel settings (threads = 1), from the stored WP10A probe data (READ of a stored file; no new fit).
+
+optimizer_success_seed1: 169 sub-fields compared bitwise; by kind {'flag': 3, 'array_hash_or_shape': 49, 'float': 97, 'discrete': 20}; the ones that differ across kernels, by kind: {'float': 75, 'array_hash_or_shape': 6}
+  the three flag fields over all kernels: optimizer_success = ['True']; duration_optimizer_success = ['True']; duration_fallback_used = ['False']
+  discrete sub-fields (iteration counter, integer sizes, booleans, text): 20; of which differ across kernels: none  (includes ['model.Dmax', 'model._em_iteration', 'model._n_observations', 'model.fit_state_'])
+  model attributes with at least one differing float: ['A_fast', 'C_obs', 'Q_fast', 'R_obs', 'b_fast', 'd_obs', 'log_likelihood_', 'log_likelihood_history_', 'window_gain_at_cap_']
+  largest relative difference of the stored floats over all kernel pairs, per attribute: A_fast 1.40e-12, C_obs 3.28e-12, Q_fast 5.49e-13, R_obs 1.97e-13, b_fast 1.45e-13, d_obs 7.73e-14, log_likelihood_ 2.99e-15, log_likelihood_history_ 6.20e-15, window_gain_at_cap_ 4.33e-13
+
+optimizer_success_seed2: 169 sub-fields compared bitwise; by kind {'flag': 3, 'array_hash_or_shape': 49, 'float': 97, 'discrete': 20}; the ones that differ across kernels, by kind: {'float': 75, 'array_hash_or_shape': 6}
+  the three flag fields over all kernels: optimizer_success = ['False']; duration_optimizer_success = ['False']; duration_fallback_used = ['True']
+  discrete sub-fields (iteration counter, integer sizes, booleans, text): 20; of which differ across kernels: none  (includes ['model.Dmax', 'model._em_iteration', 'model._n_observations', 'model.fit_state_'])
+  model attributes with at least one differing float: ['A_fast', 'C_obs', 'Q_fast', 'R_obs', 'b_fast', 'd_obs', 'log_likelihood_', 'log_likelihood_history_', 'window_gain_at_cap_']
+  largest relative difference of the stored floats over all kernel pairs, per attribute: A_fast 4.46e-13, C_obs 1.64e-13, Q_fast 1.43e-13, R_obs 6.32e-14, b_fast 1.29e-11, d_obs 6.91e-14, log_likelihood_ 1.21e-15, log_likelihood_history_ 2.18e-14, window_gain_at_cap_ 4.25e-13

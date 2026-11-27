@@ -255,6 +255,24 @@
       "boundary": false
     },
     {
+      "name": "cloudpickle",
+      "version": "3.1.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "boundary",
+          "value": "false"
+        }
+      ],
+      "boundary": false
+    },
+    {
       "name": "colorama",
       "version": "0.4.6",
       "licenses": [
