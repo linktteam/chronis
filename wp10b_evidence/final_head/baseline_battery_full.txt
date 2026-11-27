@@ -1,0 +1,20 @@
+== baseline battery full: reference = git archive 95dd125, new = git archive HEAD (WP10B)
+seed  fit_state            ref_status   fitted outputs identical  BIC identical  status identical  old restart_summary keys identical  only new keys added  fit_unstable (new tree)
+5301  CONVERGED            publishable  True                      True           True              True                                 True                 False
+5302  CONVERGED            publishable  True                      True           True              True                                 True                 True
+5303  CONVERGED            publishable  True                      True           True              True                                 True                 True
+5304  CONVERGED            publishable  True                      True           True              True                                 True                 True
+5305  CONVERGED            publishable  True                      True           True              True                                 True                 False
+5306  CONVERGED            publishable  True                      True           True              True                                 True                 False
+5307  CONVERGED            publishable  True                      True           True              True                                 True                 True
+5308  CONVERGED            publishable  True                      True           True              True                                 True                 True
+5309  CONVERGED            publishable  True                      True           True              True                                 True                 True
+5310  CONVERGED            publishable  True                      True           True              True                                 True                 True
+5311  CONVERGED            publishable  True                      True           True              True                                 True                 True
+5312  CONVERGED            publishable  True                      True           True              True                                 True                 True
+
+fitted outputs (m_t, uncertainty, p_t, posteriors, regime means, duration parameters, fit_state, Dmax, K) bit-identical: 12 of 12
+BIC and BIC by K identical: 12 of 12; withheld status, reason and collapse flag identical: 12 of 12
+old restart_summary keys identical: 12 of 12; no key removed and only allowed keys added (none, the six WP9 keys, or --allow-new): 12 of 12
+previously healthy (publishable) fits unchanged in every output: 12 of 12
+PASS

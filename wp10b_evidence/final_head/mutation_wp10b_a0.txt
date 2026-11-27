@@ -1,0 +1,12 @@
+CONTROL (unmutated, 6 named tests, same run): PASSED: all named tests pass unmutated
+B01 any added key is accepted: CAUGHT
+B02 a subset of the six WP9 keys is accepted: CAUGHT
+B03 no added key at all is refused (the old WP10A failure): CAUGHT
+B04 the allowed keys are never accepted: CAUGHT
+B05 the added-keys condition is dropped from ok: CAUGHT
+B06 fitted arrays compared with a tolerance: CAUGHT
+B07 BIC compared with a tolerance: CAUGHT
+B08 old restart_summary values are not compared: CAUGHT
+B09 the status check is dropped from ok: CAUGHT
+B10 K is not compared: CAUGHT
+10/10 caught
