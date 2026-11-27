@@ -1,0 +1,13 @@
+machine: [{'api': 'openblas', 'arch': 'SkylakeX', 'threads': 1}]; operating point h=2.5, flag ON, sharpness 0.95; 3 users (0 done), 30 fits to run at most; stored fits for comparison: 1080
+user 10151 (hard) done in 111 s: alignments 9, served 0, wrong-and-unflagged 0, identical to stored 10/10, state differences 0
+  running: users 1/3; alignments 9, served 0, wrong-and-unflagged 0; fits identical to stored 10/10, lineage-state differences 0
+user 10171 (medium) done in 181 s: alignments 9, served 1, wrong-and-unflagged 0, identical to stored 10/10, state differences 0
+  running: users 2/3; alignments 18, served 1, wrong-and-unflagged 0; fits identical to stored 20/20, lineage-state differences 0
+user 10191 (easy) done in 264 s: alignments 9, served 9, wrong-and-unflagged 0, identical to stored 10/10, state differences 0
+  running: users 3/3; alignments 27, served 10, wrong-and-unflagged 0; fits identical to stored 30/30, lineage-state differences 0
+summary of /tmp/replay_smoke (2026-11-27 07:34): users 3/3
+  hard   : users 1, alignments 9, served 0, wrong-and-unflagged 0, identical to stored 10/10
+  medium : users 1, alignments 9, served 1, wrong-and-unflagged 0, identical to stored 10/10
+  easy   : users 1, alignments 9, served 9, wrong-and-unflagged 0, identical to stored 10/10
+SAFETY: no wrong-and-unflagged alignment in 27; one-sided exact 95% upper bound 10.50% (ABOVE 1%; a transfer check on a subset, not a new per-stratum demonstration)
+REPRODUCTION: the discrete outcomes of all 30 fits and the lineage state of every window are identical to the stored WP10A fits; largest relative log-likelihood difference 0

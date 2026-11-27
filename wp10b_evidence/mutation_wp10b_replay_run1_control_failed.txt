@@ -1,0 +1,2 @@
+CONTROL (unmutated, 13 named tests, same run): FAILED: exit 1: d_difference_is_relative_and_never_a_verdict FAILED tests/test_wp10b_replay.py::test_the_replay_of_the_stored_fits_does_not_reuse_the_new_fit_from_the_cache FAILED tests/test_wp10b_replay.py::test_the_run_writes_one_line_per_fit_and_per_user_and_resumes_without_refitting 7 failed, 8 passed in 0.32s 
+0 caught (control failed: no mutant result is valid)

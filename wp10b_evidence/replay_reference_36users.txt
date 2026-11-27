@@ -1,0 +1,5 @@
+REFERENCE from the stored WP10A fits (/home/claude/work/hssm_l/wp10a_evidence/a3_eval_fits.jsonl), 36 users, operating point (2.5, True, 0.95): alignments 324, served 167 of 324 refits, wrong-and-unflagged 0; exact 95% upper bound 0.92%
+  hard   : alignments 108, served 8 of 108, wrong-and-unflagged 0
+  medium : alignments 108, served 73 of 108, wrong-and-unflagged 0
+  easy   : alignments 108, served 86 of 108, wrong-and-unflagged 0
+  self-comparison (stored against stored): identical 360/360, state differences 0

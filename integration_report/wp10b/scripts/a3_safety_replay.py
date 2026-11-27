@@ -153,19 +153,25 @@ def load_stored(path) -> dict:
     return out
 
 
+def replay_chain(recs: list, user: int, h: float, flag: bool, sharp: float):
+    """The production replay of one chain. `wp9_replay_lib.prepared` caches by (user, seed, window, ...) and NOT by the contents of the record, so the cache is cleared first: otherwise the replay of the stored fits of
+    the same job would silently reuse the new fit (the comparison would compare a fit with itself)."""
+    import a12_analyze as A
+    import wp9_replay_lib as R
+    R._prep_cache.clear()
+    res = A.run_candidate({(user, user): recs}, h, sharp, flag, 10)
+    return A.tally_rows(res), res[(user, user)][0]
+
+
 def replay_user(records: list, stored: dict, h: float, flag: bool, sharp: float) -> dict:
     """The production lineage over the chain of one user's records, the WP8 tally, and the comparison with the stored fits (and with the stored replay's lineage states)."""
-    import a12_analyze as A
     recs = sorted(records, key=lambda r: r["job"]["end"])
     user, stratum = recs[0]["job"]["user"], recs[0]["job"].get("stratum")
-    res = A.run_candidate({(user, user): recs}, h, sharp, flag, 10)
-    t = A.tally_rows(res)
-    rows, _ = res[(user, user)]
+    t, rows = replay_chain(recs, user, h, flag, sharp)
     cmps = [compare_fit(r, stored.get((user, r["job"]["end"]))) for r in recs]
     state_diffs = 0
     if all((user, r["job"]["end"]) in stored for r in recs):
-        sres = A.run_candidate({(user, user): [stored[(user, r["job"]["end"])] for r in recs]}, h, sharp, flag, 10)
-        srows, _ = sres[(user, user)]
+        _, srows = replay_chain([stored[(user, r["job"]["end"])] for r in recs], user, h, flag, sharp)
         state_diffs = sum(1 for a, b in zip(rows, srows) if (a["state"], a["served"], a["correct"]) != (b["state"], b["served"], b["correct"])) + abs(len(rows) - len(srows))
     return dict(user=user, stratum=stratum, fits=len(recs), fits_ok=sum(1 for r in recs if r.get("ok")), refits=t["refits"], alignments=t["alignments"], served=t["served"], wrong_unflagged=t["wrong_unflagged"],
                 states=[r["state"] for r in rows], compared=sum(1 for c in cmps if c["compared"]), identical=sum(1 for c in cmps if c["identical"]), state_diffs=state_diffs,
