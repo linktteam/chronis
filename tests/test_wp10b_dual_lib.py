@@ -145,7 +145,9 @@ def test_the_record_of_a_tiny_real_fit_is_consistent():
 
 
 def test_variants_override_only_what_they_name():
-    assert L.VARIANTS["D60"] == dict(max_duration=60) and L.VARIANTS["I600"] == dict(max_iter=600) and L.VARIANTS["S0"] == {}
+    assert L.VARIANTS["D60"] == dict(max_duration=60) and L.VARIANTS["S0"] == {}
+    assert L.VARIANTS["I600"] == dict(max_iter=600, _flags=dict(MAX_FIT_SECONDS=900.0)) and L.VARIANTS["REG"] == dict(_flags=dict(DURATION_PRIOR_SEGMENTS=1.0))
+    assert L.VARIANTS["ALL"] == dict(max_duration=60, max_iter=600, _flags=dict(MAX_FIT_SECONDS=900.0, DURATION_PRIOR_SEGMENTS=1.0))
     assert L.S0["max_iter"] == 200 and L.S0["max_duration"] == 45 and L.S0["n_initializations"] == 1 and L.S0["latent_dim"] == 2
 
 def test_publishable_follows_the_withhold_reason_not_the_em_state():
@@ -160,3 +162,24 @@ def test_publishable_follows_the_withhold_reason_not_the_em_state():
     r2.collapse_report = dict(min_effective_days=0.5, min_effective_days_threshold=3.0)
     rec = L.dual_record(r2, res.model)
     assert rec["fit_state"] == "CONVERGED" and rec["publishable"] is False and "collapsed_regime" in rec["categories"]
+
+
+def test_class_flags_of_a_variant_are_set_for_the_fit_and_restored_after_it(monkeypatch):
+    from backbone.hssm.dual_model import DualTimescaleHSSM
+    seen = {}
+    import backbone.hssm.fitting as FM
+
+    def fake(matrix, **kw):
+        seen.update(prior=DualTimescaleHSSM.DURATION_PRIOR_SEGMENTS, cap=DualTimescaleHSSM.MAX_FIT_SECONDS, kw=kw)
+        raise RuntimeError("stop")
+    monkeypatch.setattr(FM, "fit_hssm", fake)
+    with pytest.raises(RuntimeError):
+        L.fit_dual(np.zeros((10, 3)), 1, "ALL")
+    assert seen["prior"] == 1.0 and seen["cap"] == 900.0 and "_flags" not in seen["kw"] and seen["kw"]["max_iter"] == 600 and seen["kw"]["max_duration"] == 60
+    assert DualTimescaleHSSM.DURATION_PRIOR_SEGMENTS == 0.0 and DualTimescaleHSSM.MAX_FIT_SECONDS is None          # restored even though the fit raised
+
+
+def test_the_record_carries_the_wall_clock_stop_flag():
+    X = tiny_series(T=60, F=4, seed=7)
+    res = L.fit_dual(X, 7, "S0", dict(max_iter=3, max_duration=10))
+    assert L.dual_record(res, res.model)["wall_clock_stop"] is False

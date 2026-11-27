@@ -29,7 +29,9 @@ sys.path.insert(0, str(ROOT / "integration_report" / "wp9" / "scripts"))
 K_STUDY, T_TRAIN, T_END = 3, 120, 150
 S0 = dict(n_initializations=1, max_iter=200, max_duration=45, latent_dim=2, allow_fast_test_fit=True, model_type="dual_timescale")
 # variants of the dual fit: keyword overrides of S0 that need no engine change (B2 adds opt-in engine switches as they are implemented)
-VARIANTS = {"S0": {}, "D60": dict(max_duration=60), "I600": dict(max_iter=600), "D60I600": dict(max_duration=60, max_iter=600)}
+# `_flags` = opt-in class switches of `DualTimescaleHSSM` (WP10B B2), set for the duration of one fit and restored afterwards; every other key is a `fit_hssm` keyword override of S0.
+VARIANTS = {"S0": {}, "D60": dict(max_duration=60), "I600": dict(max_iter=600, _flags=dict(MAX_FIT_SECONDS=900.0)), "REG": dict(_flags=dict(DURATION_PRIOR_SEGMENTS=1.0)),
+            "ALL": dict(max_duration=60, max_iter=600, _flags=dict(MAX_FIT_SECONDS=900.0, DURATION_PRIOR_SEGMENTS=1.0))}
 CONVERGE_TOL = 1e-4
 
 
@@ -136,13 +138,22 @@ def creep_diagnostics(hist: list, tol: float = CONVERGE_TOL, window: int = 50) -
 
 def fit_dual(Xtr: np.ndarray, seed: int, variant: str = "S0", extra: dict | None = None):
     """One dual fit through the public path with the named variant; returns the HSSMResult (raises what fit_hssm raises)."""
+    from backbone.hssm.dual_model import DualTimescaleHSSM
     from backbone.hssm.fitting import fit_hssm
     kw = dict(S0)
     kw.update(VARIANTS[variant])
     kw.update(extra or {})
-    with warnings.catch_warnings(), contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-        warnings.simplefilter("ignore")
-        return fit_hssm(matrix=Xtr, candidate_ks=(K_STUDY,), random_seed=seed, **kw)
+    flags = dict(kw.pop("_flags", {}))
+    old = {k: getattr(DualTimescaleHSSM, k) for k in flags}
+    try:
+        for k, v in flags.items():
+            setattr(DualTimescaleHSSM, k, v)
+        with warnings.catch_warnings(), contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            warnings.simplefilter("ignore")
+            return fit_hssm(matrix=Xtr, candidate_ks=(K_STUDY,), random_seed=seed, **kw)
+    finally:
+        for k, v in old.items():
+            setattr(DualTimescaleHSSM, k, v)
 
 
 def fit_baseline(Xtr: np.ndarray, seed: int):
@@ -168,7 +179,7 @@ def dual_record(res, model) -> dict:
                 min_effective_days=None if "min_effective_days" not in coll else float(coll["min_effective_days"]), fit_collapsed=bool(res.fit_collapsed), fit_degraded=bool(res.fit_degraded),
                 cholesky_fallbacks=int(res.fit_cholesky_fallbacks), exceptions=[str(e.get("exception_type")) for e in res.fit_exceptions],
                 box_refit=None if box is None else dict(first_state=str(getattr(box.get("first_fit_state"), "value", box.get("first_fit_state"))), first_n_iter=int(box.get("first_fit_n_iter", -1))),
-                optimizer_success=bool(res.optimizer_success))
+                optimizer_success=bool(res.optimizer_success), wall_clock_stop=bool(getattr(model, "wall_clock_stop_", False)))
 
 
 def fit_job(job: dict) -> dict:
