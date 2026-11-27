@@ -36,6 +36,7 @@ MUT = [
     ("Z24 a non-finite baseline difference is reported as a number", F, "if len(db) >= 3 and np.all(np.isfinite(db)):", "if len(db) >= 3:", [T + "test_a_non_finite_baseline_difference_is_reported_as_not_beating_it"]),
     ("Z25 the gain is not taken over the Gaussian", F, "parts.append(lp - g)", "parts.append(lp)", [T + "test_a_clear_and_stable_gain_is_certified_and_uses_the_wp9_constants"]),
     ("Z26 an all-missing day is a row with one observed feature", F, "return ~np.isnan(np.asarray(X, dtype=float)).all(axis=1)", "return ~np.isnan(np.asarray(X, dtype=float)).any(axis=1)", [T + "test_the_observed_row_mask"]),
+    ("Z28 the baseline refit ignores the user's seed", F, "return BaselineAdapter(dual_lib.fit_baseline(X_train, seed).model)", "return BaselineAdapter(dual_lib.fit_baseline(X_train, 0).model)", [T + "test_the_baseline_refit_passes_the_seed_and_the_rows_to_the_production_baseline_fit"]),
     ("Z27 the baseline decides the certificate", F, '        out.update(blocks=[list(b) for b in blocks], schema_version=1, baseline=None)\n', '        out.update(blocks=[list(b) for b in blocks], schema_version=1, baseline=None)\n        if parts_b and float(np.concatenate(parts_b).mean()) < 0.0:\n            out["state"] = C.STATE_NOT_CERTIFIED\n', [T + "test_the_baseline_does_not_decide_the_certificate"]),
 ]
 

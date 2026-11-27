@@ -12,7 +12,7 @@ T = "tests/test_wp10b_b3_analyze.py::"
 U = "tests/test_wp10b_b3_run.py::"
 MUT = [
     ("Y1 harmful means a loss of the strict kind", F, 'harmful=bool(mean < 0), good=bool(mean > 0)', 'harmful=bool(mean < -0.1), good=bool(mean > 0)', [T + "test_truth_is_the_point_estimate_and_the_strict_version_uses_1_645_se"]),
-    ("Y2 good means a gain of the strict kind", F, 'good=bool(mean > 0), strict_good', 'good=bool(mean > 0.1), strict_good', [T + "test_truth_is_the_point_estimate_and_the_strict_version_uses_1_645_se"]),
+    ("Y2 good means a gain of the strict kind", F, 'good=bool(mean > 0), strict_harmful', 'good=bool(mean > 0.1), strict_harmful', [T + "test_truth_is_the_point_estimate_and_the_strict_version_uses_1_645_se"]),
     ("Y3 the strict margin is 1 se", F, "Z_STRICT = 1.645", "Z_STRICT = 1.0", [T + "test_truth_is_the_point_estimate_and_the_strict_version_uses_1_645_se"]),
     ("Y4 the strict harmful side has the wrong sign", F, "strict_harmful=bool(ok and mean + Z_STRICT * se < 0)", "strict_harmful=bool(ok and mean - Z_STRICT * se < 0)", [T + "test_truth_is_the_point_estimate_and_the_strict_version_uses_1_645_se"]),
     ("Y5 two days are enough for a truth", F, "if len(d) < 3 or not np.all(np.isfinite(d)):\n        return None\n    mean, se = float(d.mean()), C.hac_se(d)", "if len(d) < 2 or not np.all(np.isfinite(d)):\n        return None\n    mean, se = float(d.mean()), C.hac_se(d)", [T + "test_truth_is_none_for_too_few_or_non_finite_days"]),
@@ -40,9 +40,9 @@ MUT = [
     ("Y27 the published level is 50%", F, "PUBLISHED_LEVEL = 0.60 ", "PUBLISHED_LEVEL = 0.50 ", [T + "test_the_point_estimate_verdict_of_the_published_share"]),
     ("Y28 hard users are in the B4 set", F, 'em = [r for r in recs if r["job"]["stratum"] in ("easy", "medium")]', 'em = [r for r in recs]', [T + "test_b4_uses_easy_and_medium_users_only"]),
     ("Y29 the baseline margin counts every certified fit", F, 'both = [r for r in cert if ((r["certificate"].get("baseline") or {}).get("beats_baseline"))]', 'both = list(cert)', [T + "test_stratum_table_and_baseline_margin"]),
-    ("Y30 the breaker fits are not marked as asked", F, '            r["eligible"] = True                                                      # the certificate was forced on every breaker fit', '            pass', [T + "test_analyse_marks_breaker_fits_as_asked_and_reads_the_real_engine_as_a_share"]),
+    ("Y30 a fit that was not asked counts as asked (default of the eligible field)", F, 'rows = [(r, truth(r)) for r in recs if r.get("ok") and r.get("eligible", True)]\n    g = ', 'rows = [(r, truth(r)) for r in recs if r.get("ok")]\n    g = ', [T + "test_share_block_counts_good_asked_fits"]),
     ("Y31 the ranges overlap (eval users start at the ext range)", G, '"ext": list(range(11457, 11481))', '"ext": list(range(11456, 11480))', [U + "test_the_ranges_do_not_overlap_and_stay_inside_the_reserved_band"]),
-    ("Y32 a stratum block of 12 is 10", G, "return STRATA[(user - 11421) // 12]", "return STRATA[(user - 11421) // 10]", [U + "test_strata_follow_the_declared_blocks"]),
+    ("Y32 a stratum block of 12 is 13", G, "return STRATA[(user - 11421) // 12]", "return STRATA[(user - 11421) // 13]", [U + "test_strata_follow_the_declared_blocks"]),
     ("Y33 the guard accepts a file without the B3 part", G, 'if a.range != "smoke" and (not CRITERIA.exists() or CRITERIA_MARK not in CRITERIA.read_text()):', 'if a.range != "smoke" and (not CRITERIA.exists()):', [U + "test_a_scored_range_is_refused_before_the_dated_criteria_exist"]),
     ("Y34 the driver reruns finished jobs", G, "    todo = [j for j in jobs if job_key(j) not in done]", "    todo = list(jobs)", [U + "test_the_driver_is_resumable_and_writes_one_line_per_job"]),
     ("Y35 the breaker refit is the real engine", G, "cls = HP.ENGINE_CLASSES[engine]", "cls = HP.ENGINE_CLASSES['real']", [U + "test_a_wrong_engine_job_is_fitted_refitted_and_refused"]),

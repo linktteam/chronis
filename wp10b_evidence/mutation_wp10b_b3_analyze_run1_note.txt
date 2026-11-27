@@ -1,0 +1,9 @@
+Run 1 of mutation_wp10b_b3_analyze.py (2026-11-27, killed after 34 of 36 lines; the full output was not kept): CONTROL passed (21 named tests). Not caught in run 1:
+  Y2  NOT APPLIED (pattern did not occur once: the mutant text was wrong) -> pattern corrected
+  Y3  SURVIVED (strict margin 1.0 instead of 1.645: the test data were not between the two margins) -> test now builds data between 1 and 1.645 standard errors
+  Y27 SURVIVED (published level 0.50 instead of 0.60: the test data sat at 15/24 = 0.625) -> test now includes 13/24 = 0.54
+  Y29 SURVIVED (baseline-margin block counted every certified fit: only one certified fit in the test) -> test now has a certified fit that does not beat the baseline
+  Y30 SURVIVED (the explicit marking of breaker fits as asked was redundant with the default of the eligible field) -> redundant line removed from b3_analyze.py; the mutant now targets the default
+  Y32 CRASH (IndexError: the mutant indexed past the strata tuple) -> mutant changed to a block of 13
+  Y33 HUNG (the mutated guard let the 80-job breaker run start inside the test) -> the test now makes a started run fail by its own assertion
+Run 2 (corrected tests and mutants, file mutation_wp10b_b3_analyze.txt): 36/36 caught, control passed (20 named tests).

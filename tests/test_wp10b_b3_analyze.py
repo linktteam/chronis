@@ -43,6 +43,10 @@ def test_truth_is_the_point_estimate_and_the_strict_version_uses_1_645_se():
     assert t["good"] is True and t["strict_good"] is False
     t = A.truth(rec(g=-1.0))
     assert t["strict_harmful"] is True
+    se0 = C.hac_se(np.array(rec(g=0.0, noise=1.0)["test_g_diff"]))                                   # a shift moves the mean and leaves the standard error alone
+    assert A.truth(rec(g=1.3 * se0, noise=1.0))["good"] is True and A.truth(rec(g=1.3 * se0, noise=1.0))["strict_good"] is False         # between 1 and 1.645 se
+    assert A.truth(rec(g=-1.3 * se0, noise=1.0))["harmful"] is True and A.truth(rec(g=-1.3 * se0, noise=1.0))["strict_harmful"] is False
+    assert A.truth(rec(g=2.0 * se0, noise=1.0))["strict_good"] is True and A.truth(rec(g=-2.0 * se0, noise=1.0))["strict_harmful"] is True
 
 
 def test_truth_is_none_for_too_few_or_non_finite_days():
@@ -133,14 +137,18 @@ def test_the_point_estimate_verdict_of_the_published_share():
     recs = [rec(i, "easy", state=CERT if i < 15 else "NOT_CERTIFIED", b=0.5) for i in range(24)]
     r = A.b4_block(recs)
     assert r["published"] == 15 and r["published_verdict"] == "MET on the point estimate" and r["rule_met"] is True and r["rule_met_strict"] is False
+    recs = [rec(i, "easy", state=CERT if i < 13 else "NOT_CERTIFIED", b=0.5) for i in range(24)]                  # 13 of 24 = 0.54 is below the 0.60 level
+    r = A.b4_block(recs)
+    assert r["published"] == 13 and r["published_verdict"] == "NOT MET" and r["rule_met"] is False
 
 
 def test_stratum_table_and_baseline_margin():
-    recs = [rec(1, "hard", state=CERT, b=0.1), rec(2, "hard"), rec(3, "easy", publishable=True)]
+    recs = [rec(1, "hard", state=CERT, b=0.1), rec(2, "hard"), rec(3, "easy", publishable=True), rec(4, "easy", state=CERT, b=0.1)]
     recs[0]["certificate"]["baseline"] = dict(beats_baseline=True)
+    recs[3]["certificate"]["baseline"] = dict(beats_baseline=False)
     t = A.stratum_table(recs)
-    assert t["hard"]["n"] == 2 and t["hard"]["certified"] == 1 and t["hard"]["published"] == 1 and t["easy"]["converged_publishable"] == 1 and t["medium"]["n"] == 0
-    assert A.baseline_margin_block(recs) == dict(certified=1, certified_and_beats_baseline_refits=1)
+    assert t["hard"]["n"] == 2 and t["hard"]["certified"] == 1 and t["hard"]["published"] == 1 and t["easy"]["converged_publishable"] == 1 and t["medium"]["n"] == 0 and t["easy"]["certified"] == 1
+    assert A.baseline_margin_block(recs) == dict(certified=2, certified_and_beats_baseline_refits=1)
 
 
 def test_analyse_marks_breaker_fits_as_asked_and_reads_the_real_engine_as_a_share():
@@ -148,6 +156,7 @@ def test_analyse_marks_breaker_fits_as_asked_and_reads_the_real_engine_as_a_shar
     br += [dict(job=dict(engine="B2", seed=s), ok=True, test_g_diff=rec(s, g=0.5)["test_g_diff"], certificate=dict(state="NOT_CERTIFIED", reasons=[])) for s in range(5)]
     br += [dict(job=dict(engine="real", seed=s), ok=True, test_g_diff=rec(s, g=0.5)["test_g_diff"], certificate=dict(state=CERT, reasons=[])) for s in range(12)]
     a = A.analyse([rec(1, "hard", g=-0.5), rec(2, "easy", g=0.5, state=CERT)], br)
+    assert all("eligible" not in r for r in br)                                  # breaker records carry no eligibility field: the certificate was forced on all of them
     assert a["breakers"]["stops"]["refusal"]["n_harmful"] == 14 and a["breakers"]["stops"]["refusal"]["verdict"] == "MET"
     assert a["breakers"]["B2"]["refusal"]["n_harmful"] == 0 and a["breakers"]["B2"]["refusal"]["verdict"] == "NOT DEMONSTRATED"
     assert a["breakers"]["real"]["share"]["verdict"] == "MET" and a["breakers"]["real"]["n"] == 12

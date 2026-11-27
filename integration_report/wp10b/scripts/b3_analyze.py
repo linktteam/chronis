@@ -76,7 +76,7 @@ def share_verdict(k: int, n: int, level: float = SHARE_LEVEL) -> str:
 
 
 def refusal_block(recs: list, label: str) -> dict:
-    """Among the fits the certificate was asked about (eligible, or forced for the breakers) whose held-out gain over the Gaussian is below 0: how many were certified."""
+    """Among the fits the certificate was asked about (eligible, or forced for the breakers: their records carry no `eligible` field and count as asked) whose held-out gain over the Gaussian is below 0: how many were certified."""
     rows = [(r, truth(r)) for r in recs if r.get("ok") and r.get("eligible", True)]
     h = [(r, t) for r, t in rows if t and t["harmful"]]
     c = sum(is_certified(r) for r, _ in h)
@@ -154,8 +154,6 @@ def analyse(s0: list, breaker: list) -> dict:
                baseline_margin=baseline_margin_block([r for r in s0 if r.get("ok")]), b4=b4_block(s0), breakers={})
     for e in ("stops", "B2", "real"):
         rs = [r for r in breaker if r["job"]["engine"] == e]
-        for r in rs:
-            r["eligible"] = True                                                      # the certificate was forced on every breaker fit
         if e == "real":
             out["breakers"][e] = dict(share=share_block(rs, "real engine, N18 generator, certificate forced"), n=len(rs), failed=sum(not r.get("ok") for r in rs))
         else:

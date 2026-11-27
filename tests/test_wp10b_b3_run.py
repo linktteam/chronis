@@ -51,6 +51,7 @@ def test_a_scored_range_is_refused_before_the_dated_criteria_exist(tmp_path, mon
     crit = tmp_path / "c.md"
     crit.write_text("# nothing about B3\n")
     monkeypatch.setattr(R, "CRITERIA", crit)
+    monkeypatch.setattr(R, "run", lambda *a, **k: pytest.fail("the scored run started without the dated B3 part"))
     monkeypatch.setattr(sys, "argv", ["b3_run.py", "--arm", "breaker", "--range", "eval", "--out", str(tmp_path / "o.jsonl")])
     with pytest.raises(SystemExit) as e:
         R.main()
