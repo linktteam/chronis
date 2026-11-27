@@ -107,7 +107,9 @@ def test_unstable_regime_means_refuse_even_a_clear_gain():
 
 def test_eligibility_converged_is_not_applicable_unless_a_control_asks_for_any_state():
     X = data()
-    assert run(X, el=dict(em_state="CONVERGED", other_reasons=[]))["state"] == C.STATE_NOT_APPLICABLE
+    na = run(X, el=dict(em_state="CONVERGED", other_reasons=[]))
+    assert na["state"] == C.STATE_NOT_APPLICABLE and na["reasons"] == [C.R_CONVERGED]
+    assert run(X, el=dict(em_state="CONVERGED", other_reasons=["x"], apply_to_any_state=True))["reasons"] == [C.R_OTHER]          # a control skips the EM-state test, never the other withhold reasons
     assert run(X, el=dict(em_state="CONVERGED", other_reasons=[], apply_to_any_state=True))["state"] == C.STATE_CERTIFIED
     assert run(X, el=dict(em_state="REJECTED_UPDATE", other_reasons=[]))["state"] == C.STATE_CERTIFIED
     r = run(X, el=dict(em_state="NUMERICAL_FAILURE", other_reasons=[]))
@@ -190,3 +192,37 @@ def test_the_refit_sees_only_the_rows_before_each_origin():
 def test_the_observed_row_mask():
     X = data(T=5); X[2] = np.nan; X[3, 0] = np.nan
     assert D.observed(X).tolist() == [True, True, False, True, True]
+
+
+def test_the_baseline_refit_sees_only_the_rows_before_each_origin():
+    X = data()
+    seen = []
+    def bref(Xt):
+        seen.append(len(Xt))
+        return Stub(gauss_plus(1.0, X))
+    D.certify_dual(X, Stub(const(0.0)), lambda Xt: Stub(gauss_plus(1.0, X)), bref, eligibility=EL)
+    assert seen == [50, 65, 80]
+
+
+def test_the_baseline_lower_bound_uses_the_same_margin_and_the_beats_flag_follows_it():
+    X = data()
+    noise = np.random.default_rng(3).standard_normal(len(X))
+    blocks = C.origin_blocks(len(X))[0]
+    base = lambda Xt: Stub(lambda Z: gauss_plus(1.0, X)(Z) - noise[:len(Z)])          # noqa: E731  the baseline is the dual minus noise
+    diffs = np.concatenate([noise[o:e] for o, e in blocks])
+    shift = 2.0 * C.hac_se(diffs) - diffs.mean()
+    shifted = lambda Xt: Stub(lambda Z: gauss_plus(1.0, X)(Z) - noise[:len(Z)] - shift)        # noqa: E731  the mean difference now sits at two standard errors
+    r = D.certify_dual(X, Stub(const(0.0)), lambda Xt: Stub(gauss_plus(1.0, X)), shifted, eligibility=EL)
+    b = r["baseline"]
+    mean, se = (diffs + shift).mean(), C.hac_se(diffs)
+    assert b["mean_gain"] == pytest.approx(mean) and b["se"] == pytest.approx(se) and b["lower"] == pytest.approx(mean - 3.0 * se) and mean > 0 > b["lower"] and b["beats_baseline"] is False
+    assert D.certify_dual(X, Stub(const(0.0)), lambda Xt: Stub(gauss_plus(1.0, X)), shifted, eligibility=EL, z=1.0)["baseline"]["beats_baseline"] is True
+    assert base is not None
+
+
+def test_stability_is_measured_in_units_of_the_feature_spread():
+    means = np.zeros((2, 3)); means[0, :] = 0.5                       # a shift of half a unit in every feature of one regime (root mean square 0.35 in units of spread 1)
+    narrow = run(data(), means_last=means)                              # features with spread about 1: 0.5 is far above the 0.25 limit
+    assert narrow["state"] == C.STATE_NOT_CERTIFIED and narrow["reasons"] == [C.R_UNSTABLE]
+    wide = run(data() * 10.0, means_last=means)                         # the same shift in features with spread about 10 is 0.05
+    assert wide["state"] == C.STATE_CERTIFIED and wide["stability"] < 0.25

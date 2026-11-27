@@ -1,0 +1,29 @@
+CONTROL (unmutated, 16 named tests, same run): PASSED: all named tests pass unmutated
+Z1 a converged fit is not 'not applicable': CAUGHT
+Z2 a control cannot skip the EM-state test: CAUGHT
+Z3 any EM state is eligible: CAUGHT
+Z4 other withhold reasons do not refuse: CAUGHT
+Z5 all-missing days are scored: CAUGHT
+Z6 the dual increments are not masked: CAUGHT
+Z7 the training Gaussian includes missing days: CAUGHT
+Z8 margin default is two standard errors: CAUGHT
+Z9 stability limit default is 0.5: CAUGHT
+Z10 other rolling origins: CAUGHT
+Z11 the dual refit sees the rows up to the end of the block: CAUGHT
+Z12 the baseline refit sees all the rows: CAUGHT
+Z13 the baseline gain has the wrong sign: CAUGHT
+Z14 the baseline lower bound has no margin: CAUGHT
+Z15 beating the baseline is judged on the mean: CAUGHT
+Z16 the stability is measured against the full fit itself: CAUGHT
+Z17 the stability ignores the feature spread: CAUGHT
+Z18 a degraded refit is accepted: CAUGHT
+Z19 a failed refit gives the wrong reason: CAUGHT
+Z20 an unexpected error leaves the reasons empty: CAUGHT
+Z21 infinite values are not refused: CAUGHT
+Z22 too few rows is not refused: CAUGHT
+Z23 a baseline from two increments is reported: CAUGHT
+Z24 a non-finite baseline difference is reported as a number: CAUGHT
+Z25 the gain is not taken over the Gaussian: CAUGHT
+Z26 an all-missing day is a row with one observed feature: CAUGHT
+Z27 the baseline decides the certificate: SURVIVED
+26/27 caught
