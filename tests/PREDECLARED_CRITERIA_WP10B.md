@@ -88,3 +88,9 @@ The rule is stated for the hard stratum because the brief asks about it; whether
 
 ## 6. Items B1 to B6
 Declared in dated later parts, each committed before the first scored run of that item: B1 (diagnosis, with the reasons each fix is expected to remove), B2 (fixes and their levels), B3 (certificate: the margin in SE and the controls), B4 (the publish rule and the declared certified-share level), B5 (lineage thresholds: candidates, selection rule, safety demonstration), B6 only if B1 to B5 are finished.
+
+## 7. Part 1b (dated 2026-11-27, added after writing the C1 scripts and BEFORE any C1 fit; it only closes gaps in section 4, it moves no level)
+- **E1 with fewer than 12 eligible harmful fits and at least one certified:** NOT MET. A certified eligible harmful fit is a counterexample whatever n is. Zero certified with n >= 12: MET (exact one-sided bound reported). Zero certified with n < 12 after the extension: NOT EVALUABLE. (Section 4.5 said NOT EVALUABLE for n < 12 without covering k >= 1.)
+- **Norms (RUN, a pure function of the true prior file, no fit):** change of `d_obs` in Frobenius norm: M1 22.63, M2 33.94, M3 1.73, H3 45.25. All three candidates are milder than H3 by the declared construction. M3 is by far the mildest; if it is verified it is the frozen candidate.
+- **The extension is enforced in code:** `c1_mild_run.py --range ext` refuses unless the blind count of eligible harmful fits of the evaluation file is below 12 (`c1_mild_analyze.eligible_harmful_count`, which never reads the certification field).
+- **Single-Gaussian score in development** comes from the same run (the `gauss` rows of the development file), not from a WP9 file, because the development users are new.
