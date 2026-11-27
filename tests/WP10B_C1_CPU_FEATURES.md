@@ -43,3 +43,14 @@ What the table says. Fields that differ: every float of every fit (fitted poster
 - Consequence for the earlier statements: every number in WP10A and WP10B was produced on an AVX-512 machine; a test or report that asserts a discrete dual-engine fit outcome (a fallback flag, an optimiser success flag) is machine dependent.
 
 ## 4. Dated addendum slot: B1 diagnosis replicate with AVX-512 off (started 2026-11-27, results added below when finished)
+
+### Addendum, 2026-11-27 (written after the replicate finished; the earlier sections are unchanged)
+**What was run (RUN).** The B1 diagnosis (36 S0 dual fits, users 11201..11236, `wp10b_evidence/b1_dev_fits.jsonl`) was run a second time on the same machine with `NPY_DISABLE_CPU_FEATURES="AVX512F AVX512CD AVX512_KNL AVX512_KNM AVX512_SKX AVX512_CLX AVX512_CNL AVX512_ICL"` set before numpy was imported (`wp10b_evidence/b1_dev_fits_noavx512.jsonl`, analysis `b1_dev_analysis_noavx512.txt/json`). Python 3.12, repo pins; no code was changed between the two runs.
+
+**Result (RUN).** Discrete outcomes: identical in 36 of 36 fits for the fit state, the reason categories, the publishable flag and the iteration count. All counts of `b1_dev_analysis.txt` (states, categories, exclusive combinations, degenerate-duration counts, the extrapolations to +200/+400/+800/+1600 iterations, publishable 2/12, 2/12, 0/12) are the same in the replicate. Floats: not bit-identical. Largest differences over the 36 fits: held-out one-step mean of the dual fit 6.8e-4 (median 3.7e-14), of the baseline engine 8.2e-8, final log-likelihood 3.9e-3, a duration location parameter 1.3e-2; the median creep rate differs in the 10th digit. The only line of the analysis that differs materially is the median fit time of the easy stratum (59 s against 113 s): that is machine load (other jobs were running on the two cores during that part of the replicate), not a CPU-feature effect, and it is not a result.
+
+**Reading.**
+- (RUN) The B1 conclusion (dual fits do not publish because EM does not finish: iteration cap and rejected update; durations are not the cause) does not depend on the AVX-512 setting on this machine.
+- (RUN) On these 36 fits the iteration cap was never moved across the line by the changed rounding, so the `seed1_fallback`-type flip of F2 is not visible in the S0 setting; the F2 flip needs the flat Nelder-Mead objective of the nearly empty regime and was found in the K = 2 population setting.
+- (INFERENCE) The B2 to B5 numbers need no AVX-512 caveat for their discrete findings on this machine; they keep the caveat of section (c) for other CPUs.
+- (UNKNOWN) Whether the 36 fits would agree on the EPYC 7763; no claim of cross-machine reproducibility is made.

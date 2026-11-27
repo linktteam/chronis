@@ -226,3 +226,25 @@ def test_stability_is_measured_in_units_of_the_feature_spread():
     assert narrow["state"] == C.STATE_NOT_CERTIFIED and narrow["reasons"] == [C.R_UNSTABLE]
     wide = run(data() * 10.0, means_last=means)                         # the same shift in features with spread about 10 is 0.05
     assert wide["state"] == C.STATE_CERTIFIED and wide["stability"] < 0.25
+
+
+def test_the_baseline_refit_passes_the_seed_and_the_rows_to_the_production_baseline_fit(monkeypatch):
+    import dual_lib
+    seen = []
+    class FakeRes:
+        model = object()
+    monkeypatch.setattr(dual_lib, "fit_baseline", lambda Xt, seed: seen.append((len(Xt), seed)) or FakeRes())
+    ad = D.make_baseline_refit(11421)(data(T=50))
+    assert seen == [(50, 11421)] and isinstance(ad, D.BaselineAdapter) and ad.degraded is False and ad.model is FakeRes.model
+
+
+def test_without_all_missing_days_the_rule_is_the_production_rule():
+    """`certify_dual` and `certify_prior_anchored` are the same decision on inputs the production function accepts, so the WP10A harmful-prior controls (H3) and the C1 controls, which went through the production function, speak for the rule."""
+    X = data()
+    for delta, means in ((1.0, None), (-0.5, None), (1.0, np.full((2, 3), 5.0))):
+        refit = lambda Xt, delta=delta, means=means: Stub(gauss_plus(delta, X), means=means)          # noqa: E731
+        a = D.certify_dual(X, Stub(const(0.0)), refit, eligibility=EL)
+        el = dict(used_shared_prior=True, n0=5.0, em_state="MAX_ITER_REACHED", other_reasons=[])
+        b = C.certify_prior_anchored(X, Stub(const(0.0)), refit, eligibility=el)
+        for k in ("state", "reasons", "n_increments", "mean_gain", "se", "lower", "stability", "blocks", "z", "tau"):
+            assert a[k] == b[k], k

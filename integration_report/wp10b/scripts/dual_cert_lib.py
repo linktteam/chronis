@@ -86,16 +86,16 @@ class BaselineAdapter:
         self.degraded = False
 
     def predictive_increments(self, X: np.ndarray) -> np.ndarray:
-        from dual_lib import baseline_increments
-        return baseline_increments(self.model, np.asarray(X, dtype=float))
+        import dual_lib
+        return dual_lib.baseline_increments(self.model, np.asarray(X, dtype=float))
 
     def regime_observation_means(self) -> np.ndarray:
         return np.asarray(self.model.mu, dtype=float)
 
 
-def make_baseline_refit(n_regimes: int, base_seed: int) -> Callable:
-    """The production baseline fit (10 restarts, 60 iterations) on the rows before the origin."""
+def make_baseline_refit(seed: int) -> Callable:
+    """The production baseline fit (`dual_lib.fit_baseline`: 10 restarts, 60 iterations, K from the study) on the rows before the origin, with the user's seed."""
     def refit(X_train: np.ndarray) -> BaselineAdapter:
-        from dual_lib import fit_baseline
-        return BaselineAdapter(fit_baseline(X_train, base_seed).model)
+        import dual_lib
+        return BaselineAdapter(dual_lib.fit_baseline(X_train, seed).model)
     return refit

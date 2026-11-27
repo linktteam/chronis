@@ -1,0 +1,173 @@
+{
+ "hard": {
+  "fits": 12,
+  "failed": 0,
+  "states": {
+   "MAX_ITER_REACHED": 9,
+   "REJECTED_UPDATE": 1,
+   "CONVERGED": 2
+  },
+  "publishable": 2,
+  "non_publishable": 10,
+  "cat_counts": {
+   "iteration_cap": 9,
+   "rejected_update": 1,
+   "other_non_convergence": 0,
+   "degenerate_duration": 1,
+   "collapsed_regime": 0,
+   "numerical": 0,
+   "other": 0
+  },
+  "exclusive": {
+   "iteration_cap": 8,
+   "rejected_update": 1,
+   "degenerate_duration+iteration_cap": 1
+  },
+  "regimes": 36,
+  "degenerate_regimes": 1,
+  "deg_wall": 0,
+  "deg_rising": 0,
+  "deg_both": 0,
+  "deg_wall_only": 0,
+  "deg_rising_only": 0,
+  "fits_with_degenerate": 1,
+  "n_cap": 10,
+  "cap_extra_known": 9,
+  "cap_extra_median": 387.0,
+  "cap_within": {
+   "200": 2,
+   "400": 5,
+   "800": 8,
+   "1600": 9
+  },
+  "box_refit": 1,
+  "median_rate": 0.9879112294029451,
+  "dual_minus": {
+   "gauss": {
+    "n": 12,
+    "mean": -0.13866842448558167,
+    "se": 0.13812636830627642
+   },
+   "baseline": {
+    "n": 12,
+    "mean": 0.01616153044913604,
+    "se": 0.4256009995922822
+   }
+  },
+  "wall_seconds_median": 63.54,
+  "optimizer_success": 9
+ },
+ "medium": {
+  "fits": 12,
+  "failed": 0,
+  "states": {
+   "MAX_ITER_REACHED": 8,
+   "CONVERGED": 2,
+   "REJECTED_UPDATE": 2
+  },
+  "publishable": 2,
+  "non_publishable": 10,
+  "cat_counts": {
+   "iteration_cap": 8,
+   "rejected_update": 2,
+   "other_non_convergence": 0,
+   "degenerate_duration": 0,
+   "collapsed_regime": 0,
+   "numerical": 0,
+   "other": 0
+  },
+  "exclusive": {
+   "iteration_cap": 8,
+   "rejected_update": 2
+  },
+  "regimes": 36,
+  "degenerate_regimes": 0,
+  "deg_wall": 0,
+  "deg_rising": 0,
+  "deg_both": 0,
+  "deg_wall_only": 0,
+  "deg_rising_only": 0,
+  "fits_with_degenerate": 0,
+  "n_cap": 10,
+  "cap_extra_known": 7,
+  "cap_extra_median": 644.0,
+  "cap_within": {
+   "200": 0,
+   "400": 2,
+   "800": 5,
+   "1600": 5
+  },
+  "box_refit": 0,
+  "median_rate": 0.9919482281549483,
+  "dual_minus": {
+   "gauss": {
+    "n": 12,
+    "mean": 0.47204690153523,
+    "se": 0.14105963451656742
+   },
+   "baseline": {
+    "n": 12,
+    "mean": 0.06637683412806772,
+    "se": 0.20373977372919533
+   }
+  },
+  "wall_seconds_median": 57.625,
+  "optimizer_success": 9
+ },
+ "easy": {
+  "fits": 12,
+  "failed": 0,
+  "states": {
+   "MAX_ITER_REACHED": 10,
+   "REJECTED_UPDATE": 2
+  },
+  "publishable": 0,
+  "non_publishable": 12,
+  "cat_counts": {
+   "iteration_cap": 10,
+   "rejected_update": 2,
+   "other_non_convergence": 0,
+   "degenerate_duration": 0,
+   "collapsed_regime": 0,
+   "numerical": 0,
+   "other": 0
+  },
+  "exclusive": {
+   "iteration_cap": 10,
+   "rejected_update": 2
+  },
+  "regimes": 36,
+  "degenerate_regimes": 0,
+  "deg_wall": 0,
+  "deg_rising": 0,
+  "deg_both": 0,
+  "deg_wall_only": 0,
+  "deg_rising_only": 0,
+  "fits_with_degenerate": 0,
+  "n_cap": 12,
+  "cap_extra_known": 9,
+  "cap_extra_median": 345.0,
+  "cap_within": {
+   "200": 1,
+   "400": 7,
+   "800": 8,
+   "1600": 9
+  },
+  "box_refit": 0,
+  "median_rate": 0.9866955561076236,
+  "dual_minus": {
+   "gauss": {
+    "n": 12,
+    "mean": 0.41497439163447586,
+    "se": 0.279254904007815
+   },
+   "baseline": {
+    "n": 12,
+    "mean": -0.25911623694111724,
+    "se": 0.30760638497218695
+   }
+  },
+  "wall_seconds_median": 113.26,
+  "optimizer_success": 9
+ }
+}
