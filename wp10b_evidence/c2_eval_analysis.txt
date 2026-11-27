@@ -1,0 +1,22 @@
+WP10B C2 HARD-STRATUM CEILING, EVALUATION (read once): wp10b_evidence/c2_eval_fits.jsonl
+gate: separation_min >= 2.5; evaluable refit = every one of the 3 true regimes has >= 3 days and an observed value per feature; intervals = user-level bootstrap (2000 resamples, seed 11999), naive Wilson over refits for O
+
+[hard] refits 160 (16 users), evaluable 160, non-evaluable 0, failed fits 0; production unusable among evaluable 0
+   (a) separation in gate units, median [Q1, Q3] over evaluable refits: oracle 2.38 [1.79, 3.44] | generator means 2.42 [1.90, 3.30] | production (usable fits) 2.43 [2.10, 3.12]
+   (b) share of evaluable refits passing the gate: oracle 0.431 [0.206, 0.669] (naive Wilson 0.357..0.509); generator means 0.438 [0.200, 0.675]; production, separation only 0.481 [0.287, 0.681]; production, separation and not flagged 0.194 [0.069, 0.344]
+   (c) gap oracle - production (separation only) -0.050 [-0.131, 0.025]; oracle - production (separation and not flagged) 0.238 [0.113, 0.381]
+   (d) users whose oracle passes at least once: 8 of 16; users whose production fit passes the full gate at least once: 7 of 16
+
+[medium] refits 160 (16 users), evaluable 159, non-evaluable 1, failed fits 0; production unusable among evaluable 0
+   (a) separation in gate units, median [Q1, Q3] over evaluable refits: oracle 4.69 [3.65, 6.34] | generator means 4.53 [3.69, 6.20] | production (usable fits) 4.48 [3.40, 6.06]
+   (b) share of evaluable refits passing the gate: oracle 0.937 [0.810, 1.000] (naive Wilson 0.888..0.965); generator means 0.874 [0.686, 1.000]; production, separation only 0.899 [0.748, 1.000]; production, separation and not flagged 0.560 [0.354, 0.755]
+   (c) gap oracle - production (separation only) 0.038 [0.000, 0.101]; oracle - production (separation and not flagged) 0.377 [0.196, 0.579]
+   (d) users whose oracle passes at least once: 15 of 16; users whose production fit passes the full gate at least once: 12 of 16
+
+[easy] refits 160 (16 users), evaluable 160, non-evaluable 0, failed fits 0; production unusable among evaluable 0
+   (a) separation in gate units, median [Q1, Q3] over evaluable refits: oracle 7.68 [6.77, 8.61] | generator means 7.55 [6.81, 8.54] | production (usable fits) 7.06 [6.48, 7.74]
+   (b) share of evaluable refits passing the gate: oracle 1.000 [1.000, 1.000] (naive Wilson 0.977..1.000); generator means 1.000 [1.000, 1.000]; production, separation only 1.000 [1.000, 1.000]; production, separation and not flagged 0.944 [0.869, 0.994]
+   (c) gap oracle - production (separation only) 0.000 [0.000, 0.000]; oracle - production (separation and not flagged) 0.056 [0.006, 0.131]
+   (d) users whose oracle passes at least once: 16 of 16; users whose production fit passes the full gate at least once: 16 of 16
+
+INTERPRETATION RULE (section 5.3, hard stratum, evaluation): NOT SERVABLE BY DESIGN (on the point estimate: the interval reaches 0.50)
