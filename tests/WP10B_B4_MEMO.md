@@ -16,7 +16,7 @@ Publishable iff (i) the mean over users of (held-out one-step mean of the dual f
 | reported: dual minus the single Gaussian, n = 40 | +0.278, se 0.159, mean - 3 se = -0.198 | the dual is ahead of the Gaussian on average, not by 3 se |
 | reported, hard stratum (n = 20) | dual minus baseline -0.311 (se 0.171) | no verdict |
 | (ii) published share | 31 of 40 = 0.775, Wilson 0.625 to 0.877 | **MET** at 0.60 (lower end above it) |
-Published share against the levels the memo has to show: 0.40 MET, 0.50 MET, 0.60 MET, **0.80 NOT MET** (point estimate 0.775, lower end 0.625). Of the 31 published fits all 31 are converged-publishable and none was certified; the 9 not published stopped on the iteration cap (4, one of them also with a degenerate duration) or on a rejected update (5), and the certificate was asked for each and refused each.
+Published share against the levels the memo has to show: 0.40 MET, 0.50 MET, 0.60 MET, **0.80 NOT MET** (point estimate 0.775, lower end 0.625). Of the 31 published fits all 31 are converged-publishable and none was certified; the 9 not published stopped on the iteration cap (4, one of them also with a degenerate duration) or on a rejected update (5); the certificate was asked for 8 of them (the fit with a degenerate duration has another withhold reason and is not asked, rule 11.7) and refused all 8.
 **Rule result: NOT MET** (one of two parts).
 
 ## What the owner may want from this (INFERENCE where marked)
