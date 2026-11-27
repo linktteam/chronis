@@ -1,0 +1,27 @@
+M01 the recent window is 13 days: KILLED
+M02 the z level is 3.0: KILLED
+M03 the size level is 0.5 sd: KILLED
+M04 the cooldown is 1 day: KILLED
+M05 the reference is 27 days: KILLED
+M06 a rise counts as a drop: KILLED
+M07 either condition is enough: KILLED
+M08 the z level is strict: KILLED
+M09 no autocorrelation inflation: KILLED
+M10 the inflation is inverted: KILLED
+M11 the reference mean has no error: KILLED
+M12 non-finite days are kept: KILLED
+M13 the event day is the compressed index: KILLED
+M14 the cooldown is ignored: KILLED
+M15 a constant reference is evaluated: KILLED
+M16 the gate opens for any truthy n17 flag: KILLED
+M17 the gate does not need calibration evidence: KILLED
+M18 the threshold is inclusive of less: KILLED
+M19 the percentage is rounded: KILLED
+M20 the owner floor is not enforced: KILLED
+M21 N17 is declared passed: KILLED
+M22 the confidence threshold is 0.8: KILLED
+M23 a boolean confidence is a number: KILLED
+M24 the first increment ignores the initial distribution: KILLED
+M25 increments are not differenced: KILLED
+M26 the alert carries the raw id: KILLED
+26/26 killed

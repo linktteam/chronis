@@ -110,6 +110,14 @@ def test_the_two_fits_must_use_the_same_context_categories():
     assert r.continuity_state == CONTINUITY_UNVERIFIED and "assessment_crashed" in r.reasons and not may_claim_same_as_before(r)
 
 
+def test_a_single_category_context_is_not_broadcast_against_a_full_profile_in_either_direction():
+    # WP10B (older mutation set rerun after F3, mutant C13): with the explicit width check removed numpy would broadcast a (K, 1) profile against a (K, C) one without an error and the pair could be aligned on it.
+    # The mismatch must stay a failed-closed assessment (the two-column case above also fails closed without the check, because numpy raises there by itself).
+    for a_ctx, n_ctx in ((CTX, np.ones((3, 1))), (np.ones((3, 1)), CTX)):
+        r, _ = _pair(M3, a_ctx, M3, n_ctx, _cfg())
+        assert r.continuity_state == CONTINUITY_UNVERIFIED and "assessment_crashed" in r.reasons and not may_claim_same_as_before(r)
+
+
 # ------------------------------------------------------------------------------------------------------------------- one channel decisive, the other not (both directions)
 SAME = np.array([[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [6.0, 6.0, 6.0]])                              # regimes 0 and 1 cannot be told apart by their physical means
 FLAT = np.full((3, 3), 1.0 / 3.0)                                                                   # a context that says nothing

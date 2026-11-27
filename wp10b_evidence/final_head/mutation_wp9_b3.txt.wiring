@@ -1,0 +1,6 @@
+W01 the assessment is not attached: KILLED
+W02 no alert for an unsure fit: KILLED
+W03 an alert for every fit: KILLED
+W04 a failed assessment is reported as sure: KILLED
+W05 the stability flag is not passed: KILLED
+5/5 killed

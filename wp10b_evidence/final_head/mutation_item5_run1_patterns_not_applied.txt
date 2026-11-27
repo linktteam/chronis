@@ -1,0 +1,26 @@
+C01 Hellinger without the square root: KILLED
+C02 Hellinger without the one half: KILLED
+C03 combined cost without the scale of channel 1: KILLED
+C04 combined cost without the scale of channel 2: KILLED
+C05 channel weights swapped: KILLED
+C06 the contextual channel is always on: KILLED
+C07 disagreement needs only one confident channel: KILLED
+C08 disagreement ignores the assignments: KILLED
+C09 disagreement never flagged: KILLED
+C10 context channel judged by the physical threshold: KILLED
+C11 anchor profiles not put in stable-id order: KILLED
+C12 a missing profile is not reported: KILLED
+C13 mismatched categories accepted: SURVIVED
+C14 profiles need not sum to 1: KILLED
+C15 negative profiles accepted: KILLED
+C16 daily aggregation not renormalised: KILLED
+C17 days without descriptor not skipped: KILLED
+C18 an empty regime accepted: KILLED
+C19 weights both zero accepted: KILLED
+C20 registry units dropped from the regime table: KILLED
+C21 the scale of a channel with identical regimes not guarded: KILLED
+C22 K changed is judged by the contextual channel: KILLED
+C23 contract loses the consent statement: KILLED
+C25 an uncalibrated class is not flagged as such: NOT APPLIED (pattern count 0)
+C24 the channel info is dropped by NEW_NAMES: KILLED
+23/25 killed

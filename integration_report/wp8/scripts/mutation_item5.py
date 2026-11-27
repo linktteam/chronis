@@ -30,7 +30,7 @@ MUTANTS = [
     ("C21 the scale of a channel with identical regimes not guarded", LN, "return v if v > 0 else 1.0", "return v"),
     ("C22 K changed is judged by the contextual channel", LN, "    if summary.K != anchor.summary.K:\n        # one-to-one", "    if summary.K != anchor.summary.K and summary.context_profiles is None:\n        # one-to-one"),
     ("C23 contract loses the consent statement", DOC, "from a consented, aggregated, non-identifying pipeline", "from any pipeline"),
-    ("C25 an uncalibrated class is not flagged as such", LN, '        if not th.calibrated:\n            reasons.append("threshold_not_calibrated")\n        elif not margin_ok(th, al):', '        if False:\n            reasons.append("threshold_not_calibrated")\n        elif not margin_ok(th, al):'),
+    ("C25 an uncalibrated class is not flagged as such", LN, '        if not th.calibrated:\n            reasons.append("threshold_not_calibrated")\n        elif al is not None:', '        if False:\n            reasons.append("threshold_not_calibrated")\n        elif al is not None:'),
     ("C24 the channel info is dropped by NEW_NAMES", LN, "channels_used=record.channels_used, channel_detail=record.channel_detail)", "channels_used=('physical',), channel_detail=None)"),
 ]
 
