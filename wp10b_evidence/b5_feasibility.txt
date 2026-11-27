@@ -1,0 +1,22 @@
+WP10B B5 FEASIBILITY (criteria Part 10, section 16); inputs: development fits only (wp10b_evidence/b1_dev_fits.jsonl, wp10b_evidence/b2_dev_fits.jsonl); no fit is run here
+n required for the A3 level (zero events, one-sided exact 95% bound <= 1%): 299  (bound at 298: 1.0002%, at 299: 0.9969%)
+code (RUN): dual_engine.calibrated=False, cross_engine.calibrated=False, fit_stability_flag(dual result)=(False, None) -> a dual stability signal exists: False
+WP8 development alignments passing the gate (READ, lineage.py): dual to dual 4 of 216, cross-engine 16 of 480 (the rule needs >= 20)
+
+[S0 (B1)] publishable share per stratum: hard 0.17, medium 0.17, easy 0.00; median dual fit 60 s
+   hard: every pair counted: 34 chains = 340 fits; only published pairs counted: 200 chains = 2000 fits
+   medium: every pair counted: 34 chains = 340 fits; only published pairs counted: 200 chains = 2000 fits
+   easy: every pair counted: 34 chains = 340 fits; only published pairs counted: impossible (publishable share 0)
+   evaluation fits, three strata: every pair 1020 (8.5 h on 2 workers); published pairs only impossible
+   (a)+(b) favourable cost 8.5 h against the 6 h budget: FAILS; (c) >= 20 passing development alignments per pair type and a dual stability signal: FAILS
+   achievable in the 6 h budget (every pair counted, whole chains, evaluation fits only): 207 alignments per stratum; with zero wrong the exact one-sided 95% bound would be 1.44% (the level asks for <= 1%)
+   VERDICT by the declared rule: NOT DEMONSTRATED (infeasible in this package)
+
+[I600 (B2, the frozen configuration)] publishable share per stratum: hard 0.67, medium 0.67, easy 0.42; median dual fit 191 s
+   hard: every pair counted: 34 chains = 340 fits; only published pairs counted: 50 chains = 500 fits
+   medium: every pair counted: 34 chains = 340 fits; only published pairs counted: 50 chains = 500 fits
+   easy: every pair counted: 34 chains = 340 fits; only published pairs counted: 80 chains = 800 fits
+   evaluation fits, three strata: every pair 1020 (27.0 h on 2 workers); published pairs only 1800 (47.7 h)
+   (a)+(b) favourable cost 27.0 h against the 6 h budget: FAILS; (c) >= 20 passing development alignments per pair type and a dual stability signal: FAILS
+   achievable in the 6 h budget (every pair counted, whole chains, evaluation fits only): 63 alignments per stratum; with zero wrong the exact one-sided 95% bound would be 4.64% (the level asks for <= 1%)
+   VERDICT by the declared rule: NOT DEMONSTRATED (infeasible in this package)

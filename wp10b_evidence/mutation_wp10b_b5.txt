@@ -1,0 +1,23 @@
+CONTROL (unmutated, 10 named tests, same run): PASSED: all named tests pass unmutated
+H01 ten alignments per chain instead of nine: CAUGHT
+H02 chains rounded down: CAUGHT
+H03 a zero rate is not treated as impossible: CAUGHT
+H04 the bound uses the level instead of its complement: CAUGHT
+H05 the required bound is 5% instead of 1%: CAUGHT
+H06 the cost ignores the workers: CAUGHT
+H07 the cost budget is exclusive: CAUGHT
+H08 the budget is 60 hours: CAUGHT
+H09 the favourable count is the larger one: CAUGHT
+H10 the run condition needs only one of cost and passing alignments: CAUGHT
+H11 one pair type with enough passing alignments is enough: CAUGHT
+H12 the passing threshold is 4: CAUGHT
+H13 a dual stability signal is not required: CAUGHT
+H14 the variant filter is ignored: CAUGHT
+H15 a failed fit is counted: CAUGHT
+H16 the mean instead of the median fit time: CAUGHT
+H17 the dual signal test is inverted: CAUGHT
+H18 fits per chain is 9: CAUGHT
+H19 the budget is shared by one stratum instead of three: CAUGHT
+H20 partial chains are counted: CAUGHT
+H21 the achievable n ignores the workers: CAUGHT
+21/21 caught
