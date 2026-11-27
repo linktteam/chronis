@@ -1,6 +1,6 @@
 # WP10B report (CHRONIS HSSM, branch `ledger/wp10b`, from `ledger/wp10a` 95dd125)
 
-**DRAFT IN PROGRESS: rows marked PENDING are filled after the B2 / B3 / B4 / B5 runs and the final-head checks. Nothing marked PENDING is a result.**
+**DRAFT IN PROGRESS: rows marked PENDING are filled after the final-head checks (full suite, bit-identity batteries, mutation reruns). Nothing marked PENDING is a result.**
 
 Labels: **RUN** = executed in this repository, output in `wp10b_evidence/`; **READ** = read in code or a package document; **REPORTED** = taken from an earlier report or from opa; **UNKNOWN** = not established; **INFERENCE** = my reading, not tested. Every number is **Python 3.12.3 with the repo pins** (numpy 2.2.6, pandas 2.3.3, scipy 1.15.3, scikit-learn 1.9.1, pytest 9.1.1, cloudpickle 3.1.3), one 2-core AVX-512 development machine. No cross-machine reproducibility is claimed. Criteria: `tests/PREDECLARED_CRITERIA_WP10B.md`, each part committed before the first scored run of its item; no criterion was edited after a result (dated corrections only, listed in the file).
 
@@ -16,11 +16,11 @@ Labels: **RUN** = executed in this repository, output in `wp10b_evidence/`; **RE
 | F4 CPU-dependent drift stream, kernel test | **DONE**: cause is the BLAS norm; skip made deliberate and tested |
 | Replay of the A3 safety demonstration | **DELIVERED** (script, tests, mutation 20/20); not run in full here |
 | B1 why dual fits do not publish | **DONE**: 4 of 36 publishable (11%); 32 of 36 end on the iteration cap or a rejected update |
-| B2 fixes | PENDING |
-| B3 dual certificate | PENDING |
-| B4 publish memo | PENDING |
-| B5 lineage thresholds | PENDING |
-| B6 | PENDING (only if B1 to B5 are finished) |
+| B2 fixes (dev only) | **I600** (600 EM iterations) frozen: publishable 4 to 21 of 36, 17 gained, 0 lost; D60 no effect; REG harmed; SQUAREM not built; dual bit-identity PASS |
+| B3 dual certificate | wrong-engine refusal **MET** twice (0 of 30, 0 of 14 certified); natural refusal and useful share **NOT DEMONSTRATED** (2 harmful, 8 good fits); B3 as a whole not MET |
+| B4 publish memo | published share 31 of 40 = 0.78 **MET**, but the dual loses to the baseline engine by 0.46 nats per step: **NOT publishable by the declared rule**; research-only |
+| B5 lineage thresholds | **NOT DEMONSTRATED (infeasible in this package)**, as declared beforehand; fail-closed kept, no code change |
+| B6 (A8, second unsure-K signal) | **NOT STARTED** (the brief: low priority, only if time remains; the compute went to the final-head checks) |
 
 ## The ten questions
 **1. What differs across CPU kernels in `optimizer_success_*`? (C1(1), READ of stored WP10A probe data, 18 OpenBLAS kernel settings, no new fit; `wp10b_evidence/c1_optimizer_fields.txt`)** Of 169 sub-fields per object, 20 are discrete (iteration counter, sizes, booleans, text) and none differs; the three flags are the same everywhere (seed 1: optimizer success True, duration fallback False; seed 2: success False, fallback True). 75 float sub-fields and 6 array hashes differ, in `A_fast`, `C_obs`, `Q_fast`, `R_obs`, `b_fast`, `d_obs`, `log_likelihood_`, its history and `window_gain_at_cap_`, by at most 1.3e-11 relative. The flag flip behind F2 is not a BLAS-kernel effect: **it is numpy's AVX-512 dispatch** (reproduced here with `NPY_DISABLE_CPU_FEATURES`; a Nelder-Mead step limit on a flat objective flips `seed1_fallback`); opa's EPYC 7763 run (seed1_fallback True everywhere) agrees (`tests/WP10B_C1_CPU_FEATURES.md`). The 12-user baseline battery gives identical discrete outputs with and without AVX-512 (24/24), floats not bit-identical.
@@ -38,13 +38,20 @@ Labels: **RUN** = executed in this repository, output in `wp10b_evidence/`; **RE
 | all | 36 | 4 (11%, Wilson 4% to 25%) | 27 | 5 | 1 | 0 | 0 |
 Of the 32 fits not finished by EM the extrapolated number of further iterations to an increment below 1e-4 is known for 25 (median creep rate 0.99 per iteration): within 400 more iterations 14, within 800 more 21. Duration degeneracy (segments at the Dmax wall) occurred in 1 of 108 regimes, not the 10 of 40 of WP7-R. The held-out one-step mean of the dual fit is below the single Gaussian in hard (-0.139, se 0.138), above it in medium (+0.472) and easy (+0.415), and not distinguishable from the baseline engine (n = 12 per stratum; record only).
 
-**5. Which fixes helped, with intervals; was bit-identity kept?** PENDING (B2 dev fits running).
+**5. Which fixes helped, with intervals; was bit-identity kept? (B2, development users 11201..11236, 36 paired fits per variant; `tests/WP10B_B2_RESULTS.md`)**
+| variant | publishable of 36 (S0: 4) | gained / lost | held-out change vs S0, 95% lower bound (level -0.10) | class |
+|---|---|---|---|---|
+| D60 | 3 | 0 / 1 | -0.0006 | no effect |
+| **I600** | **21** (58%, Wilson 42% to 73%) | **17 / 0** (p 7.6e-6) | -0.055 | **HELPED** (frozen) |
+| REG | 6 | 4 / 2 | -0.112 | HARMED |
+| ALL | 22 | 19 / 1 | -0.140 | helped but harmful |
+Only I600 is eligible, the cause is the iteration budget; it costs 3.2 times the S0 fit time. The mean held-out score is not improved (-0.027, se 0.017). The SQUAREM trigger (at least 10 fits at the cap and a time ratio of at least 3) was not met (7). Every fix is an opt-in switch; the dual defaults are unchanged, and the dual bit-identity battery (12 population + 4 identity fits) is PASS against a clean export of 95dd125 (`wp10b_evidence/dual_battery_b2.txt`). The 12 + 12 baseline batteries: PENDING (final head). The prediction of the criteria for REG (|gained - lost| at most 1) failed (observed 2), reported.
 
-**6. Does the dual certificate refuse the harmful controls and certify good fits?** PENDING (B3).
+**6. Does the dual certificate refuse the harmful controls and certify good fits? (B3, frozen I600, `tests/WP10B_B3_RESULTS.md`)** Refusal of harmful wrong-engine fits is **MET** for both engines (0 of 30 certified, exact bound 9.5%; 0 of 14, bound 19.3%). On natural S0 fits (60 users: 36 declared plus the pre-declared extension of 24, because the blind count in the first 36 was 0) only 13 fits were eligible and 2 were harmful: refusal **NOT DEMONSTRATED** (needs 14). Useful share among good eligible easy + medium fits: 0 of 8, **NOT DEMONSTRATED** (needs 12). Reported: 5 of 19 good fits certified for the real engine on the N18 generator (0.26, Wilson 0.12 to 0.49). The certificate certified none of the 13 natural eligible fits: conservative, not selective. B3 as a whole is not MET.
 
-**7. The dual publish memo: rule, result, recommendation.** PENDING (B4).
+**7. The dual publish memo: rule, result, recommendation. (`tests/WP10B_B4_MEMO.md`)** Rule: beats the baseline engine by 3 paired standard errors on easy + medium AND published share at least 0.60. Result: share 31 of 40 = 0.775 (Wilson 0.625 to 0.877; levels 0.40, 0.50, 0.60 MET, 0.80 not); dual minus baseline engine -0.464 nats per step (se 0.206, mean - 3 se -1.082; the dual is ahead for 10 of 40 users; published subset -0.725). **Not publishable by the rule; recommendation: stay research-only**, no switch or default changes. A different level for the share would not change the outcome; only a new margin rule would, and I do not choose one after the result.
 
-**8. Dual and cross-engine lineage thresholds: was the one-sided 95% bound <= 1% demonstrated per stratum?** PENDING (B5). Known now: only 4 of 36 dual fits in B1 were publishable (11%), so a dual-to-dual or cross-engine alignment set of the A3 size (299 alignments per stratum for a 1% bound) cannot be collected in this package; the actual achievable n is reported in the B5 note.
+**8. Dual and cross-engine lineage thresholds: was the one-sided 95% bound <= 1% demonstrated per stratum? (B5, `tests/WP10B_B5_RESULTS.md`)** **No: NOT DEMONSTRATED (infeasible in this package)**, the outcome the rule predicted before the B2 analysis. 299 alignments per stratum are needed (1,020 dual fits for three strata), about 27 hours on two cores at the I600 fit time against a 6-hour budget; the budget buys about 63 alignments per stratum (bound 4.6%) at I600 or 207 (1.4%) at the S0 fit time; the dual engine has no stability flag, and WP8 found 4 of 216 dual alignments passing the gate. No code change; both pair types stay `calibrated = False`, never ALIGNED.
 
 **9. What the owner must decide next.** PENDING (final).
 
