@@ -1,0 +1,21 @@
+WP10B B2 (development users 11201..11236, setting S0, paired with the S0 fits of wp10b_evidence/b1_dev_fits.jsonl): wp10b_evidence/b2_dev_fits.jsonl
+levels (Part 4): HELPED = publishable gain with g - l >= 1 and exact one-sided sign test p < 0.05 AND not harmed (paired held-out mean minus 1.645 se >= -0.1 nats per step)
+
+[D60] users 36 (paired 36, failed to run 0); publishable S0 4 -> D60 3; gained 0, lost 1, exact one-sided sign p = 1.0000 -> gain demonstrated: False
+    held-out one-step mean, D60 minus S0 (paired, n 36): +0.0340 (se 0.0210), one-sided 95% lower -0.0006 (margin -0.1) -> not harmed: True
+    CLASS: NO EFFECT DEMONSTRATED.  categories among the non-publishable: {'iteration_cap': 28, 'rejected_update': 5}; still at the iteration cap 28; median fit time ratio 1.11; stopped by the clock 0; S0 CONVERGED fits that are no longer converged 1
+    by stratum (publishable S0 -> V, gained/lost, mean held-out change): hard 2->2 (+0/-0, -0.003); medium 2->1 (+0/-1, -0.001); easy 0->0 (+0/-0, +0.106)
+[I600] users 36 (paired 36, failed to run 0); publishable S0 4 -> I600 21; gained 17, lost 0, exact one-sided sign p = 0.0000 -> gain demonstrated: True
+    held-out one-step mean, I600 minus S0 (paired, n 36): -0.0268 (se 0.0173), one-sided 95% lower -0.0552 (margin -0.1) -> not harmed: True
+    CLASS: HELPED.  categories among the non-publishable: {'rejected_update': 7, 'degenerate_duration': 2, 'iteration_cap': 7}; still at the iteration cap 7; median fit time ratio 3.18; stopped by the clock 0; S0 CONVERGED fits that are no longer converged 0
+    by stratum (publishable S0 -> V, gained/lost, mean held-out change): hard 2->8 (+6/-0, -0.040); medium 2->8 (+6/-0, -0.005); easy 0->5 (+5/-0, -0.036)
+[REG] users 36 (paired 36, failed to run 0); publishable S0 4 -> REG 6; gained 4, lost 2, exact one-sided sign p = 0.3438 -> gain demonstrated: False
+    held-out one-step mean, REG minus S0 (paired, n 36): -0.0212 (se 0.0550), one-sided 95% lower -0.1116 (margin -0.1) -> not harmed: False
+    CLASS: HARMED.  categories among the non-publishable: {'iteration_cap': 25, 'rejected_update': 5, 'collapsed_regime': 1, 'degenerate_duration': 1}; still at the iteration cap 25; median fit time ratio 1.10; stopped by the clock 0; S0 CONVERGED fits that are no longer converged 2
+    by stratum (publishable S0 -> V, gained/lost, mean held-out change): hard 2->3 (+2/-1, +0.130); medium 2->3 (+2/-1, -0.088); easy 0->0 (+0/-0, -0.106)
+[ALL] users 36 (paired 36, failed to run 0); publishable S0 4 -> ALL 22; gained 19, lost 1, exact one-sided sign p = 0.0000 -> gain demonstrated: True
+    held-out one-step mean, ALL minus S0 (paired, n 36): -0.0266 (se 0.0690), one-sided 95% lower -0.1401 (margin -0.1) -> not harmed: False
+    CLASS: HELPED BUT HARMFUL.  categories among the non-publishable: {'rejected_update': 8, 'iteration_cap': 5, 'collapsed_regime': 1}; still at the iteration cap 5; median fit time ratio 3.12; stopped by the clock 0; S0 CONVERGED fits that are no longer converged 1
+    by stratum (publishable S0 -> V, gained/lost, mean held-out change): hard 2->9 (+7/-0, +0.098); medium 2->4 (+3/-1, -0.111); easy 0->9 (+9/-0, -0.067)
+
+SQUAREM trigger (Part 4, 4.4): still at the iteration cap after I600 7 (needs >= 10), I600 median time ratio 3.18 (needs >= 3.0) -> build SQUAREM-S3: False

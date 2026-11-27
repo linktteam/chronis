@@ -1,0 +1,223 @@
+{
+ "ALL": {
+  "cats": {
+   "collapsed_regime": 1,
+   "iteration_cap": 5,
+   "rejected_update": 8
+  },
+  "clock_stops": 0,
+  "failed_to_run": 0,
+  "gain": 19,
+  "gain_demonstrated": true,
+  "heldout": {
+   "lower": -0.14009359471428554,
+   "mean": -0.026586853133465673,
+   "n": 36,
+   "se": 0.0690010587117446
+  },
+  "klass": "HELPED BUT HARMFUL",
+  "loss": 1,
+  "n_paired": 36,
+  "n_users": 36,
+  "not_harmed": false,
+  "pub_new": 22,
+  "pub_ref": 4,
+  "ref_converged_changed": 1,
+  "sign_p": 2.002716064453125e-05,
+  "still_iteration_cap": 5,
+  "strata": {
+   "easy": {
+    "gain": 9,
+    "heldout_mean": -0.06669693600171933,
+    "loss": 0,
+    "n": 12,
+    "pub_new": 9,
+    "pub_ref": 0
+   },
+   "hard": {
+    "gain": 7,
+    "heldout_mean": 0.09790745594295365,
+    "loss": 0,
+    "n": 12,
+    "pub_new": 9,
+    "pub_ref": 2
+   },
+   "medium": {
+    "gain": 3,
+    "heldout_mean": -0.11097107934163135,
+    "loss": 1,
+    "n": 12,
+    "pub_new": 4,
+    "pub_ref": 2
+   }
+  },
+  "time_ratio": 3.115615115698352
+ },
+ "D60": {
+  "cats": {
+   "iteration_cap": 28,
+   "rejected_update": 5
+  },
+  "clock_stops": 0,
+  "failed_to_run": 0,
+  "gain": 0,
+  "gain_demonstrated": false,
+  "heldout": {
+   "lower": -0.0005914856331524707,
+   "mean": 0.03402724521705748,
+   "n": 36,
+   "se": 0.021044821185537965
+  },
+  "klass": "NO EFFECT DEMONSTRATED",
+  "loss": 1,
+  "n_paired": 36,
+  "n_users": 36,
+  "not_harmed": true,
+  "pub_new": 3,
+  "pub_ref": 4,
+  "ref_converged_changed": 1,
+  "sign_p": 1.0,
+  "still_iteration_cap": 28,
+  "strata": {
+   "easy": {
+    "gain": 0,
+    "heldout_mean": 0.10582236029119822,
+    "loss": 0,
+    "n": 12,
+    "pub_new": 0,
+    "pub_ref": 0
+   },
+   "hard": {
+    "gain": 0,
+    "heldout_mean": -0.002734397119749321,
+    "loss": 0,
+    "n": 12,
+    "pub_new": 2,
+    "pub_ref": 2
+   },
+   "medium": {
+    "gain": 0,
+    "heldout_mean": -0.0010062275202764592,
+    "loss": 1,
+    "n": 12,
+    "pub_new": 1,
+    "pub_ref": 2
+   }
+  },
+  "time_ratio": 1.1094556350923923
+ },
+ "I600": {
+  "cats": {
+   "degenerate_duration": 2,
+   "iteration_cap": 7,
+   "rejected_update": 7
+  },
+  "clock_stops": 0,
+  "failed_to_run": 0,
+  "gain": 17,
+  "gain_demonstrated": true,
+  "heldout": {
+   "lower": -0.05524537453186533,
+   "mean": -0.026827583035657514,
+   "n": 36,
+   "se": 0.017275253189184082
+  },
+  "klass": "HELPED",
+  "loss": 0,
+  "n_paired": 36,
+  "n_users": 36,
+  "not_harmed": true,
+  "pub_new": 21,
+  "pub_ref": 4,
+  "ref_converged_changed": 0,
+  "sign_p": 7.62939453125e-06,
+  "still_iteration_cap": 7,
+  "strata": {
+   "easy": {
+    "gain": 5,
+    "heldout_mean": -0.03616034884732137,
+    "loss": 0,
+    "n": 12,
+    "pub_new": 5,
+    "pub_ref": 0
+   },
+   "hard": {
+    "gain": 6,
+    "heldout_mean": -0.039784252980545144,
+    "loss": 0,
+    "n": 12,
+    "pub_new": 8,
+    "pub_ref": 2
+   },
+   "medium": {
+    "gain": 6,
+    "heldout_mean": -0.004538147279106027,
+    "loss": 0,
+    "n": 12,
+    "pub_new": 8,
+    "pub_ref": 2
+   }
+  },
+  "time_ratio": 3.176627268187115
+ },
+ "REG": {
+  "cats": {
+   "collapsed_regime": 1,
+   "degenerate_duration": 1,
+   "iteration_cap": 25,
+   "rejected_update": 5
+  },
+  "clock_stops": 0,
+  "failed_to_run": 0,
+  "gain": 4,
+  "gain_demonstrated": false,
+  "heldout": {
+   "lower": -0.11162961509101775,
+   "mean": -0.02120466346782621,
+   "n": 36,
+   "se": 0.05496957545482769
+  },
+  "klass": "HARMED",
+  "loss": 2,
+  "n_paired": 36,
+  "n_users": 36,
+  "not_harmed": false,
+  "pub_new": 6,
+  "pub_ref": 4,
+  "ref_converged_changed": 2,
+  "sign_p": 0.34375,
+  "still_iteration_cap": 25,
+  "strata": {
+   "easy": {
+    "gain": 0,
+    "heldout_mean": -0.10559506047729512,
+    "loss": 0,
+    "n": 12,
+    "pub_new": 0,
+    "pub_ref": 0
+   },
+   "hard": {
+    "gain": 2,
+    "heldout_mean": 0.1298572059928421,
+    "loss": 1,
+    "n": 12,
+    "pub_new": 3,
+    "pub_ref": 2
+   },
+   "medium": {
+    "gain": 2,
+    "heldout_mean": -0.08787613591902559,
+    "loss": 1,
+    "n": 12,
+    "pub_new": 3,
+    "pub_ref": 2
+   }
+  },
+  "time_ratio": 1.0978025636757116
+ },
+ "squarem_trigger": {
+  "build": false,
+  "still_iteration_cap": 7,
+  "time_ratio": 3.176627268187115
+ }
+}

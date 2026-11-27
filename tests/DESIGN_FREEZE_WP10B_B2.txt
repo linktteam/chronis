@@ -1,0 +1,11 @@
+{"variant": "I600"}
+WP10B B2 downstream-configuration freeze, written 2026-11-27 AFTER the B2 development analysis and BEFORE the B3 S0 arm (and before B4 / B5 use any number). Nothing here changes a rule of tests/PREDECLARED_CRITERIA_WP10B.md Part 4 (section 10) or Part 9 (owner decision W10B-1).
+Development (users 11201..11236, setting S0, 36 paired fits per variant; 3.12, repo pins; wp10b_evidence/b2_dev_analysis.txt, .json):
+  D60  : publishable 4 -> 3, gained 0, lost 1: NO EFFECT DEMONSTRATED.
+  I600 : publishable 4 -> 21, gained 17, lost 0 (exact sign p = 7.6e-6); paired held-out change -0.0268 (se 0.0173), one-sided 95% lower bound -0.0552 >= -0.10: not harmed: HELPED. Median fit time 3.18x S0; stopped by the clock 0.
+  REG  : publishable 4 -> 6, gained 4, lost 2 (p = 0.34); lower bound -0.1116 < -0.10: HARMED.
+  ALL  : publishable 4 -> 22, gained 19, lost 1; lower bound -0.1401 < -0.10: HELPED BUT HARMFUL.
+  SQUAREM-S3: trigger not met (7 of 36 I600 fits still at the iteration cap, needs >= 10): not built.
+Rule applied (section 10.4, "Downstream configuration"): the HELPED variant with the largest g - l. I600 is the only HELPED variant (ALL is not eligible: it fails the not-harmed level). FROZEN: I600 = max_iter 600, MAX_FIT_SECONDS 900 (`dual_lib.VARIANTS["I600"]`), every other switch at its default. No hard-tier-specific parameter (owner decision W10B-1).
+Predictions of 10.4 against the result (reported, not adjusted): I600 g >= 6: observed 17 (met). D60 |g - l| <= 1: observed 1 (met). REG |g - l| <= 1: observed 2 (FAILED). ALL about the I600 result: 19 gained and 1 lost against 17 and 0 (met on the count), but ALL fails the not-harmed level.
+Version control for W10B-1: this frozen version meets the evaluation seeds (B3 S0 arm, users 11421..11456) ONCE. A second version needs the spare seeds 11901..11999 and the owner's go-ahead.
