@@ -165,3 +165,4 @@ With every switch at its default: (a) `integration_report/wp10b/scripts/dual_bat
 ### 10.7 Cost and order
 36 fits per variant on 2 workers: D60 about 25 min, I600 about 55 min, REG about 20 min, ALL about 75 min (estimates from the S0 time of 58 to 63 s; REPORTED to the owner before the start). Order: I600, REG, D60, ALL (ALL may be left out if time runs out; that would be stated, and the combination would then be UNKNOWN).
 Tests and mutation set: `tests/test_wp10b_b2_analyze.py` (11), `tests/test_wp10b_dual_lib.py` (23), `mutation_wp10b_b2_analyze.py` (22/22), `mutation_wp10b_b2.py` (19/19).
+- Correction (dated 2026-11-27, no result involved): section 10.7 says `tests/test_wp10b_dual_lib.py` has 23 tests; it has 21 (the 32 passing tests of the commit are 21 + 11).
