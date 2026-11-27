@@ -105,8 +105,9 @@ def test_a_missing_profile_falls_back_to_channel_one_and_says_so():
 
 
 def test_the_two_fits_must_use_the_same_context_categories():
-    with pytest.raises(ValueError, match="same categories"):
-        _pair(M3, CTX, M3, np.array([[0.5, 0.5], [0.2, 0.8], [0.9, 0.1]]), _cfg())
+    # WP10B F3 (owner amendment, matching stage): the mismatch used to raise a ValueError out of `step`; it is now a crashed assessment: CONTINUITY_UNVERIFIED with `assessment_crashed`, never ALIGNED (tests/test_wp10b_f3_fail_closed.py)
+    r, _ = _pair(M3, CTX, M3, np.array([[0.5, 0.5], [0.2, 0.8], [0.9, 0.1]]), _cfg())
+    assert r.continuity_state == CONTINUITY_UNVERIFIED and "assessment_crashed" in r.reasons and not may_claim_same_as_before(r)
 
 
 # ------------------------------------------------------------------------------------------------------------------- one channel decisive, the other not (both directions)

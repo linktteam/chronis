@@ -1,0 +1,48 @@
+CONTROL (unmutated, 19 named tests, same run): PASSED: all named tests pass unmutated
+F01 a crash still gives ALIGNED: CAUGHT
+F02 no alert is emitted: CAUGHT
+F03 the alert carries the message text: CAUGHT
+F04 duplicate alerts are not suppressed: CAUGHT
+F05 an alert failure flips the result (the exception escapes): CAUGHT
+F06 a malformed record (not boolean) is still ALIGNED: CAUGHT
+F07 a record that is not a dict is still ALIGNED: CAUGHT
+F08 make_summary turns a non-mapping into nothing known: CAUGHT
+F09 the record shows a malformed record as nothing: CRASH  [TypeError: 'NoneType' object is not subscriptable bad = 'garbage'
+
+    @pytest.mark.parametrize("bad", ["garbage", 7, ["suspected"], dict(OK]
+F10 the pre-F3 reason is not recognised: CAUGHT
+F11 the dedup key ignores the stage: CAUGHT
+F12 the dedup key ignores the revision: CAUGHT
+F13 the dedup key ignores the user: CAUGHT
+F14 the dedup memory is unbounded: CAUGHT
+F15 an unknown user or revision is deduplicated: CAUGHT
+F16 two crashes of one stage give two alerts: CAUGHT
+F17 the wrong alert kind: CAUGHT
+F18 an extra field in the alert: CAUGHT
+F19 the class name is not restricted to identifier characters: CAUGHT
+F20 the fit-stability crash is not recorded: CAUGHT
+F21 the fit-stability crash is read as stable: CAUGHT
+F22 a malformed posterior is not checked: CAUGHT
+F23 the data revision id is the user id: CAUGHT
+F24 a scaler crash is not recorded: CAUGHT
+F25 a matching crash is not recorded: CAUGHT
+F26 a margin crash is not recorded: CAUGHT
+F27 the crash reason is not added to the record: CAUGHT
+F28 the crash reason is missing on the K-change path: CAUGHT
+F29 the crash reason is missing on the first fit: CAUGHT
+F30 a crashed fit is promoted to anchor: CAUGHT
+F31 the configuration error is swallowed as a crash: CAUGHT
+F32 fit_recent_window swallows every exception again: CAUGHT
+F33 assess_k_change swallows every fit exception again: CRASH  [KeyError: 'crashed' def test_t4_assess_k_change_marks_an_unexpected_exception_as_crashed_and_a_non_convergence_as_unavailable():
+        mu ]
+F34 the crash record keeps the message: CAUGHT
+F35 the crash record has the old reason: CAUGHT
+F36 the anchor-variance failure is not a crash: CRASH  [KeyError: 'crashed' def test_t4b_the_anchor_variance_failure_is_a_crash_record_with_the_class_name_only():
+        m = means()
+        s = s]
+F37 a healthy record with a reason is counted as a crash: CAUGHT
+F38 no assessment (None) is counted as a crash: CAUGHT
+F39 the delivery failure is not logged: CAUGHT
+F40 the delivery failure log carries the message: CAUGHT
+F41 the user id reaches the lineage record: CAUGHT
+38/41 caught

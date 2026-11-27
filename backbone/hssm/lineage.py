@@ -29,11 +29,14 @@ EXPERT_REVIEW(identity-distance): the matching distance, the identifiability gat
 from __future__ import annotations
 
 import itertools
+import logging
+from collections.abc import Mapping
 from dataclasses import dataclass, field, replace
 
 import numpy as np
 from scipy.optimize import linear_sum_assignment
 
+from . import alerts
 from .fit_stability import REASON_NOT_ASSESSED, REASON_NOT_SHARP, sharpness_unstable
 from .ordering import LadderConfig, OrderingResult, order_regimes
 
@@ -44,6 +47,9 @@ NEW_LINEAGE = "NEW_LINEAGE"
 STATES = (ALIGNED, CONTINUITY_UNVERIFIED, K_CHANGED, NEW_LINEAGE)
 USER_CHOICES = (None, "KEEP_OLD", "NEW_NAMES")
 MESSAGE_UNCONFIRMED = "cannot confirm this is the same as before"
+REASON_CRASHED = "assessment_crashed"       # WP10B F3: an assessment crashed or returned a malformed record: the fit is never served as ALIGNED and the developers are alerted (`alerts.ASSESSMENT_CRASHED`)
+CRASH_REASONS = ("assessment_crashed", "assessment_error")      # `assessment_error` is what K-change records written before F3 say
+logger = logging.getLogger("chronis.hssm.lineage")
 EXPERT_REVIEW_STATUS = "PENDING"            # stays PENDING until the owner records an expert sign-off (A7)
 MAX_MATCH_K = 6                             # the second-best assignment is found by enumeration, which is exact for K <= 6 (the same limit as shrinkage.match_regimes)
 AMBIGUITY_RATIO = 0.5                       # the WP5 production rule of shrinkage.match_regimes; the ratio threshold is never more lenient than this
@@ -119,7 +125,10 @@ class FitSummary:
     context_profiles: np.ndarray | None = None      # channel 2 (optional): (K, C), one non-negative row per regime that sums to 1, supplied by the caller
     fit_unstable: bool = False                      # WP9 A1: the multi-start consensus of the fit failed (`fit_stability`); such a fit is never served as ALIGNED. False = nothing known against it
     fit_unstable_reason: str | None = None
-    k_change: dict | None = None                    # WP9 A3: the K-change record of this refit against the anchor (`k_change.assess_k_change`); None = nothing known (behaves as in WP8)
+    k_change: dict | None = None                    # WP9 A3: the K-change record of this refit against the anchor (`k_change.assess_k_change`); None = no assessment was asked (behaves as in WP8). WP10B F3: a crash or malformed record is NEVER "nothing known"
+    assessment_crashes: tuple = ()                  # WP10B F3: ((stage, exception class name), ...) of assessments that crashed while the summary was built (`summarize_fit`); the lineage fails closed on them
+    user_id: str | None = None                      # WP10B F3: only for the developer alert (hashed there); never stored in a lineage record
+    data_revision_id: str | None = None             # WP10B F3: the dataset hash of the fit (`HSSMResult.fit_dataset_hash`) unless the caller gives one; only for the developer alert
 
     @property
     def K(self) -> int:
@@ -291,7 +300,7 @@ def regime_table(summary: "FitSummary", registry) -> list[dict]:
 
 # EXPERT_REVIEW(identity-distance): computes the identifiability signal (`separation_min`) that the gate `min_separation` is applied to.
 def make_summary(engine: str, raw_means, scaler_mean, scaler_std, labels, raw_window, exp_durations=None, context_profiles=None, fit_unstable: bool = False, fit_unstable_reason: str | None = None,
-                 k_change: dict | None = None) -> FitSummary:
+                 k_change: dict | None = None, assessment_crashes: tuple = (), user_id: str | None = None, data_revision_id: str | None = None) -> FitSummary:
     raw_means = np.array(raw_means, dtype=float); raw_window = np.array(raw_window, dtype=float); labels = np.array(labels, dtype=int)
     scaler_mean = np.array(scaler_mean, dtype=float); scaler_std = np.array(scaler_std, dtype=float)
     if engine not in ("baseline", "dual"):
@@ -305,8 +314,18 @@ def make_summary(engine: str, raw_means, scaler_mean, scaler_std, labels, raw_wi
         raise ValueError("scaler_std must be positive")
     dur = None if exp_durations is None else np.array(exp_durations, dtype=float)
     ctx = None if context_profiles is None else validate_context_profiles(context_profiles, K)
-    return FitSummary(engine, raw_means, scaler_mean, scaler_std, labels, separation_min(raw_means, raw_window, labels), raw_window, dur, ctx, bool(fit_unstable), fit_unstable_reason,
-                      None if k_change is None else dict(k_change))
+    if k_change is None:
+        kc = None
+    elif isinstance(k_change, Mapping):
+        kc = dict(k_change)
+    else:                                                                # WP10B F3: a record that is not a mapping is a malformed assessment, never "nothing known"
+        kc = dict(suspected=False, reason=REASON_CRASHED, crashed=True, error_class="MalformedRecord")
+    return FitSummary(engine, raw_means, scaler_mean, scaler_std, labels, separation_min(raw_means, raw_window, labels), raw_window, dur, ctx, bool(fit_unstable), fit_unstable_reason, kc,
+                      tuple((str(a), alerts.exception_class_name(b)) for a, b in assessment_crashes), None if user_id is None else str(user_id), None if data_revision_id is None else str(data_revision_id))
+
+
+class MalformedAssessment(Exception):
+    """An assessment input or output that cannot be used (WP10B F3). Only its class name ever leaves the lineage (alerts, records)."""
 
 
 def fit_stability_flag(result) -> tuple[bool, str | None]:
@@ -339,8 +358,18 @@ def summarize_fit(result, raw_window, scaler_mean, scaler_std, k_change: dict | 
     from .shrinkage import duration_pmf
     pmf = duration_pmf(np.array(model.dur_mu), np.array(model.dur_sigma), int(model.Dmax))
     exp_dur = (pmf * np.arange(1, int(model.Dmax) + 1)).sum(axis=1)
-    unstable, reason = fit_stability_flag(result)
-    return make_summary(engine, raw_means, scaler_mean, scaler_std, labels, raw_window, exp_dur, fit_unstable=unstable, fit_unstable_reason=reason, k_change=k_change)
+    crashes = []
+    try:                                                                  # WP10B F3: the fit-stability assessment fails closed: a crash or an unusable posterior is FIT_UNSTABLE with `assessment_crashed`
+        unstable, reason = fit_stability_flag(result)
+        if result.is_baseline_model:
+            post = np.asarray(result.p_t_posterior, dtype=float)
+            if post.ndim != 2 or post.size == 0 or not np.isfinite(post).all():
+                raise MalformedAssessment("the posterior is empty, not two-dimensional or not finite")
+    except Exception as exc:                                              # noqa: BLE001
+        unstable, reason = True, REASON_CRASHED
+        crashes.append(("fit_stability", alerts.exception_class_name(exc)))
+    return make_summary(engine, raw_means, scaler_mean, scaler_std, labels, raw_window, exp_dur, fit_unstable=unstable, fit_unstable_reason=reason, k_change=k_change,
+                        assessment_crashes=tuple(crashes), user_id=getattr(result, "user_id", None) or None, data_revision_id=getattr(result, "fit_dataset_hash", None) or None)
 
 
 def annotate_result(result, record: LineageRecord):
@@ -453,8 +482,10 @@ def _correspondence(anchor_vec: np.ndarray, new_vec: np.ndarray, proposed_raw_to
 def _k_change_record(summary: FitSummary, anchor: Anchor | None) -> dict | None:
     """The K-change record of the summary as stored in the lineage record (WP9 A3): a copy, with the OLD regimes of every overlap candidate also given in the anchor's STABLE ids
     (`old_stable_regime` / `old_stable_regimes`; the raw ids of the anchor stay under their own keys). None when the summary carries no assessment."""
-    if not isinstance(summary.k_change, dict):                           # None or malformed: nothing known
+    if summary.k_change is None:                                         # no assessment was asked
         return None
+    if not isinstance(summary.k_change, dict):                           # WP10B F3: malformed, shown as a crash record (the lineage fails closed on it)
+        return dict(suspected=False, reason=REASON_CRASHED, crashed=True, error_class="MalformedRecord")
     kc = dict(summary.k_change)
     if anchor is None:
         return kc
@@ -472,9 +503,52 @@ def _k_change_record(summary: FitSummary, anchor: Anchor | None) -> dict | None:
 
 
 def k_change_suspected(summary: FitSummary) -> bool:
-    """True when the summary carries a K-change record that says a change of the number of regimes is suspected (WP9 A3). A missing or malformed record is False (nothing known = WP8 behaviour)."""
+    """True when the summary carries a K-change record that says a change of the number of regimes is suspected (WP9 A3). A missing record (no assessment asked) is False (the WP8 behaviour); a crashed or
+    malformed record is NOT "not suspected": see `k_change_crash`."""
     kc = summary.k_change
     return bool(isinstance(kc, dict) and kc.get("suspected") is True)
+
+
+def k_change_crash(summary: FitSummary) -> str | None:
+    """WP10B F3: None when the K-change record is absent (no assessment asked) or well formed; otherwise the exception class name of the crash (`MalformedRecord` for a record that is not a mapping or has no
+    boolean `suspected`). A record whose reason is `assessment_crashed` (or the pre-F3 `assessment_error`) or that says `crashed = True` is a crash."""
+    kc = summary.k_change
+    if kc is None:
+        return None
+    if not isinstance(kc, dict):
+        return "MalformedRecord"
+    if kc.get("crashed") is True or kc.get("reason") in CRASH_REASONS:
+        name = kc.get("error_class") or str(kc.get("error") or "").split(":")[0] or "AssessmentCrashed"
+        return alerts.exception_class_name(name)
+    if not isinstance(kc.get("suspected"), bool):
+        return "MalformedRecord"
+    return None
+
+
+def _report_crashes(summary: FitSummary, crashes: list) -> None:
+    """WP10B F3: one developer alert per stage (`alerts.ASSESSMENT_CRASHED`: user hash, stage, data revision id, reason, exception class name; nothing else), at most one per (user, stage, data revision).
+    A failure to deliver is logged (class name only) and never changes the lineage result."""
+    done = set()
+    for stage, cls in crashes:
+        if stage in done:
+            continue
+        done.add(stage)
+        try:
+            key = (summary.data_revision_id, stage) if (summary.user_id and summary.data_revision_id) else None
+            alerts.emit_once(alerts.ASSESSMENT_CRASHED, summary.user_id, key, stage=stage, data_revision_id=summary.data_revision_id, reason=REASON_CRASHED, error_class=alerts.exception_class_name(cls))
+        except Exception as exc:                                                 # noqa: BLE001
+            try:
+                logger.warning("assessment-crash alert not delivered (stage=%s, error=%s)", stage, alerts.exception_class_name(exc))
+            except Exception:                                                    # noqa: BLE001
+                pass
+
+
+def _summary_crashes(summary: FitSummary) -> list:
+    out = [(str(st), str(cl)) for st, cl in summary.assessment_crashes]
+    kc = k_change_crash(summary)
+    if kc is not None:
+        out.append(("k_change", kc))
+    return out
 
 
 # EXPERT_REVIEW(identity-distance): writes the identifiability signal of the fit into the record next to the margins and the state.
@@ -530,7 +604,18 @@ def _combined_alignment(anchor: Anchor, summary: FitSummary, a_vec: np.ndarray, 
 
 # EXPERT_REVIEW(identity-distance): the gate, the distance, the thresholds and the continuity state are applied together here.
 def step(state: LineageState | None, summary: FitSummary, config: AlignmentConfig = AlignmentConfig(), registry=None, lineage_id: str | None = None) -> tuple[LineageRecord, LineageState]:
-    """Feed the next accepted fit. Returns (record, new state); the old state is not modified. `lineage_id` is required for the first fit (no hidden randomness) and ignored after."""
+    """Feed the next accepted fit. Returns (record, new state); the old state is not modified. `lineage_id` is required for the first fit (no hidden randomness) and ignored after.
+    WP10B F3: an assessment that crashed or returned a malformed record (K change, fit stability, scaler, matching) never gives ALIGNED: the result is CONTINUITY_UNVERIFIED with the reason `assessment_crashed`
+    and the developers are alerted (`alerts.ASSESSMENT_CRASHED`); a failure to alert cannot change the result."""
+    crashes = _summary_crashes(summary)
+    rec, new_state = _step(state, summary, config, registry, lineage_id, crashes)
+    if crashes:
+        _report_crashes(summary, crashes)
+    return rec, new_state
+
+
+# EXPERT_REVIEW(identity-distance): the gate, the distance, the thresholds and the continuity state are applied together here (the body of `step`; WP10B F3 split the guard from it).
+def _step(state, summary, config, registry, lineage_id, crashes):
     if state is None:
         if not lineage_id:
             raise ValueError("the first fit of a lineage needs a lineage_id")
@@ -538,14 +623,20 @@ def step(state: LineageState | None, summary: FitSummary, config: AlignmentConfi
         anchor = Anchor(summary, raw_to_stable, 0, rung, verified)
         msg = ("first fit of this lineage: regimes named by the activity ordering" if verified else
                "first fit of this lineage: the activity order could not be verified, regimes are named in first-fit order (no activity claim)")
-        rec = _record(0, summary, None, 0, lineage_id, NEW_LINEAGE, msg, raw_to_stable, rung, verified, None, None, ("first_fit",), None, ())
+        rec = _record(0, summary, None, 0, lineage_id, NEW_LINEAGE, msg, raw_to_stable, rung, verified, None, None, ("first_fit",) + ((REASON_CRASHED,) if crashes else ()), None, ())
         return rec, LineageState(lineage_id, 0, anchor, 1)
     anchor = state.anchor
     fit_index = state.n_fits
-    scale = _scale(anchor)
-    a_vec_raw = _vectors(anchor.summary, scale, config.duration_weight)
-    a_vec = a_vec_raw[list(anchor.stable_to_raw)]                          # rows in stable-id order
-    n_vec = _vectors(summary, scale, config.duration_weight)
+    if config.duration_weight > 0 and (summary.exp_durations is None or anchor.summary.exp_durations is None):
+        raise ValueError("duration_weight > 0 needs exp_durations in every summary")          # a configuration error, not a crashed assessment: it stays loud (checked in WP10B F3)
+    try:
+        scale = _scale(anchor)
+        a_vec_raw = _vectors(anchor.summary, scale, config.duration_weight)
+        a_vec = a_vec_raw[list(anchor.stable_to_raw)]                      # rows in stable-id order
+        n_vec = _vectors(summary, scale, config.duration_weight)
+    except Exception as exc:                                               # noqa: BLE001  WP10B F3: the scaler / distance vectors failed: fail closed, no matching
+        crashes.append(("scaler", alerts.exception_class_name(exc)))
+        a_vec = n_vec = None
     cross = summary.engine != anchor.summary.engine
     th = config.cross_engine if cross else (config.dual_engine if summary.engine == "dual" else config.same_engine)
     # EXPERT_REVIEW(identity-distance): the proposal for a new fit: the ladder names it and the matching distance gives the old-to-new correspondence.
@@ -553,28 +644,51 @@ def step(state: LineageState | None, summary: FitSummary, config: AlignmentConfi
         """The names this fit would get on its own (what NEW_NAMES would adopt), computed only when continuity is not confirmed."""
         prop_r2s, prop_rung, prop_verified, _ = name_fit(summary, registry, config.ladder)
         prop = dict(raw_to_stable=tuple(prop_r2s), stable_regime_id=np.asarray(prop_r2s, dtype=int)[summary.labels], activity_rung=prop_rung, ordering_verified=prop_verified)
-        return prop, Pending(fit_index, summary, tuple(prop_r2s), prop_rung, prop_verified, _correspondence(a_vec, n_vec, tuple(prop_r2s)))
+        return prop, Pending(fit_index, summary, tuple(prop_r2s), prop_rung, prop_verified, _correspondence(a_vec, n_vec, tuple(prop_r2s)) if a_vec is not None else ())
+
+    def guarded_proposal():
+        """The healthy path is exactly `proposal()`; after a crash a failure of the proposal itself must not undo the fail-closed result (no proposal then)."""
+        if not crashes:
+            return proposal()
+        try:
+            return proposal()
+        except Exception:                                                  # noqa: BLE001
+            return None, None
     if summary.K != anchor.summary.K:
         # one-to-one as far as it goes: matched regimes inherit the old name, the others get fresh ids that were never used by the anchor
-        D = ((a_vec[:, None, :] - n_vec[None, :, :]) ** 2).sum(axis=2)
-        rows, cols = linear_sum_assignment(D)
-        r2s = [-1] * summary.K
-        for r, c in zip(rows, cols):
-            r2s[int(c)] = int(r)
-        nxt = anchor.summary.K
-        for k in range(summary.K):
-            if r2s[k] < 0:
-                r2s[k] = nxt; nxt += 1
-        cands = split_merge_candidates(a_vec, n_vec)
-        proposed, pending = proposal()
+        r2s, cands = None, ()
+        if a_vec is not None:
+            try:
+                D = ((a_vec[:, None, :] - n_vec[None, :, :]) ** 2).sum(axis=2)
+                rows, cols = linear_sum_assignment(D)
+                r2s = [-1] * summary.K
+                for r, c in zip(rows, cols):
+                    r2s[int(c)] = int(r)
+                nxt = anchor.summary.K
+                for k in range(summary.K):
+                    if r2s[k] < 0:
+                        r2s[k] = nxt; nxt += 1
+                cands = split_merge_candidates(a_vec, n_vec)
+            except Exception as exc:                                       # noqa: BLE001  WP10B F3: the matching of a K change crashed: fail closed (this state is never ALIGNED)
+                crashes.append(("matching", alerts.exception_class_name(exc)))
+                r2s, cands = None, ()
+        if r2s is None:
+            r2s = list(range(summary.K))                                   # the old names are kept in order; the claim is withheld whatever happens
+        proposed, pending = guarded_proposal()
         rec = _record(fit_index, summary, anchor, state.epoch, state.lineage_id, K_CHANGED, MESSAGE_UNCONFIRMED + ": the number of regimes changed from "
                       f"{anchor.summary.K} to {summary.K}; the old names are kept, new names can be chosen", r2s, anchor.activity_rung, anchor.ordering_verified, None, None,
-                      ("k_changed",), proposed, cands)
+                      ("k_changed",) + ((REASON_CRASHED,) if crashes else ()), proposed, cands)
         return rec, replace(state, n_fits=state.n_fits + 1, pending=pending)
     if summary.K > MAX_MATCH_K:
         reasons = ["k_above_matching_ceiling"]; al = None; channels_used, detail = ("physical",), None
+    elif a_vec is None:                                                  # the scaler step crashed (recorded above): nothing to match, fail closed
+        reasons = []; al = None; channels_used, detail = ("physical",), None
     else:
-        al, channels_used, detail = _combined_alignment(anchor, summary, a_vec, n_vec, th, config)
+        try:
+            al, channels_used, detail = _combined_alignment(anchor, summary, a_vec, n_vec, th, config)
+        except Exception as exc:                                         # noqa: BLE001  WP10B F3: the matching crashed: fail closed
+            crashes.append(("matching", alerts.exception_class_name(exc)))
+            al = None; channels_used, detail = ("physical",), None
         reasons = []
         if anchor.summary.separation_min < config.min_separation:
             reasons.append("anchor_not_identifiable")
@@ -586,12 +700,20 @@ def step(state: LineageState | None, summary: FitSummary, config: AlignmentConfi
             reasons.append("anchor_fit_unstable")
         if not th.calibrated:
             reasons.append("threshold_not_calibrated")
-        elif not margin_ok(th, al):
-            reasons.append("margin_below_threshold")
+        elif al is not None:
+            try:
+                margin_passes = margin_ok(th, al)
+            except Exception as exc:                                     # noqa: BLE001  WP10B F3
+                crashes.append(("matching", alerts.exception_class_name(exc)))
+                margin_passes = False
+            if not margin_passes:
+                reasons.append("margin_below_threshold")
         if detail is not None and detail.get("disagree"):
             reasons.append("channels_disagree")
     if k_change_suspected(summary):                                      # WP9 A3: a suspected change of the number of regimes is never served as "same as before"
         reasons.append("k_change_suspected")
+    if crashes:                                                          # WP10B F3: a crashed or malformed assessment is never served as "same as before"
+        reasons.append(REASON_CRASHED)
     if not reasons:
         r2s = [0] * summary.K
         for i, raw in enumerate(al["perm"]):
@@ -607,10 +729,10 @@ def step(state: LineageState | None, summary: FitSummary, config: AlignmentConfi
         r2s = [0] * summary.K
         for i, raw in enumerate(al["perm"]):
             r2s[raw] = i
-    proposed, pending = proposal()
+    proposed, pending = guarded_proposal()
     rec = _record(fit_index, summary, anchor, state.epoch, state.lineage_id, CONTINUITY_UNVERIFIED, MESSAGE_UNCONFIRMED + "; the old names are kept, new names can be chosen",
                   r2s, anchor.activity_rung, anchor.ordering_verified, al, th, reasons, proposed, (), channels_used=channels_used, channel_detail=detail)
-    if anchor.summary.fit_unstable and not summary.fit_unstable and al is not None:
+    if anchor.summary.fit_unstable and not summary.fit_unstable and al is not None and not crashes:
         # WP9 A1, dated change (tests/PREDECLARED_CRITERIA_WP9.md part 3): an unstable anchor must not kill the lineage. The claim for THIS step stays withheld (state above), but the first stable
         # fit becomes the anchor with the best-guess names, so later stable fits can be compared with a stable anchor. Only a stable fit can become the anchor this way.
         new_anchor = Anchor(summary, tuple(int(x) for x in r2s), fit_index, anchor.activity_rung, anchor.ordering_verified)

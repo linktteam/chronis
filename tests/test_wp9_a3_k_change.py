@@ -250,14 +250,16 @@ def test_an_unaccepted_reference_fit_gives_no_signal_at_all():
 def test_a_fit_that_raises_counts_as_unavailable_and_the_assessment_never_raises():
     means, var = _anchor3()
 
+    from backbone.hssm.model import FittingConvergenceError
+
     def boom(recent, K):
         if K == 4:
-            raise RuntimeError("no convergence")
+            raise FittingConvergenceError("no convergence")                 # WP10B F3: only a fit that did not finish is "unavailable"; any other exception is a crash (tests/test_wp10b_f3_fail_closed.py)
         return dict(bic=300.0, labels=np.zeros(len(recent), dtype=int), raw_means=np.zeros((K, 2)), accepted=True)
     r = KC.assess_k_change(means, var, np.zeros((45, 2)), fit_fn=boom)
-    assert not r["suspected"] and r["bic_by_k"]["4"] is None
+    assert not r["suspected"] and r["bic_by_k"]["4"] is None and "crashed" not in r
     bad = KC.assess_k_change(means, var, "not an array", fit_fn=boom)
-    assert bad["suspected"] is False and bad["reason"] == "assessment_error"
+    assert bad["suspected"] is False and bad["reason"] == "assessment_crashed" and bad["crashed"] is True
 
 
 def test_k_below_two_is_never_fitted():
@@ -364,19 +366,19 @@ def test_the_suspicion_must_be_exactly_true():
     m = _means(3)
     a = _summary(m, seed=1)
     _, st = step(None, a, CFG, REGISTRY, lineage_id="t")
-    for odd in ("yes", 1, [True], None):
+    for odd in ("yes", 1, [True], None):            # WP10B F3: a `suspected` that is not a boolean is a malformed record: never ALIGNED
         r, _ = step(st, _summary(m, seed=2, k_change=dict(SUSPECT, suspected=odd)), CFG, REGISTRY)
-        assert r.continuity_state == ALIGNED, odd
+        assert r.continuity_state == CONTINUITY_UNVERIFIED and "assessment_crashed" in r.reasons and "k_change_suspected" not in r.reasons, odd      # a malformed value is a crash, not a suspicion
 
 
-def test_a_malformed_record_is_nothing_known():
+def test_a_malformed_record_is_never_aligned():
     m = _means(3)
     a = _summary(m, seed=1)
     _, st = step(None, a, CFG, REGISTRY, lineage_id="t")
     n = _summary(m, seed=2)
     n = L.FitSummary(n.engine, n.raw_means, n.scaler_mean, n.scaler_std, n.labels, n.separation_min, n.raw_window, n.exp_durations, None, False, None, "garbage")
     r, _ = step(st, n, CFG, REGISTRY)
-    assert r.continuity_state == ALIGNED
+    assert r.continuity_state == CONTINUITY_UNVERIFIED and "assessment_crashed" in r.reasons          # WP10B F3 (owner amendment): was ALIGNED ("nothing known")
 
 
 def test_a_different_fitted_k_stays_k_changed_and_carries_the_record():
@@ -489,7 +491,8 @@ def test_fit_recent_window_reports_a_withheld_fit_as_not_accepted_and_the_bic_of
 
 def test_production_fit_needs_the_full_ten_restarts():
     X = _blobs(0, [[0.0, 0.0, 0.0], [6.0, 6.0, 6.0]], 25)
-    assert KC.fit_recent_window(X, 2, seed=3, n_init=3, max_iter=40) is None            # fewer than 10 restarts is refused unless the test switch is on
+    with pytest.raises(ValueError):                                                      # fewer than 10 restarts is refused unless the test switch is on; WP10B F3: that refusal is a crash of the
+        KC.fit_recent_window(X, 2, seed=3, n_init=3, max_iter=40)                        # assessment (it propagates; `assess_k_change` turns it into a crash record), no longer a silent "no signal"
 
 
 def test_fit_recent_window_returns_none_when_the_fit_cannot_run():

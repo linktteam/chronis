@@ -1,0 +1,35 @@
+A01 the anchor variance uses ddof 0: KILLED
+A02 a small regime keeps its own variance: KILLED
+A03 the own-variance row minimum is 2: KILLED
+A04 the density ignores the variance term: KILLED
+A05 the row goes to the least likely regime: KILLED
+A06 a row with no observation is assigned: KILLED
+A07 unassigned rows count in the shares: KILLED
+A08 the dominant-parent level is exclusive: KILLED
+A09 one child is enough for a split: KILLED
+A10 the merge level is exclusive (first share): KILLED
+A11 the merge pair is not the two largest: KILLED
+A12 a tie goes against the anchor K: KILLED
+A13 the margin level is exclusive: KILLED
+A14 the two deltas are swapped: KILLED
+A15 a non-finite BIC is accepted: KILLED
+A16 a non-adjacent K can be a signal: KILLED
+A17 the whole window is used as the recent window: KILLED
+A18 a fit that is not accepted is trusted: KILLED
+A19 an unfinished fit is not contained: KILLED
+A20 an exception in the assessment escapes: KILLED
+A21 K = 1 is fitted: KILLED
+A22 the reason of an anchor without a window is changed: KILLED
+A23 the anchor labels are ignored: KILLED
+A24 the anchor means are negated: KILLED
+L01 a suspected change adds no reason: KILLED
+L02 a truthy value counts as suspected: KILLED
+L03 the stable id is the raw id: KILLED
+L04 the merge stable ids are the raw ids: KILLED
+L05 the record does not carry the signal: KILLED
+L06 a malformed record breaks the lineage: KILLED
+L07 the summary drops the record: KILLED
+C01 the recent window is 40 days: KILLED
+C02 the dominant-parent share is 0.6: KILLED
+C03 the merge share is 0.3: KILLED
+34/34 killed

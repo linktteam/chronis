@@ -20,9 +20,15 @@ from typing import Callable, Mapping
 
 import numpy as np
 
+from .alerts import exception_class_name
 from .config import K_CHANGE_DELTA_DOWN, K_CHANGE_DELTA_UP, K_CHANGE_RECENT_DAYS
+from .gating import ColdStartError
+from .model import FittingConvergenceError
 
 SCHEMA_VERSION = 1
+REASON_CRASHED = "assessment_crashed"      # WP10B F3: the assessment crashed (or returned a malformed record); `lineage.step` never serves such a fit as ALIGNED
+LEGACY_CRASH_REASONS = ("assessment_error",)   # what records written before F3 say
+EXPECTED_NO_FIT = (FittingConvergenceError, ColdStartError)   # a recent-window fit that did not finish: unavailable, no signal. Any OTHER exception of a fit is a crash.
 DOMINANT_PARENT_SHARE = 0.5          # split: the old regime must hold at least this share of a new regime's rows
 MERGE_MIN_SHARE = 0.25               # merge: each of the two old regimes must hold at least this share of the new regime's rows
 MIN_ROWS_FOR_OWN_VARIANCE = 3
@@ -125,7 +131,8 @@ def decide(bic_by_k: Mapping[int, float | None], k_anchor: int, delta_up: float 
 def assess_k_change(anchor_means: np.ndarray, anchor_variances: np.ndarray, raw_window: np.ndarray, *, fit_fn: Callable, k_anchor: int | None = None, recent_days: int = K_CHANGE_RECENT_DAYS,
                     delta_up: float = K_CHANGE_DELTA_UP, delta_down: float = K_CHANGE_DELTA_DOWN) -> dict:
     """The K-change record of one refit. `fit_fn(recent_raw, K) -> dict(bic, labels, raw_means, accepted) or None` fits the recent window at K (see `fit_recent_window`). A candidate K whose fit
-    is missing or not accepted is unavailable (no claim from it). Never raises: an exception in a fit counts as unavailable, anything else becomes `reason = "assessment_error"`."""
+    is missing or not accepted is unavailable (no claim from it). Never raises. WP10B F3: a fit that did not finish (`EXPECTED_NO_FIT`) is unavailable; ANY other exception, in a fit or anywhere else in the
+    assessment, makes the record a crash record (`reason = "assessment_crashed"`, `crashed = True`, `error_class` = the exception class name and nothing else), which `lineage.step` never serves as ALIGNED."""
     Ka = int(anchor_means.shape[0] if k_anchor is None else k_anchor)
     rec = dict(schema_version=SCHEMA_VERSION, suspected=False, direction=None, k_best=Ka, margin=None, reason=None, bic_by_k={}, candidates=(), recent_days=int(recent_days),
                thresholds=dict(delta_up=float(delta_up), delta_down=float(delta_down)))
@@ -137,7 +144,7 @@ def assess_k_change(anchor_means: np.ndarray, anchor_variances: np.ndarray, raw_
                 bic[K] = None; continue
             try:
                 f = fit_fn(recent, K)
-            except Exception:                                                               # noqa: BLE001  an unfinished fit is unavailable
+            except EXPECTED_NO_FIT:                                                         # an unfinished fit is unavailable; any other exception is a crash and goes to the handler below
                 f = None
             ok = f is not None and f.get("accepted", False) and f.get("bic") is not None and math.isfinite(float(f["bic"]))
             bic[K] = float(f["bic"]) if ok else None
@@ -152,8 +159,8 @@ def assess_k_change(anchor_means: np.ndarray, anchor_variances: np.ndarray, raw_
             shares = overlap_shares(parent, np.asarray(f["labels"], dtype=int), Ka, d["k_best"])
             rec["candidates"] = overlap_candidates(shares, Ka, d["k_best"])
             rec["overlap_shares"] = shares.round(4).tolist()
-    except Exception as exc:                                                                # noqa: BLE001  fail closed: no claim
-        rec.update(suspected=False, direction=None, reason="assessment_error", error=f"{type(exc).__name__}: {str(exc)[:120]}")
+    except Exception as exc:                                                                # noqa: BLE001  fail closed: a crash record, never a claim of "no change"
+        rec.update(suspected=False, direction=None, reason=REASON_CRASHED, crashed=True, error_class=exception_class_name(exc))
     return rec
 
 
@@ -173,7 +180,7 @@ def assess_against_anchor(state, raw_window: np.ndarray, *, seed: int = 0, n_ini
     try:
         variances = anchor_within_variances(s.raw_window, s.labels, s.K)
     except Exception as exc:                                                                # noqa: BLE001
-        return dict(rec, k_best=int(s.K), reason="assessment_error", error=f"{type(exc).__name__}: {str(exc)[:120]}")
+        return dict(rec, k_best=int(s.K), reason=REASON_CRASHED, crashed=True, error_class=exception_class_name(exc))
     fit = fit_fn if fit_fn is not None else (lambda recent, K: fit_recent_window(recent, K, seed=seed, n_init=n_init, max_iter=max_iter))
     return assess_k_change(s.raw_means, variances, raw_window, fit_fn=fit, k_anchor=s.K, recent_days=recent_days, delta_up=delta_up, delta_down=delta_down)
 
@@ -181,7 +188,7 @@ def assess_against_anchor(state, raw_window: np.ndarray, *, seed: int = 0, n_ini
 # ------------------------------------------------------------------------------------------------------------------- the fit of the recent window (production path)
 def fit_recent_window(recent_raw: np.ndarray, K: int, *, seed: int = 0, n_init: int = 10, max_iter: int = 60, allow_fast_test_fit: bool = False) -> dict | None:
     """Fit the recent raw window (days x features, NaN = missing) at K regimes through the public `fit_hssm` (per-window z-scoring as the pipeline does, a missing single feature filled with 0, a
-    missing day left as a NaN row). Returns dict(bic, labels, raw_means, accepted) or None when the fit raised (FittingConvergenceError ...). `accepted` = not withheld by the publish rule.
+    missing day left as a NaN row). Returns dict(bic, labels, raw_means, accepted) or None when the fit did not finish (`EXPECTED_NO_FIT`); any other exception propagates (WP10B F3). `accepted` = not withheld by the publish rule.
     Production uses the default 10 restarts; fewer need `allow_fast_test_fit=True` (unit tests only)."""
     import contextlib, io, logging, warnings
     from .fitting import fit_hssm
@@ -196,7 +203,7 @@ def fit_recent_window(recent_raw: np.ndarray, K: int, *, seed: int = 0, n_init: 
             warnings.simplefilter("ignore")
             res = fit_hssm(matrix=z, candidate_ks=(int(K),), n_initializations=n_init, max_iter=max_iter, random_seed=int(seed), user_id="k-change", dataset_hash="k-change",
                            allow_fast_test_fit=bool(allow_fast_test_fit))
-    except Exception:                                                                       # noqa: BLE001
+    except EXPECTED_NO_FIT:                                                                 # WP10B F3: only "did not finish" is no signal; any other exception is a crash and propagates to `assess_k_change`
         return None
     labels = np.asarray(res.p_t_posterior).argmax(axis=1)
     return dict(bic=float(res.bic_by_k[int(K)]), labels=labels, raw_means=mean + std * np.asarray(res.model.mu, dtype=float), accepted=not res.insights_withheld)

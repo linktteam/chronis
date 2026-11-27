@@ -1,0 +1,11 @@
+# WP10B F3 lineage bit-identity battery (3.12, repo pins; RUN)
+reference = git archive 95dd125; new = working tree of ledger/wp10b (uncommitted F3 changes at the time of the run)
+records compared: 384 (+ the records after a user choice); fields compared per record: 35; fields only in the new tree: []; only in the reference: []
+states reached (reference): {'ALIGNED': 146, 'CONTINUITY_UNVERIFIED': 178, 'K_CHANGED': 12, 'NEW_LINEAGE': 48}
+states reached (new):       {'ALIGNED': 146, 'CONTINUITY_UNVERIFIED': 178, 'K_CHANGED': 12, 'NEW_LINEAGE': 48}
+records with any difference: 0
+PASS
+
+## sensitivity control: the reference tree with ONE healthy-path change planted (the k_change_suspected reason removed) must give FAIL
+records with any difference: 597; first: [(0, 3, ['continuity_state', 'message', 'proposed_new_names', 'reasons']), (0, 3, ['may_claim']), (0, 3, ['state']), (0, 4, ['alignment_margin', 'margin_diff', 'cost_second', 'nearest_other_distances', 'anchor_separation_min']), (0, 4, ['state'])]
+FAIL

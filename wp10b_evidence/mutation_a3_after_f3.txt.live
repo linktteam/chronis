@@ -1,0 +1,5 @@
+F01 the raw means are left in z units: KILLED
+F02 the fit never says it is not accepted: KILLED
+F03 the BIC of another K is returned: KILLED
+F04 the fast test switch is always on: KILLED
+4/4 killed
