@@ -1,0 +1,30 @@
+CONTROL (unmutated, 18 named tests, same run): PASSED: all named tests pass unmutated
+L01 the scaler uses the whole record: CAUGHT
+L02 a missing single feature is not filled: CAUGHT
+L03 the baseline forward omits the duration continuation: CAUGHT
+L04 the baseline increment is not differenced: CAUGHT
+L05 the baseline ignores the initial distribution: CAUGHT
+L06 the dual increment is not differenced: CAUGHT
+L07 the Gaussian uses the test moments: CAUGHT
+L08 the Gaussian covariance uses ddof 0: CAUGHT
+L09 the test mean includes missing days: CAUGHT
+L10 the test mean ignores non-finite values: CAUGHT
+L11 MAX_ITER is classed as rejected: CAUGHT
+L12 numerical reasons are classed as other: CAUGHT
+L13 the creep rate is the mean ratio: CAUGHT
+L14 the extrapolation uses the wrong tolerance: CAUGHT
+L15 a rate of at least one still extrapolates: CAUGHT
+L16 the gain over the last ten iterations uses nine: CAUGHT
+L17 publishable is not tied to the withhold reason: CAUGHT
+L18 the D60 variant keeps Dmax 45: CAUGHT
+A01 wall regimes that are not degenerate are counted: CAUGHT
+A02 both is the union: CAUGHT
+A03 publishable fits are counted as non-publishable: CAUGHT
+A04 failed fits are included in the dual list: CAUGHT
+A05 the exclusive key is unsorted: CAUGHT
+A06 the budget is exclusive: CAUGHT
+A07 rejected fits are not in the not-finished group: CAUGHT
+A08 the held-out gap is the other way round: CAUGHT
+A09 non-finite comparators are not skipped: CAUGHT
+A10 the Wilson interval uses z = 1.645: CAUGHT
+28/28 caught
