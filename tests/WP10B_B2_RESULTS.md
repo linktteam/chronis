@@ -10,7 +10,7 @@ Every number: Python 3.12.3, repo pins, the development 2-core AVX-512 machine. 
 | REG (duration prior, 1 pseudo-segment) | 6 | 4 / 2 | 0.34 | -0.021 (se 0.055), -0.112 | HARMED | 1.10 |
 | ALL | 22 | 19 / 1 | 2e-5 | -0.027 (se 0.069), -0.140 | HELPED BUT HARMFUL | 3.12 |
 By stratum, I600 publishable (S0 to I600): hard 2 to 8, medium 2 to 8, easy 0 to 5 (gains 6, 6, 5; no losses). Mean held-out change I600 minus S0: hard -0.040, medium -0.005, easy -0.036.
-Non-publishable under I600 (15; a fit can carry several reasons): rejected update 7, iteration cap 7, degenerate duration 2. Under S0 it was 28 at the iteration cap and 5 rejected updates.
+Non-publishable under I600 (15; a fit can carry several reasons): rejected update 7, iteration cap 7, degenerate duration 2. Under S0 (B1) it was 27 at the iteration cap and 5 rejected updates (32 not finished by EM).
 
 ## What it means (INFERENCE where marked)
 - **The cause named in B1 is the iteration budget, not the durations.** 32 of 36 S0 fits stop on the cap or on a rejected update, and a larger budget alone turns 17 of them into publishable fits with no loss (the converged S0 fits stay converged). Dmax = 60 and the duration prior, which the brief's WP7-R population numbers suggested, do nothing useful on S0 identity streams (1 of 108 regimes was degenerate in B1), and the prior harms held-out prediction on the declared level. Prediction 10.4 for REG (|g - l| <= 1) failed (observed 2); the others held.
