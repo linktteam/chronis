@@ -1,0 +1,24 @@
+# WP10B F4 controls (3.12, repo pins, this AVX-512 machine; RUN)
+
+## 1. The OLD test (HEAD before F4) under a forced HASWELL kernel reproduces opa's 7763 failure
+OPENBLAS_CORETYPE=HASWELL pytest tests/<old test_wp9_a4_generator.py>: 1 failed, 9 passed; FAILED ...test_default_streams_are_bit_identical_to_wp8[9996-drift] (hash d66af22924722a01 against 41355ac8122f9a17, see f4_generator_probe.txt)
+
+## 2. The NEW test under forced HASWELL and forced NEHALEM kernels: 10 passed each (the 9996-drift stream goes through the stored-reference branch: not the WP8 BLAS norm, kind drift, within 1e-15 of the WP8 array)
+
+## 3. Simulation of a machine whose default kernel is Haswell (the child 'default' was started with OPENBLAS_CORETYPE=HASWELL in a temporary copy of the A2 test file)
+2 passed; recorded properties: kernel_condition = default_is_a_forced_kernel; kernels = {HASWELL: Haswell, NEHALEM: Nehalem, default: Haswell}
+
+# F4 manual control: a corrupted stored reference (one value of 9996-drift changed by 1e-9 relative) must be refused (3.12, repo pins; RUN)
+## under a forced HASWELL kernel (the 7763-like path that uses the stored reference)
+        assert kind in F4.NORM_DEPENDENT_KINDS, f"the {kind} stream of seed {seed} must be bit-identical to WP8 on every machine"
+        assert not F4.same_blas_norm_as_wp8(), "this machine's BLAS norm is the WP8 one, so the stream must be bit-identical to WP8"
+>       assert _sha16(ref) == HASHES[(seed, kind)], "the stored reference is not the WP8 stream"
+E       AssertionError: the stored reference is not the WP8 stream
+E       assert '374d1b46e18e4c25' == '41355ac8122f9a17'
+        assert set(ref.files) == {f"{s}-{kind}" for (s, kind) in HASHES}
+>           assert sha16(ref[f"{s}-{kind}"]) == h, (s, kind)
+E           assert '374d1b46e18e4c25' == '41355ac8122f9a17'
+FAILED tests/test_wp9_a4_generator.py::test_default_streams_are_bit_identical_to_wp8[9996-drift]
+FAILED tests/test_wp10b_f4_generator_kernels.py::test_the_stored_reference_streams_are_the_wp8_streams
+2 failed, 7 passed in 0.11s
+(restored; the same tests pass: 9 passed)

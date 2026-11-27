@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+import platform
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor
@@ -20,6 +21,9 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "integration_report" / "wp10a" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 from a2_probe_summary import fitfields, floats  # noqa: E402
+
+sys.path.insert(0, str(ROOT / "integration_report" / "wp10b" / "scripts"))
+from f4_lib import kernel_condition  # noqa: E402
 
 KERNELS = ("default", "HASWELL", "NEHALEM")
 HEALTHY = ("converged_fixture", "optimizer_success_seed1", "optimizer_success_seed2")
@@ -45,11 +49,33 @@ def children():
         return dict(zip(KERNELS, ex.map(_child, KERNELS)))
 
 
-def test_the_forced_kernels_are_really_three_different_ones(children):
+def test_the_forced_kernels_are_really_different_ones_and_a_machine_with_fewer_than_three_is_named(children, record_property):
+    """WP10B F4 (criteria section 13). This used to SKIP whenever the machine had fewer than three distinct kernels (an AMD EPYC 7763 runs OpenBLAS's Haswell kernel by default, so default and forced HASWELL are the same
+    kernel: two distinct kernels, not three). A skip hid that the property can be tested there. The property: the two FORCED kernels are honoured and are two different kernels (so the HASWELL-against-NEHALEM comparison
+    below compares two really different kernels on every x86-64 machine), and the machine is in one of the two documented conditions `three_distinct` or `default_is_a_forced_kernel`. A forced kernel that is not honoured
+    FAILS. The only skip left is a machine that is not x86-64 (the kernel names are x86 names). The condition is recorded as a test property."""
     archs = {k: children[k]["blas"][0]["arch"] for k in KERNELS}
-    if len(set(archs.values())) < 3:
-        pytest.skip(f"this machine's OpenBLAS did not honour OPENBLAS_CORETYPE for all of {KERNELS}: {archs}")   # reported, not a pass of the claims below
-    assert archs["HASWELL"] == "Haswell" and archs["NEHALEM"] == "Nehalem"
+    condition = kernel_condition(archs, platform.machine())
+    record_property("kernel_condition", condition)
+    record_property("kernels", json.dumps(archs, sort_keys=True))
+    if condition == "not_x86":
+        pytest.skip(f"not an x86-64 machine ({platform.machine()}): OPENBLAS_CORETYPE=HASWELL / NEHALEM name x86 kernels; reported: {archs}")
+    assert condition in ("three_distinct", "default_is_a_forced_kernel"), f"a forced OpenBLAS kernel was not honoured: {archs}"
+    assert archs["HASWELL"] == "Haswell" and archs["NEHALEM"] == "Nehalem" and archs["HASWELL"] != archs["NEHALEM"]
+
+
+@pytest.mark.parametrize("pair", [("HASWELL", "NEHALEM")])
+def test_two_forced_kernels_agree_with_each_other_within_the_documented_tolerances(children, pair):
+    """WP10B F4: the cross-kernel claims (healthy fits within a relative 1e-8, the not-converged fixture within 5e-2, the discrete outcomes identical) tested between the two forced kernels, which are two distinct kernels
+    on every x86-64 machine (also when the default kernel is one of them, so that default-against-forced is a comparison of a kernel with itself)."""
+    a, b = pair
+    if kernel_condition({k: children[k]["blas"][0]["arch"] for k in KERNELS}, platform.machine()) == "not_x86":
+        pytest.skip("not an x86-64 machine: the forced kernels are not x86 kernels")
+    assert children[a]["outcomes"] == children[b]["outcomes"], (children[a]["outcomes"], children[b]["outcomes"])
+    worst, n = _max_rel(children[a], children[b], HEALTHY)
+    assert n > 100 and worst <= REL_HEALTHY, f"{pair}: relative difference {worst:.3g} > {REL_HEALTHY} (n={n})"
+    worst, n = _max_rel(children[a], children[b], ("not_converged_fixture",))
+    assert n > 50 and worst <= REL_UNHEALTHY, f"{pair}: relative difference {worst:.3g} > {REL_UNHEALTHY} (n={n})"
 
 
 def test_the_discrete_outcomes_are_identical_across_kernels(children):

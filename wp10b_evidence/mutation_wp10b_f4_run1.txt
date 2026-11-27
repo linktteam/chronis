@@ -1,0 +1,24 @@
+CONTROL (unmutated, 11 named tests, same run): PASSED: all named tests pass unmutated
+G01 the HASWELL forcing is not checked: CAUGHT
+G02 the NEHALEM forcing is not checked: CAUGHT
+G03 three distinct kernels accepted with two: CAUGHT
+G04 the three-distinct condition is never reported: CAUGHT
+G05 a non-x86 machine is treated as x86: CAUGHT
+G06 AMD64 is not recognised as x86: CAUGHT
+G07 the WP8 norm comparison is inverted: CAUGHT
+G08 the tolerance is widened to 1e-12: CAUGHT
+G09 default may deviate: CAUGHT
+G10 merge may deviate: CAUGHT
+G11 NaN placement is ignored: CAUGHT
+G12 the shape is ignored: CRASH  [ValueError: operands could not be broadcast together with shapes (3,) (4,) def test_within_last_bit():
+        x = np.array([1.0, 2.0, np.na]
+G13 the tolerance is exclusive: CAUGHT
+G14 the probe vector is changed: SURVIVED
+G15 the children do not force the kernel: CAUGHT
+G16 the probe norm is computed exactly instead of with np.linalg.norm: CAUGHT
+G17 the 'pure' norm of the child uses BLAS: CAUGHT
+G18 the generator's drift stream moves by 1e-13 (WP8-kernel machine): CAUGHT
+G19 the generator's merge stream moves by 1e-13: CAUGHT
+G20 the generator's drift stream moves by 1e-13 (any kernel): CAUGHT
+G21 the generator's default stream moves by 1e-13: CAUGHT
+19/21 caught
