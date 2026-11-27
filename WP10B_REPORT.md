@@ -1,0 +1,60 @@
+# WP10B report (CHRONIS HSSM, branch `ledger/wp10b`, from `ledger/wp10a` 95dd125)
+
+**DRAFT IN PROGRESS: rows marked PENDING are filled after the B2 / B3 / B4 / B5 runs and the final-head checks. Nothing marked PENDING is a result.**
+
+Labels: **RUN** = executed in this repository, output in `wp10b_evidence/`; **READ** = read in code or a package document; **REPORTED** = taken from an earlier report or from opa; **UNKNOWN** = not established; **INFERENCE** = my reading, not tested. Every number is **Python 3.12.3 with the repo pins** (numpy 2.2.6, pandas 2.3.3, scipy 1.15.3, scikit-learn 1.9.1, pytest 9.1.1, cloudpickle 3.1.3), one 2-core AVX-512 development machine. No cross-machine reproducibility is claimed. Criteria: `tests/PREDECLARED_CRITERIA_WP10B.md`, each part committed before the first scored run of its item; no criterion was edited after a result (dated corrections only, listed in the file).
+
+## Summary
+| item | outcome |
+|---|---|
+| A0 restore, pins, criteria | **DONE** (export 1); cloudpickle pinned; compare script fixed |
+| C1(1) optimiser fields across CPU kernels | **DONE**: only float model parameters differ (at most 1.3e-11 relative); flags and discrete fields identical |
+| C1(2) mildly wrong prior | frozen M1 (every intercept + 8): **E1 MET**, 0 of 13 eligible harmful fits certified (bound 20.6%) |
+| C1(3) F2 cause | **CONFIRMED with opa's runner result**: numpy AVX-512 dispatch plus Nelder-Mead maxfev on a flat objective |
+| C2 hard-stratum ceiling | hard: **NOT SERVABLE BY DESIGN on the point estimate** (pO 0.43, interval 0.21 to 0.67) |
+| F3 (opa P02A, safety) fail-closed assessments | **DONE**: a crashed or malformed assessment is never ALIGNED; 44/44 mutants; healthy fits bit-identical |
+| F4 CPU-dependent drift stream, kernel test | **DONE**: cause is the BLAS norm; skip made deliberate and tested |
+| Replay of the A3 safety demonstration | **DELIVERED** (script, tests, mutation 20/20); not run in full here |
+| B1 why dual fits do not publish | **DONE**: 4 of 36 publishable (11%); 32 of 36 end on the iteration cap or a rejected update |
+| B2 fixes | PENDING |
+| B3 dual certificate | PENDING |
+| B4 publish memo | PENDING |
+| B5 lineage thresholds | PENDING |
+| B6 | PENDING (only if B1 to B5 are finished) |
+
+## The ten questions
+**1. What differs across CPU kernels in `optimizer_success_*`? (C1(1), READ of stored WP10A probe data, 18 OpenBLAS kernel settings, no new fit; `wp10b_evidence/c1_optimizer_fields.txt`)** Of 169 sub-fields per object, 20 are discrete (iteration counter, sizes, booleans, text) and none differs; the three flags are the same everywhere (seed 1: optimizer success True, duration fallback False; seed 2: success False, fallback True). 75 float sub-fields and 6 array hashes differ, in `A_fast`, `C_obs`, `Q_fast`, `R_obs`, `b_fast`, `d_obs`, `log_likelihood_`, its history and `window_gain_at_cap_`, by at most 1.3e-11 relative. The flag flip behind F2 is not a BLAS-kernel effect: **it is numpy's AVX-512 dispatch** (reproduced here with `NPY_DISABLE_CPU_FEATURES`; a Nelder-Mead step limit on a flat objective flips `seed1_fallback`); opa's EPYC 7763 run (seed1_fallback True everywhere) agrees (`tests/WP10B_C1_CPU_FEATURES.md`). The 12-user baseline battery gives identical discrete outputs with and without AVX-512 (24/24), floats not bit-identical.
+
+**2. Does a mildly wrong prior get refused? (C1(2), `tests/WP10B_C1_RESULTS.md`)** A mild harmful control could be built: three candidates were tried on development users, M1 (every intercept + 8, half the WP10A +16 shift) was verified harmful (20 of 36 fits below the single Gaussian, 6 of those eligible for the certificate) and frozen. Evaluation, analysed once on 40 fresh users and 3 lengths: 47 of 120 M1 fits worse than the single Gaussian, 13 eligible; **0 of 13 certified, exact one-sided 95% bound 20.6%, E1 MET**; with the true prior 13 of 31 eligible fits are certified (the test is not vacuous); 0 of 47 worse fits were published. Wording allowed: "refuses a mild harmful prior in this setting"; 10 of the 13 harmful fits are 30-day series and none is a 120-day series; a regime-swap prior (M3) did not harm and was not evaluated.
+
+**3. Hard-stratum ceiling (C2, `tests/WP10B_C2_RESULTS.md`)** Evaluation users 11141..11188, 480 production fits, analysed once. The share of evaluable refits that pass the gate (separation >= 2.5) with the TRUE labels: hard 0.431 [0.206, 0.669], medium 0.937, easy 1.000; the production fit: hard 0.481 on the separation alone and 0.194 with the instability flag, medium 0.899 / 0.560, easy 1.000 / 0.944. **Hard: NOT SERVABLE BY DESIGN on the point estimate** (pO < 0.50; the interval reaches 0.50, so "demonstrated" is not allowed). The separation of the production fit (median 2.43) is as large as the oracle's (2.38): what the production loses is the instability flag, which is the safety mechanism, and no hard-tier-specific tuning follows (owner decision W10B-1). Medium loses about 0.38 of refits to the flag against an oracle that passes 94%: the place where better fitting could pay, and the owner's call.
+
+**4. Why do dual fits fail to publish? (B1, development users 11201..11236, setting S0: K = 3, F = 7, 200 iterations; `wp10b_evidence/b1_dev_analysis.txt`)**
+| stratum | dual fits | publishable | iteration cap | rejected update | degenerate duration | collapsed regime | numerical |
+|---|---|---|---|---|---|---|---|
+| hard | 12 | 2 (17%) | 9 | 1 | 1 | 0 | 0 |
+| medium | 12 | 2 (17%) | 8 | 2 | 0 | 0 | 0 |
+| easy | 12 | 0 (0%) | 10 | 2 | 0 | 0 | 0 |
+| all | 36 | 4 (11%, Wilson 4% to 25%) | 27 | 5 | 1 | 0 | 0 |
+Of the 32 fits not finished by EM the extrapolated number of further iterations to an increment below 1e-4 is known for 25 (median creep rate 0.99 per iteration): within 400 more iterations 14, within 800 more 21. Duration degeneracy (segments at the Dmax wall) occurred in 1 of 108 regimes, not the 10 of 40 of WP7-R. The held-out one-step mean of the dual fit is below the single Gaussian in hard (-0.139, se 0.138), above it in medium (+0.472) and easy (+0.415), and not distinguishable from the baseline engine (n = 12 per stratum; record only).
+
+**5. Which fixes helped, with intervals; was bit-identity kept?** PENDING (B2 dev fits running).
+
+**6. Does the dual certificate refuse the harmful controls and certify good fits?** PENDING (B3).
+
+**7. The dual publish memo: rule, result, recommendation.** PENDING (B4).
+
+**8. Dual and cross-engine lineage thresholds: was the one-sided 95% bound <= 1% demonstrated per stratum?** PENDING (B5). Known now: only 4 of 36 dual fits in B1 were publishable (11%), so a dual-to-dual or cross-engine alignment set of the A3 size (299 alignments per stratum for a 1% bound) cannot be collected in this package; the actual achievable n is reported in the B5 note.
+
+**9. What the owner must decide next.** PENDING (final).
+
+**10. Restore-test logs for every export and the final head hash.** Exports 1 to 7 restored and tested (SHA256, bundle verify, patch on a clean `git archive 95dd125`, base + patch == tarball tree, smoke script exit 0): heads 81ec6f0, 192242b, f804685, 212134a, 4dd9db6, ec99fc9, 0087f20 (`restore_log_item1..7.txt` kept). Final head: PENDING.
+
+## Items asked by the owner on 2026-11-27 (opa package P02A and decision W10B-1)
+- **F3, fail-closed assessments (`tests/WP10B_F3_RESULTS.md`).** A crashed or malformed assessment (K-change, fit-stability, scaler, matching) gives CONTINUITY_UNVERIFIED with reason `assessment_crashed`, never ALIGNED; one `ASSESSMENT_CRASHED` alert per user, stage and data revision with exactly five fields (user hash, stage, revision id, reason, exception class name); an alert that cannot be delivered is logged and changes nothing. 30 tests, mutation set 44/44 (the owner's five are F01..F05), the WP9 A3 mutation set rerun 34/34 and 4/4, lineage bit-identity against `git archive 95dd125`: identical in 384 of 384 records (sensitivity control prints FAIL as it must). Five existing tests were changed; one is a judgment call (a context-category mismatch now fails closed instead of raising), flagged to the owner. `duration_weight > 0` without durations stays a loud error.
+- **F4, CPU-dependent drift stream and the skipped kernel test (`tests/WP10B_F4_RESULTS.md`).** The function is the BLAS `ddot` behind `np.linalg.norm` of a 1-D vector (opa's hash reproduced under a forced Haswell kernel; not numpy's AVX-512 dispatch); the same function is used in production (`lineage.separation_min`), where the lineage battery shows identical discrete outputs under three kernels and floats differing by at most 2.6e-16 relative. The skip is replaced by a deliberate, documented condition (`kernel_condition`) plus a Haswell-vs-Nehalem test; the WP8-hash test passes on a machine whose kernel gives the AVX2 value only within 1e-15 and only for drift and split. 22 tests, mutation 21/21. The tolerance is the single place where an existing test was relaxed; the owner can revert it.
+- **Replay (`tests/WP10B_REPLAY_RESULTS.md`).** `integration_report/wp10b/scripts/a3_safety_replay.py` replays the A3 safety demonstration on 36 users (12 per stratum, single seed, operating point read from the freeze file); failure outcomes declared beforehand; 18 tests, mutation 20/20; a real bug found and fixed on the way (a prep cache keyed by job made the stored-fit comparison vacuous). Smoke run on 3 users: 0 wrong-and-unflagged in 27 alignments, 30 of 30 fits identical to the stored ones. Full run not done here (about 50 minutes on two cores), for opa's 7763 and an AVX-512 runner.
+- **W10B-1.** All declared levels and verdict words stay. B2 variants are generic, one configuration chosen on development users and frozen; the frozen version meets the evaluation seeds once; a second version would need the spare seeds and the owner's go-ahead.
+
+## Checks required by brief section 7
+PENDING (final head): full suite, bit-identity 12 + 12 and the dual battery, mutation sets, seeds and dated changes.
