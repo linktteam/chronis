@@ -1,0 +1,6 @@
+== lineage battery at the final code head: reference = git archive 95dd125, new = git archive HEAD (36b39ee)
+records compared: 384 (+ the records after a user choice); fields compared per record: 35; fields only in the new tree: []; only in the reference: []
+states reached (reference): {'ALIGNED': 146, 'CONTINUITY_UNVERIFIED': 178, 'K_CHANGED': 12, 'NEW_LINEAGE': 48}
+states reached (new):       {'ALIGNED': 146, 'CONTINUITY_UNVERIFIED': 178, 'K_CHANGED': 12, 'NEW_LINEAGE': 48}
+records with any difference: 0
+PASS
