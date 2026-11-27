@@ -1,0 +1,22 @@
+battery_fast_default.pkl vs battery_fast_NO_AVX512_ZEN.pkl: 12 users
+  bit-identical fitted outputs (m_t, uncertainty, p_t, posteriors, regime means, duration parameters): 0 of 12
+  same fit state, K, Dmax, withheld reason, collapse flag and stability flag/reason: 12 of 12
+  BIC: largest absolute difference 1.27e-07 (relative 5.61e-11)
+  decoded regime labels: exactly equal sequences 12 of 12; lowest agreement after renaming 1.0000
+  largest absolute difference of an output over the users: m_t_posterior_mean 0, m_t_uncertainty 0, p_t_estimate 0, p_t_posterior 1.86e-08, regime_means 8.28e-10; duration parameters 1.74e-07
+  restart_summary keys that differ in at least one user: none
+  served lineage: served stable ids equal when each fit starts a lineage 12 of 12; the other configuration's fit is ALIGNED with the first 12 of 12 (may claim 'same as before': 12); lineage step ran without error 12 of 12
+  the SAME fit fed twice to the lineage (what the gate does on its own, whatever the machine): ALIGNED 12 of 12 (states ['ALIGNED']); ALIGNED only with the other configuration's fit: 0; ALIGNED only with itself: 0 (states with the other configuration's fit: ['ALIGNED'])
+  (reference fits: states ['CONVERGED'], withheld 0 of 12)
+    user 5301: state ('CONVERGED', 'CONVERGED'), K (2, 2), withheld (None, None), unstable ((False, None), (False, None)), label agreement 1.000, BIC diff 2.27e-13, lineage ALIGNED
+    user 5302: state ('CONVERGED', 'CONVERGED'), K (2, 2), withheld (None, None), unstable ((False, None), (False, None)), label agreement 1.000, BIC diff 0, lineage ALIGNED
+    user 5303: state ('CONVERGED', 'CONVERGED'), K (2, 2), withheld (None, None), unstable ((False, None), (False, None)), label agreement 1.000, BIC diff 1.2e-09, lineage ALIGNED
+    user 5304: state ('CONVERGED', 'CONVERGED'), K (2, 2), withheld (None, None), unstable ((False, None), (False, None)), label agreement 1.000, BIC diff 9.09e-13, lineage ALIGNED
+    user 5305: state ('CONVERGED', 'CONVERGED'), K (2, 2), withheld (None, None), unstable ((False, None), (False, None)), label agreement 1.000, BIC diff 8e-11, lineage ALIGNED
+    user 5306: state ('CONVERGED', 'CONVERGED'), K (2, 2), withheld (None, None), unstable ((False, None), (False, None)), label agreement 1.000, BIC diff 3.37e-09, lineage ALIGNED
+    user 5307: state ('CONVERGED', 'CONVERGED'), K (2, 2), withheld (None, None), unstable ((False, None), (False, None)), label agreement 1.000, BIC diff 1.27e-11, lineage ALIGNED
+    user 5308: state ('CONVERGED', 'CONVERGED'), K (2, 2), withheld (None, None), unstable ((False, None), (False, None)), label agreement 1.000, BIC diff 1.27e-07, lineage ALIGNED
+    user 5309: state ('CONVERGED', 'CONVERGED'), K (2, 2), withheld (None, None), unstable ((False, None), (False, None)), label agreement 1.000, BIC diff 2.12e-09, lineage ALIGNED
+    user 5310: state ('CONVERGED', 'CONVERGED'), K (2, 2), withheld (None, None), unstable ((False, None), (False, None)), label agreement 1.000, BIC diff 5.03e-10, lineage ALIGNED
+    user 5311: state ('CONVERGED', 'CONVERGED'), K (2, 2), withheld (None, None), unstable ((False, None), (False, None)), label agreement 1.000, BIC diff 3.57e-10, lineage ALIGNED
+    user 5312: state ('CONVERGED', 'CONVERGED'), K (2, 2), withheld (None, None), unstable ((False, None), (False, None)), label agreement 1.000, BIC diff 9.78e-10, lineage ALIGNED

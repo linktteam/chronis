@@ -1,0 +1,10 @@
+battery_fast_default.pkl vs battery_fast_default_rep2.pkl: 12 users
+  bit-identical fitted outputs (m_t, uncertainty, p_t, posteriors, regime means, duration parameters): 12 of 12
+  same fit state, K, Dmax, withheld reason, collapse flag and stability flag/reason: 12 of 12
+  BIC: largest absolute difference 0 (relative 0)
+  decoded regime labels: exactly equal sequences 12 of 12; lowest agreement after renaming 1.0000
+  largest absolute difference of an output over the users: m_t_posterior_mean 0, m_t_uncertainty 0, p_t_estimate 0, p_t_posterior 0, regime_means 0; duration parameters 0
+  restart_summary keys that differ in at least one user: none
+  served lineage: served stable ids equal when each fit starts a lineage 12 of 12; the other configuration's fit is ALIGNED with the first 12 of 12 (may claim 'same as before': 12); lineage step ran without error 12 of 12
+  the SAME fit fed twice to the lineage (what the gate does on its own, whatever the machine): ALIGNED 12 of 12 (states ['ALIGNED']); ALIGNED only with the other configuration's fit: 0; ALIGNED only with itself: 0 (states with the other configuration's fit: ['ALIGNED'])
+  (reference fits: states ['CONVERGED'], withheld 0 of 12)
