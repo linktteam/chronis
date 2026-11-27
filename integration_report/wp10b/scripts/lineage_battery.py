@@ -2,6 +2,7 @@
 Healthy = no crash anywhere: every K-change record is None, or comes from the real `assess_k_change` with a deterministic stand-in for the recent-window fit that never raises. The chains cover the four states
 (ALIGNED, K_CHANGED, NEW_LINEAGE, CONTINUITY_UNVERIFIED by dual engine / unstable fit / suspected K change), both engines, user choices, and the record without any assessment.
 usage: python3 lineage_battery.py fit --tree TREE --out FILE.json     |     python3 lineage_battery.py compare REF.json NEW.json     (compare prints PASS or FAIL; exit code 0 / 1)
+       python3 lineage_battery.py compare --tolerant REF.json NEW.json   (F4: two machines or OpenBLAS kernels; every non-float leaf must be identical, floats are reported by relative difference; prints SAME DISCRETE OUTPUTS or DIFFERENT DISCRETE OUTPUTS)
 Compared: EVERY field of every LineageRecord (all dataclass fields present in BOTH trees; fields only in the new tree are listed), `may_claim_same_as_before`, `effective_choice`, and the state after each step (epoch, anchor fit
 index, pending fit index, epoch-history length). Floats are compared exactly (repr round trip)."""
 from __future__ import annotations
@@ -137,8 +138,67 @@ def compare_dumps(ref, new):
     return dict(ok=ok, n_records=n_rec, diffs=diffs, only_new=only_new, only_ref=only_ref, states_ref=ref["states"], states_new=new["states"], common=len(common))
 
 
+def leaves(x, path=""):
+    """(path, value) of every leaf of a canonical dump; a float leaf is a hex string that parses with `float.fromhex` (or `nan`/`inf`)."""
+    if isinstance(x, dict):
+        for k in sorted(x):
+            yield from leaves(x[k], f"{path}/{k}")
+    elif isinstance(x, list):
+        for i, v in enumerate(x):
+            yield from leaves(v, f"{path}[{i}]")
+    else:
+        yield path, x
+
+
+def as_float(v):
+    if isinstance(v, str) and (v.startswith(("0x", "-0x")) or v in ("nan", "inf", "-inf")):
+        try:
+            return float.fromhex(v) if v[:2] in ("0x", "-0") else float(v)
+        except ValueError:
+            return None
+    return None
+
+
+def compare_tolerant(ref, new):
+    """Machine / kernel comparison: every leaf that is not a float must be identical (states, reasons, names, flags, counts, shapes); floats are compared by relative difference."""
+    n_rec = n_discrete_diff = n_float_diff = 0
+    worst, worst_at = 0.0, None
+    discrete_examples = []
+    for c, (cr, cn) in enumerate(zip(ref["chains"], new["chains"])):
+        for t, (r, n) in enumerate(zip(cr, cn)):
+            n_rec += 1
+            lr, ln = list(leaves(r)), list(leaves(n))
+            d_diff = f_diff = False
+            if [p for p, _ in lr] != [p for p, _ in ln]:
+                d_diff = True
+            else:
+                for (p, a), (_, b) in zip(lr, ln):
+                    fa, fb = as_float(a), as_float(b)
+                    if fa is not None and fb is not None:
+                        if fa != fb and not (fa != fa and fb != fb):
+                            f_diff = True
+                            rel = abs(fa - fb) / max(abs(fa), abs(fb), 1e-300)
+                            if rel > worst:
+                                worst, worst_at = rel, (c, t, p)
+                    elif a != b:
+                        d_diff = True
+                        if len(discrete_examples) < 5:
+                            discrete_examples.append((c, t, p, a, b))
+            n_discrete_diff += d_diff
+            n_float_diff += f_diff
+    return dict(n_records=n_rec, n_discrete_diff=n_discrete_diff, n_float_diff=n_float_diff, worst_rel=worst, worst_at=worst_at, examples=discrete_examples, ok=n_discrete_diff == 0)
+
+
 def cmd_compare(a):
     ref, new = (json.load(open(p)) for p in (a.ref, a.new))
+    if a.tolerant:
+        c = compare_tolerant(ref, new)
+        print(f"records compared: {c['n_records']}; records with any non-float leaf different (state, reasons, names, flags, counts): {c['n_discrete_diff']}; records with any float leaf different: {c['n_float_diff']}; "
+              f"largest relative difference of a float: {c['worst_rel']:.3g}" + (f" at {c['worst_at']}" if c["worst_at"] else ""))
+        if c["examples"]:
+            print("first discrete differences: " + str(c["examples"]))
+        print("SAME DISCRETE OUTPUTS" if c["ok"] else "DIFFERENT DISCRETE OUTPUTS")
+        sys.exit(0 if c["ok"] else 1)
     c = compare_dumps(ref, new)
     print(f"records compared: {c['n_records']} (+ the records after a user choice); fields compared per record: {c['common']}; fields only in the new tree: {c['only_new']}; only in the reference: {c['only_ref']}")
     print(f"states reached (reference): {c['states_ref']}\nstates reached (new):       {c['states_new']}")
@@ -150,7 +210,7 @@ def cmd_compare(a):
 def main():
     ap = argparse.ArgumentParser(); sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("fit"); p.add_argument("--tree", required=True); p.add_argument("--out", required=True); p.set_defaults(f=cmd_fit)
-    p = sub.add_parser("compare"); p.add_argument("ref"); p.add_argument("new"); p.set_defaults(f=cmd_compare)
+    p = sub.add_parser("compare"); p.add_argument("ref"); p.add_argument("new"); p.add_argument("--tolerant", action="store_true"); p.set_defaults(f=cmd_compare)
     a = ap.parse_args(); a.f(a)
 
 

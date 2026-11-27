@@ -1,0 +1,2655 @@
+{
+ "HASWELL_and_NO_AVX512_numpy": {
+  "blas": [
+   {
+    "api": "openblas",
+    "arch": "Haswell",
+    "threads": 1
+   },
+   {
+    "api": "openblas",
+    "arch": "Haswell",
+    "threads": 1
+   }
+  ],
+  "numpy": "2.2.6",
+  "streams": {
+   "9996-default": {
+    "hash": "52541cb96246c798",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f3p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9996-drift": {
+    "hash": "d66af22924722a01",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f3p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "3f5b9287974fc34b",
+      "n": 7,
+      "out": "0x1.205705ba46d52p+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "9b86a522105325bb",
+      "n": 7,
+      "out": "0x1.3f63787d1890cp-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "c011d442c917900c",
+      "n": 7,
+      "out": "0x1.c83b434e6f059p-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     }
+    ]
+   },
+   "9996-merge": {
+    "hash": "393f717a500a76eb",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f3p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9996-split": {
+    "hash": "2bdbb5fe9b8ca5fc",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f3p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-default": {
+    "hash": "5a7818bd2e550967",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-drift": {
+    "hash": "a5d4b4dfe96d956e",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "2a906bc53f7136ac",
+      "n": 7,
+      "out": "0x1.06791b98010bap+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "eef5c495d19e4862",
+      "n": 7,
+      "out": "0x1.e9a32929c983fp-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "9b69e0cdf033badc",
+      "n": 7,
+      "out": "0x1.1b35e96a0af0ep+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     }
+    ]
+   },
+   "9997-merge": {
+    "hash": "7dce8054e54ff1bb",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-split": {
+    "hash": "14c1e75a75ed9bca",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   }
+  }
+ },
+ "NO_AVX512_numpy": {
+  "blas": [
+   {
+    "api": "openblas",
+    "arch": "SkylakeX",
+    "threads": 1
+   },
+   {
+    "api": "openblas",
+    "arch": "SkylakeX",
+    "threads": 1
+   }
+  ],
+  "numpy": "2.2.6",
+  "streams": {
+   "9996-default": {
+    "hash": "52541cb96246c798",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f2p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9996-drift": {
+    "hash": "41355ac8122f9a17",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f2p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "42e4f39106ca5151",
+      "n": 7,
+      "out": "0x1.205705ba46d52p+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "9b86a522105325bb",
+      "n": 7,
+      "out": "0x1.3f63787d1890dp-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "c011d442c917900c",
+      "n": 7,
+      "out": "0x1.c83b434e6f059p-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     }
+    ]
+   },
+   "9996-merge": {
+    "hash": "393f717a500a76eb",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f2p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9996-split": {
+    "hash": "2bdbb5fe9b8ca5fc",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f2p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-default": {
+    "hash": "5a7818bd2e550967",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-drift": {
+    "hash": "a5d4b4dfe96d956e",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "2a906bc53f7136ac",
+      "n": 7,
+      "out": "0x1.06791b98010bap+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "eef5c495d19e4862",
+      "n": 7,
+      "out": "0x1.e9a32929c983ep-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "9b69e0cdf033badc",
+      "n": 7,
+      "out": "0x1.1b35e96a0af0ep+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     }
+    ]
+   },
+   "9997-merge": {
+    "hash": "7dce8054e54ff1bb",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-split": {
+    "hash": "14c1e75a75ed9bca",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   }
+  }
+ },
+ "OPENBLAS_HASWELL": {
+  "blas": [
+   {
+    "api": "openblas",
+    "arch": "Haswell",
+    "threads": 1
+   },
+   {
+    "api": "openblas",
+    "arch": "Haswell",
+    "threads": 1
+   }
+  ],
+  "numpy": "2.2.6",
+  "streams": {
+   "9996-default": {
+    "hash": "52541cb96246c798",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f3p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9996-drift": {
+    "hash": "d66af22924722a01",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f3p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "3f5b9287974fc34b",
+      "n": 7,
+      "out": "0x1.205705ba46d52p+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "9b86a522105325bb",
+      "n": 7,
+      "out": "0x1.3f63787d1890cp-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "c011d442c917900c",
+      "n": 7,
+      "out": "0x1.c83b434e6f059p-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     }
+    ]
+   },
+   "9996-merge": {
+    "hash": "393f717a500a76eb",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f3p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9996-split": {
+    "hash": "2bdbb5fe9b8ca5fc",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f3p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-default": {
+    "hash": "5a7818bd2e550967",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-drift": {
+    "hash": "a5d4b4dfe96d956e",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "2a906bc53f7136ac",
+      "n": 7,
+      "out": "0x1.06791b98010bap+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "eef5c495d19e4862",
+      "n": 7,
+      "out": "0x1.e9a32929c983fp-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "9b69e0cdf033badc",
+      "n": 7,
+      "out": "0x1.1b35e96a0af0ep+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     }
+    ]
+   },
+   "9997-merge": {
+    "hash": "7dce8054e54ff1bb",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-split": {
+    "hash": "14c1e75a75ed9bca",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   }
+  }
+ },
+ "OPENBLAS_NEHALEM": {
+  "blas": [
+   {
+    "api": "openblas",
+    "arch": "Nehalem",
+    "threads": 1
+   },
+   {
+    "api": "openblas",
+    "arch": "Nehalem",
+    "threads": 1
+   }
+  ],
+  "numpy": "2.2.6",
+  "streams": {
+   "9996-default": {
+    "hash": "52541cb96246c798",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f3p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9996-drift": {
+    "hash": "d66af22924722a01",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f3p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "3f5b9287974fc34b",
+      "n": 7,
+      "out": "0x1.205705ba46d52p+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "9b86a522105325bb",
+      "n": 7,
+      "out": "0x1.3f63787d1890cp-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "c011d442c917900c",
+      "n": 7,
+      "out": "0x1.c83b434e6f059p-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     }
+    ]
+   },
+   "9996-merge": {
+    "hash": "393f717a500a76eb",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f3p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9996-split": {
+    "hash": "2bdbb5fe9b8ca5fc",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f3p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-default": {
+    "hash": "5a7818bd2e550967",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-drift": {
+    "hash": "a5d4b4dfe96d956e",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "2a906bc53f7136ac",
+      "n": 7,
+      "out": "0x1.06791b98010bap+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "eef5c495d19e4862",
+      "n": 7,
+      "out": "0x1.e9a32929c983fp-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "9b69e0cdf033badc",
+      "n": 7,
+      "out": "0x1.1b35e96a0af0ep+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     }
+    ]
+   },
+   "9997-merge": {
+    "hash": "7dce8054e54ff1bb",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-split": {
+    "hash": "14c1e75a75ed9bca",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   }
+  }
+ },
+ "OPENBLAS_SKYLAKEX": {
+  "blas": [
+   {
+    "api": "openblas",
+    "arch": "SkylakeX",
+    "threads": 1
+   },
+   {
+    "api": "openblas",
+    "arch": "SkylakeX",
+    "threads": 1
+   }
+  ],
+  "numpy": "2.2.6",
+  "streams": {
+   "9996-default": {
+    "hash": "52541cb96246c798",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f2p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9996-drift": {
+    "hash": "41355ac8122f9a17",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f2p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "42e4f39106ca5151",
+      "n": 7,
+      "out": "0x1.205705ba46d52p+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "9b86a522105325bb",
+      "n": 7,
+      "out": "0x1.3f63787d1890dp-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "c011d442c917900c",
+      "n": 7,
+      "out": "0x1.c83b434e6f059p-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     }
+    ]
+   },
+   "9996-merge": {
+    "hash": "393f717a500a76eb",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f2p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9996-split": {
+    "hash": "2bdbb5fe9b8ca5fc",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f2p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-default": {
+    "hash": "5a7818bd2e550967",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-drift": {
+    "hash": "a5d4b4dfe96d956e",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "2a906bc53f7136ac",
+      "n": 7,
+      "out": "0x1.06791b98010bap+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "eef5c495d19e4862",
+      "n": 7,
+      "out": "0x1.e9a32929c983ep-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "9b69e0cdf033badc",
+      "n": 7,
+      "out": "0x1.1b35e96a0af0ep+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     }
+    ]
+   },
+   "9997-merge": {
+    "hash": "7dce8054e54ff1bb",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-split": {
+    "hash": "14c1e75a75ed9bca",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   }
+  }
+ },
+ "OPENBLAS_ZEN": {
+  "blas": [
+   {
+    "api": "openblas",
+    "arch": "Haswell",
+    "threads": 1
+   },
+   {
+    "api": "openblas",
+    "arch": "Haswell",
+    "threads": 1
+   }
+  ],
+  "numpy": "2.2.6",
+  "streams": {
+   "9996-default": {
+    "hash": "52541cb96246c798",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f3p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9996-drift": {
+    "hash": "d66af22924722a01",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f3p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "3f5b9287974fc34b",
+      "n": 7,
+      "out": "0x1.205705ba46d52p+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "9b86a522105325bb",
+      "n": 7,
+      "out": "0x1.3f63787d1890cp-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "c011d442c917900c",
+      "n": 7,
+      "out": "0x1.c83b434e6f059p-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     }
+    ]
+   },
+   "9996-merge": {
+    "hash": "393f717a500a76eb",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f3p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9996-split": {
+    "hash": "2bdbb5fe9b8ca5fc",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f3p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-default": {
+    "hash": "5a7818bd2e550967",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-drift": {
+    "hash": "a5d4b4dfe96d956e",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "2a906bc53f7136ac",
+      "n": 7,
+      "out": "0x1.06791b98010bap+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "eef5c495d19e4862",
+      "n": 7,
+      "out": "0x1.e9a32929c983fp-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "9b69e0cdf033badc",
+      "n": 7,
+      "out": "0x1.1b35e96a0af0ep+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     }
+    ]
+   },
+   "9997-merge": {
+    "hash": "7dce8054e54ff1bb",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-split": {
+    "hash": "14c1e75a75ed9bca",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   }
+  }
+ },
+ "default": {
+  "blas": [
+   {
+    "api": "openblas",
+    "arch": "SkylakeX",
+    "threads": 1
+   },
+   {
+    "api": "openblas",
+    "arch": "SkylakeX",
+    "threads": 1
+   }
+  ],
+  "numpy": "2.2.6",
+  "streams": {
+   "9996-default": {
+    "hash": "52541cb96246c798",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f2p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9996-drift": {
+    "hash": "41355ac8122f9a17",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f2p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "42e4f39106ca5151",
+      "n": 7,
+      "out": "0x1.205705ba46d52p+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "9b86a522105325bb",
+      "n": 7,
+      "out": "0x1.3f63787d1890dp-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "c011d442c917900c",
+      "n": 7,
+      "out": "0x1.c83b434e6f059p-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     }
+    ]
+   },
+   "9996-merge": {
+    "hash": "393f717a500a76eb",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f2p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9996-split": {
+    "hash": "2bdbb5fe9b8ca5fc",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "1170b6c7a4b6f053",
+      "n": 7,
+      "out": "0x1.c1ed6c88789ccp+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "459d9e1ba8e42d2c",
+      "n": 7,
+      "out": "0x1.621c576b7e1f2p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "741ec7a8661e0209",
+      "n": 7,
+      "out": "0x1.60e188694637ap+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "a81cf4449450868b",
+      "n": 7,
+      "out": "0x1.3a0208ed70642p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "8c66e69a7693066e",
+      "n": 7,
+      "out": "0x1.03800bdd2e87fp+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-default": {
+    "hash": "5a7818bd2e550967",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-drift": {
+    "hash": "a5d4b4dfe96d956e",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "2a906bc53f7136ac",
+      "n": 7,
+      "out": "0x1.06791b98010bap+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "eef5c495d19e4862",
+      "n": 7,
+      "out": "0x1.e9a32929c983ep-1",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     },
+     {
+      "axis": null,
+      "inp": "9b69e0cdf033badc",
+      "n": 7,
+      "out": "0x1.1b35e96a0af0ep+0",
+      "site": "synthetic_identity.py:151 in generate_identity_stream"
+     }
+    ]
+   },
+   "9997-merge": {
+    "hash": "7dce8054e54ff1bb",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   },
+   "9997-split": {
+    "hash": "14c1e75a75ed9bca",
+    "trace": [
+     {
+      "axis": null,
+      "inp": "392d71a2390c251a",
+      "n": 7,
+      "out": "0x1.0912b8d2cd158p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "e7ca4cc363a837de",
+      "n": 7,
+      "out": "0x1.d62bb2c874671p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "30da921fafa97c87",
+      "n": 7,
+      "out": "0x1.4667e5d1377f7p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "faee0e0a2d793477",
+      "n": 7,
+      "out": "0x1.6e92790af6fd8p+0",
+      "site": "synthetic_identity.py:82 in _unit"
+     },
+     {
+      "axis": null,
+      "inp": "be9e817b4392b211",
+      "n": 7,
+      "out": "0x1.3b74a1024f551p+1",
+      "site": "synthetic_identity.py:82 in _unit"
+     }
+    ]
+   }
+  }
+ }
+}

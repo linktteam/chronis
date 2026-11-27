@@ -1,0 +1,24 @@
+numpy 2.2.6; BLAS of the default configuration: [{'api': 'openblas', 'arch': 'SkylakeX', 'threads': 1}, {'api': 'openblas', 'arch': 'SkylakeX', 'threads': 1}]
+config                        BLAS arch   9996-default       9996-split         9996-merge         9996-drift         9997-default       9997-split         9997-merge         9997-drift        
+default                       ['SkylakeX', 'SkylakeX']52541cb96246c798   2bdbb5fe9b8ca5fc   393f717a500a76eb   41355ac8122f9a17   5a7818bd2e550967   14c1e75a75ed9bca   7dce8054e54ff1bb   a5d4b4dfe96d956e  
+NO_AVX512_numpy               ['SkylakeX', 'SkylakeX']52541cb96246c798   2bdbb5fe9b8ca5fc   393f717a500a76eb   41355ac8122f9a17   5a7818bd2e550967   14c1e75a75ed9bca   7dce8054e54ff1bb   a5d4b4dfe96d956e  
+OPENBLAS_SKYLAKEX             ['SkylakeX', 'SkylakeX']52541cb96246c798   2bdbb5fe9b8ca5fc   393f717a500a76eb   41355ac8122f9a17   5a7818bd2e550967   14c1e75a75ed9bca   7dce8054e54ff1bb   a5d4b4dfe96d956e  
+OPENBLAS_HASWELL              ['Haswell', 'Haswell']52541cb96246c798   2bdbb5fe9b8ca5fc   393f717a500a76eb   d66af22924722a01   5a7818bd2e550967   14c1e75a75ed9bca   7dce8054e54ff1bb   a5d4b4dfe96d956e  
+OPENBLAS_ZEN                  ['Haswell', 'Haswell']52541cb96246c798   2bdbb5fe9b8ca5fc   393f717a500a76eb   d66af22924722a01   5a7818bd2e550967   14c1e75a75ed9bca   7dce8054e54ff1bb   a5d4b4dfe96d956e  
+OPENBLAS_NEHALEM              ['Nehalem', 'Nehalem']52541cb96246c798   2bdbb5fe9b8ca5fc   393f717a500a76eb   d66af22924722a01   5a7818bd2e550967   14c1e75a75ed9bca   7dce8054e54ff1bb   a5d4b4dfe96d956e  
+HASWELL_and_NO_AVX512_numpy   ['Haswell', 'Haswell']52541cb96246c798   2bdbb5fe9b8ca5fc   393f717a500a76eb   d66af22924722a01   5a7818bd2e550967   14c1e75a75ed9bca   7dce8054e54ff1bb   a5d4b4dfe96d956e  
+
+norm calls per stream (default configuration): 9996-default: 5, 9996-split: 5, 9996-merge: 5, 9996-drift: 8, 9997-default: 5, 9997-split: 5, 9997-merge: 5, 9997-drift: 8
+call sites of np.linalg.norm in the generator: synthetic_identity.py:151 in generate_identity_stream; synthetic_identity.py:82 in _unit
+NO_AVX512_numpy      9996-drift  stream hash identical; first norm output that differs: none
+NO_AVX512_numpy      9996-split  stream hash identical; first norm output that differs: none
+NO_AVX512_numpy      9997-drift  stream hash identical; first norm output that differs: none
+OPENBLAS_HASWELL     9996-drift  stream hash DIFFERENT; first norm output that differs: call 1 at synthetic_identity.py:82 in _unit: default 0x1.621c576b7e1f2p+0 (1.3832449567254312) vs 0x1.621c576b7e1f3p+0 (1.3832449567254315)
+OPENBLAS_HASWELL     9996-split  stream hash identical; first norm output that differs: call 1 at synthetic_identity.py:82 in _unit: default 0x1.621c576b7e1f2p+0 (1.3832449567254312) vs 0x1.621c576b7e1f3p+0 (1.3832449567254315)
+OPENBLAS_HASWELL     9997-drift  stream hash identical; first norm output that differs: call 6 at synthetic_identity.py:151 in generate_identity_stream: default 0x1.e9a32929c983ep-1 (0.95632294306847831) vs 0x1.e9a32929c983fp-1 (0.95632294306847843)
+OPENBLAS_ZEN         9996-drift  stream hash DIFFERENT; first norm output that differs: call 1 at synthetic_identity.py:82 in _unit: default 0x1.621c576b7e1f2p+0 (1.3832449567254312) vs 0x1.621c576b7e1f3p+0 (1.3832449567254315)
+OPENBLAS_ZEN         9996-split  stream hash identical; first norm output that differs: call 1 at synthetic_identity.py:82 in _unit: default 0x1.621c576b7e1f2p+0 (1.3832449567254312) vs 0x1.621c576b7e1f3p+0 (1.3832449567254315)
+OPENBLAS_ZEN         9997-drift  stream hash identical; first norm output that differs: call 6 at synthetic_identity.py:151 in generate_identity_stream: default 0x1.e9a32929c983ep-1 (0.95632294306847831) vs 0x1.e9a32929c983fp-1 (0.95632294306847843)
+OPENBLAS_NEHALEM     9996-drift  stream hash DIFFERENT; first norm output that differs: call 1 at synthetic_identity.py:82 in _unit: default 0x1.621c576b7e1f2p+0 (1.3832449567254312) vs 0x1.621c576b7e1f3p+0 (1.3832449567254315)
+OPENBLAS_NEHALEM     9996-split  stream hash identical; first norm output that differs: call 1 at synthetic_identity.py:82 in _unit: default 0x1.621c576b7e1f2p+0 (1.3832449567254312) vs 0x1.621c576b7e1f3p+0 (1.3832449567254315)
+OPENBLAS_NEHALEM     9997-drift  stream hash identical; first norm output that differs: call 6 at synthetic_identity.py:151 in generate_identity_stream: default 0x1.e9a32929c983ep-1 (0.95632294306847831) vs 0x1.e9a32929c983fp-1 (0.95632294306847843)
